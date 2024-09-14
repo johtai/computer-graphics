@@ -1,0 +1,11 @@
+D:\Programming2024\Computer Graphics\ShadesOfGray\bin\Debug\ShadesOfGray.exe.config
+D:\Programming2024\Computer Graphics\ShadesOfGray\bin\Debug\ShadesOfGray.exe
+D:\Programming2024\Computer Graphics\ShadesOfGray\bin\Debug\ShadesOfGray.pdb
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.csproj.AssemblyReference.cache
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.csproj.SuggestedBindingRedirects.cache
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.Form1.resources
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.Properties.Resources.resources
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.csproj.GenerateResource.cache
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.csproj.CoreCompileInputs.cache
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.exe
+D:\Programming2024\Computer Graphics\ShadesOfGray\obj\Debug\ShadesOfGray.pdb
