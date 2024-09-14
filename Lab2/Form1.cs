@@ -131,6 +131,7 @@ namespace ShadesOfGray
             {
 
                 chart.Series[seriesName].Points.AddXY(i, histogram[i]);
+                chart.Series[seriesName].Color = Color.Gray;
             }
         }
 
