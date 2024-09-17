@@ -20,101 +20,65 @@ namespace ShadesOfGray
         public Form2()
         {
             InitializeComponent();
+
+            button_red.Enabled = true;
+            button_green.Enabled = true;
+            button_blue.Enabled = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Image Files (*.jpg, *.png)|*.jpg;*.png";
+            openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // Загрузка изображения
                 image = new Bitmap(openFileDialog.FileName);
                 pictureBox.Image = image;
 
-                // Создание Bitmap для редактирования и отображения
                 editedImage = new Bitmap(image.Width, image.Height);
-                button_red.Enabled = true;
-                button_green.Enabled = true;
-                button_blue.Enabled = true;
             }
-        }
-
-        private void Task2_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                Hide();
-            }
-        }
-
-        private void button_red_Click(object sender, EventArgs e)
-        {
-            ExtractChannel("red");
-        }
-
-        private void button_green_Click(object sender, EventArgs e)
-        {
-            ExtractChannel("green");
-        }
-
-        private void button_blue_Click(object sender, EventArgs e)
-        {
-            ExtractChannel("blue");
         }
 
         private void ExtractChannel(string color)
         {
-            Console.WriteLine(color);
-            // Проход по каждому пикселю изображения
-            var fastBitmap = new Bitmap(image);
-            var fast_edited = new Bitmap(editedImage);
-
             for (int x = 0; x < image.Width; x++)
             {
                 for (int y = 0; y < image.Height; y++)
                 {
-                    // Получение цвета пикселя
-                    Color pixelColor = fastBitmap.GetPixel(x, y);
+                    Color pixelColor = image.GetPixel(x, y);
                     Color newColor = Color.White;
+
                     switch (color)
                     {
                         case "red":
-                            newColor = Color.FromArgb(pixelColor.R, 0, 0);
+                            editedImage.SetPixel(x, y, Color.FromArgb(pixelColor.R, 0, 0));
                             break;
                         case "green":
-                            newColor = Color.FromArgb(0, pixelColor.G, 0);
+                            editedImage.SetPixel(x, y, Color.FromArgb(0, pixelColor.G, 0));
                             break;
                         case "blue":
-                            newColor = Color.FromArgb(0, 0, pixelColor.B);
+                            editedImage.SetPixel(x, y, Color.FromArgb(0, 0, pixelColor.B));
                             break;
                     }
-
-                    // Установка нового цвета для пикселя в отредактированном изображении
-                    fast_edited.SetPixel(x, y, newColor);
                 }
             }
-                
-                //editedImage = e_image;
             
-            GenerateColorHistogram(color, fast_edited);
-            // Отображение отредактированного изображения на PictureBox
-            pictureBox.Image = fast_edited;
+            GenerateColorHistogram(color);
+
+            pictureBox.Image = editedImage;
             pictureBox.Invalidate();
         }
 
-        private void GenerateColorHistogram(string color, Bitmap fast_edited)
+        private void GenerateColorHistogram(string color)
         {
-            int[] histogram = new int[256]; // 256 possible color values
-            var fastBitmap = fast_edited;
+            int[] histogram = new int[256];
             
             for (int x = 0; x < editedImage.Width; x++)
             {
                 for (int y = 0; y < editedImage.Height; y++)
                 {
-                    Color pixel = fastBitmap.GetPixel(x, y);
+                    Color pixel = editedImage.GetPixel(x, y);
 
                     int value = 0;
 
@@ -138,9 +102,9 @@ namespace ShadesOfGray
             chart.Series[0].Points.Clear();
             for (int i = 0; i < histogram.Length - 1; i++)
             {
-                //Console.WriteLine($"{i} {histogram[i]}");
                 chart.Series[0].Points.Add(histogram[i]);
             }
+
             switch (color)
             {
                 case "red":
@@ -156,9 +120,28 @@ namespace ShadesOfGray
             chart.Series[0].Name = color;
         }
 
-        private void pictureBox_Click(object sender, EventArgs e)
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+        }
 
+        private void button_red_Click(object sender, EventArgs e)
+        {
+            ExtractChannel("red");
+        }
+
+        private void button_green_Click(object sender, EventArgs e)
+        {
+            ExtractChannel("green");
+        }
+
+        private void button_blue_Click(object sender, EventArgs e)
+        {
+            ExtractChannel("blue");
         }
     }
 }

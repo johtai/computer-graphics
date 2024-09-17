@@ -64,7 +64,7 @@ namespace ShadesOfGray
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
-            this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
+            //this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
             // 
             // button_red
             // 
@@ -136,7 +136,7 @@ namespace ShadesOfGray
             this.MinimumSize = new System.Drawing.Size(1076, 643);
             this.Name = "Form2";
             this.Text = "Form2";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Task2_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form2_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).EndInit();
             this.ResumeLayout(false);
