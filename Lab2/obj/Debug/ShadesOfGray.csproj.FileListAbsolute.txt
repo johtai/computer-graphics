@@ -21,3 +21,16 @@ D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab2\obj\Debug\Shade
 D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab2\obj\Debug\ShadesOfGray.csproj.CoreCompileInputs.cache
 D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab2\obj\Debug\ShadesOfGray.exe
 D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab2\obj\Debug\ShadesOfGray.pdb
+D:\UNIVERSITY\computer-graphics\lab2\bin\Debug\ShadesOfGray.exe.config
+D:\UNIVERSITY\computer-graphics\lab2\bin\Debug\ShadesOfGray.exe
+D:\UNIVERSITY\computer-graphics\lab2\bin\Debug\ShadesOfGray.pdb
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.csproj.AssemblyReference.cache
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.Form0.resources
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.Form1.resources
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.Properties.Resources.resources
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.csproj.GenerateResource.cache
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.csproj.CoreCompileInputs.cache
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.exe
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.pdb
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.Form2.resources
+D:\UNIVERSITY\computer-graphics\lab2\obj\Debug\ShadesOfGray.Form3.resources

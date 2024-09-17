@@ -25,12 +25,14 @@ namespace ShadesOfGray
 
         private void button2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Ещё не реализованно!");
+            var myForm2 = new Form2();
+            myForm2.Show();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Ещё не реализованно!");
+            var myForm3 = new Form3();
+            myForm3.Show();
         }
     }
 }
