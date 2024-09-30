@@ -110,11 +110,11 @@ namespace Laba3
 
         public void WuLine(int x1, int y1, int x2, int y2, Color color, PictureBox picturebox)
         {
-            if (x1 == x2 && y1 == y2)
-            {
-                plot(bmp, x1, y1, 1, Color.Black);
-                return;
-            }
+            //if (x1 == x2 && y1 == y2)
+            //{
+            //    plot(bmp, x1, y1, 1, Color.Black);
+            //    return;
+            //}
 
 
 
@@ -160,9 +160,6 @@ namespace Laba3
             //Основной цикл
             for (int x = xpxl1 + 1; x <= xpxl2 - 1; x++)
             {
-
-
-
                 plot(bmp, x, ipart(intery), 1 - fpart(intery), color);
                 plot(bmp, x, ipart(intery) + 1, fpart(intery), color);
                 intery += gradient;
@@ -181,8 +178,9 @@ namespace Laba3
 
         private void DrawButton2_Click(object sender, EventArgs e)
         {
-            //WuLine(200, 200, 10, 10, Color.Black, pictureBox1);
-            WuLine(10, 10, 110, 200, Color.Black, pictureBox1);
+            WuLine(200, 200, 10, 10, Color.Black, pictureBox1);
+            //WuLine(10, 10, 110, 200, Color.Black, pictureBox1);
+            //WuLine(300, 10, 150, 130, Color.Black, pictureBox1);
             //WuLine(10, 10, 140, 10, Color.Black, pictureBox1);
             //WuLine(0, 0, 0, 0, Color.Black, pictureBox1);
         }
