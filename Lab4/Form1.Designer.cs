@@ -40,7 +40,7 @@ namespace Lab4
             this.label4 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.gradBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
@@ -96,6 +96,12 @@ namespace Lab4
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Смещение",
+            "Поворот вокруг точки",
+            "Поворот вокруг центра",
+            "Масштабирование отночительно заданной точки",
+            "Масштабирование отночительно своего центра"});
             this.comboBox1.Location = new System.Drawing.Point(785, 116);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(274, 21);
@@ -105,7 +111,7 @@ namespace Lab4
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(730, 172);
+            this.label2.Location = new System.Drawing.Point(992, 157);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 20);
             this.label2.TabIndex = 5;
@@ -115,7 +121,7 @@ namespace Lab4
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.label3.Location = new System.Drawing.Point(741, 226);
+            this.label3.Location = new System.Drawing.Point(966, 206);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(31, 20);
             this.label3.TabIndex = 6;
@@ -125,7 +131,7 @@ namespace Lab4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.label4.Location = new System.Drawing.Point(910, 226);
+            this.label4.Location = new System.Drawing.Point(966, 232);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(31, 20);
             this.label4.TabIndex = 7;
@@ -133,33 +139,33 @@ namespace Lab4
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(778, 226);
+            this.textBox1.Location = new System.Drawing.Point(1003, 206);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(76, 20);
+            this.textBox1.Size = new System.Drawing.Size(87, 20);
             this.textBox1.TabIndex = 8;
             this.textBox1.Text = "0";
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(947, 226);
+            this.textBox2.Location = new System.Drawing.Point(1003, 232);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(87, 20);
             this.textBox2.TabIndex = 9;
             this.textBox2.Text = "0";
             // 
-            // textBox3
+            // gradBox1
             // 
-            this.textBox3.Location = new System.Drawing.Point(852, 276);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(86, 20);
-            this.textBox3.TabIndex = 10;
-            this.textBox3.Text = "0";
+            this.gradBox1.Location = new System.Drawing.Point(1004, 269);
+            this.gradBox1.Name = "gradBox1";
+            this.gradBox1.Size = new System.Drawing.Size(86, 20);
+            this.gradBox1.TabIndex = 10;
+            this.gradBox1.Text = "0";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.label5.Location = new System.Drawing.Point(754, 276);
+            this.label5.Location = new System.Drawing.Point(918, 269);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(80, 20);
             this.label5.TabIndex = 11;
@@ -174,6 +180,7 @@ namespace Lab4
             this.button3.TabIndex = 12;
             this.button3.Text = "Применить";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label6
             // 
@@ -234,7 +241,7 @@ namespace Lab4
             this.Controls.Add(this.label6);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.gradBox1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label4);
@@ -265,7 +272,7 @@ namespace Lab4
         private System.Windows.Forms.Label label4;
         private TextBox textBox1;
         private TextBox textBox2;
-        private TextBox textBox3;
+        private TextBox gradBox1;
         private Label label5;
         private Button button3;
         private Label label6;

@@ -13,9 +13,11 @@ namespace Lab4
     public partial class Form1 : Form
     {
         private List<Point> points = new List<Point>();
+        private Point MyPoint;
         private bool isPolygonClosed = false;
-        
-        
+        private bool refresh = false;
+
+
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +31,7 @@ namespace Lab4
         {
             if (isPolygonClosed)
             {
+                MyPoint = e.Location;
                 return;
             }
 
@@ -46,21 +49,21 @@ namespace Lab4
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (points.Count > 2) 
-            {   
+            if (points.Count > 2)
+            {
                 isPolygonClosed = true;
                 pictureBox1.Invalidate();
             }
-            
+
         }
 
-        private void PictureBox1_DrawPolygon(object sender, PaintEventArgs e) 
+        private void PictureBox1_DrawPolygon(object sender, PaintEventArgs e)
         {
-            if (points.Count > 1) 
+            if (points.Count > 1)
             {
                 e.Graphics.DrawLines(Pens.Black, points.ToArray());
 
-                if (isPolygonClosed) 
+                if (isPolygonClosed && !refresh)
                 {
                     e.Graphics.DrawLine(Pens.Black, points[points.Count - 1], points[0]);
                 }
@@ -68,5 +71,44 @@ namespace Lab4
         }
 
 
+        private double [,] dotRotate(double[,] dotmatr1, double[,] matr2)
+        {
+            double[,] res = new double[dotmatr1.GetLength(0), matr2.GetLength(1)];
+
+            for (int i = 0; i < dotmatr1.GetLength(0); ++i)
+                for (int j = 0; j < matr2.GetLength(1); ++j)
+                    for (int k = 0; k < matr2.GetLength(0); k++)
+                    {
+                        res[i, j] += dotmatr1[i, k] * matr2[k, j];
+                    }
+
+            return res;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (comboBox1.Text == "Поворот вокруг точки") 
+            {
+                double[,] matr = { {Math.Cos(double.Parse(gradBox1.Text)), Math.Sin(double.Parse(gradBox1.Text)), 0},
+                                    {-Math.Sin(double.Parse(gradBox1.Text)), Math.Cos(double.Parse(gradBox1.Text)), 0 },
+                                    {0, 0, 1 }};
+
+
+
+
+                for (int i = 0; i < points.Count(); i++)
+                {
+                    double[,] p = { { points[i].X, points[i].Y, 1 } };
+                    double [,] abc = dotRotate(matr, p);
+
+                    points[i] = new Point((int)abc[0, 0], (int)abc[1,0]);
+
+                }
+            }
+
+            Invalidate();
+            refresh = true;
+            pictureBox1.Refresh();
+        }
     }
 }
