@@ -63,7 +63,7 @@ namespace Lab4
             {
                 e.Graphics.DrawLines(Pens.Black, points.ToArray());
 
-                if (isPolygonClosed && !refresh)
+                if (isPolygonClosed)
                 {
                     e.Graphics.DrawLine(Pens.Black, points[points.Count - 1], points[0]);
                 }
@@ -74,10 +74,10 @@ namespace Lab4
         private double [,] dotRotate(double[,] dotmatr1, double[,] matr2)
         {
             double[,] res = new double[dotmatr1.GetLength(0), matr2.GetLength(1)];
-
+          
             for (int i = 0; i < dotmatr1.GetLength(0); ++i)
                 for (int j = 0; j < matr2.GetLength(1); ++j)
-                    for (int k = 0; k < matr2.GetLength(0); k++)
+                    for (int k = 0; k < matr2.GetLength(1); ++k)
                     {
                         res[i, j] += dotmatr1[i, k] * matr2[k, j];
                     }
@@ -89,25 +89,25 @@ namespace Lab4
         {
             if (comboBox1.Text == "Поворот вокруг точки") 
             {
-                double[,] matr = { {Math.Cos(double.Parse(gradBox1.Text)), Math.Sin(double.Parse(gradBox1.Text)), 0},
-                                    {-Math.Sin(double.Parse(gradBox1.Text)), Math.Cos(double.Parse(gradBox1.Text)), 0 },
-                                    {0, 0, 1 }};
+                double angleInRadians = double.Parse(gradBox1.Text) * Math.PI / 180;
+                double[,] matr = { {Math.Cos(angleInRadians), Math.Sin(angleInRadians), 0},
+                                    {-Math.Sin(angleInRadians), Math.Cos(angleInRadians), 0 },
+                                    {-MyPoint.X * Math.Cos(angleInRadians) - MyPoint.Y * Math.Sin(angleInRadians) + MyPoint.X, -MyPoint.X * Math.Sin(angleInRadians) + MyPoint.Y * Math.Cos(angleInRadians) - MyPoint.Y, 1 }};
 
 
 
 
                 for (int i = 0; i < points.Count(); i++)
                 {
-                    double[,] p = { { points[i].X, points[i].Y, 1 } };
+                    double[,] p = { { points[i].X }, { points[i].Y }, {1} };
                     double [,] abc = dotRotate(matr, p);
 
                     points[i] = new Point((int)abc[0, 0], (int)abc[1,0]);
 
                 }
             }
-
+            MessageBox.Show( "GradBox: "+ gradBox1.Text + " X:"+ MyPoint.X +" Y: " + MyPoint.Y);
             Invalidate();
-            refresh = true;
             pictureBox1.Refresh();
         }
     }
