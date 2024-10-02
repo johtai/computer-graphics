@@ -25,9 +25,6 @@ namespace Laba3
         }
 
 
-
-
-
         public void BresenhaimLine(int x0, int y0, int x1, int y1, Color color, PictureBox picturebox)
         {
             int dx = Math.Abs(x1 - x0);
@@ -179,9 +176,9 @@ namespace Laba3
         private void DrawButton2_Click(object sender, EventArgs e)
         {
             WuLine(200, 200, 10, 10, Color.Black, pictureBox1);
-            //WuLine(10, 10, 110, 200, Color.Black, pictureBox1);
-            //WuLine(300, 10, 150, 130, Color.Black, pictureBox1);
-            //WuLine(10, 10, 140, 10, Color.Black, pictureBox1);
+            WuLine(10, 10, 110, 200, Color.Black, pictureBox1);
+            WuLine(300, 10, 150, 130, Color.Black, pictureBox1);
+            WuLine(10, 10, 140, 10, Color.Black, pictureBox1);
             //WuLine(0, 0, 0, 0, Color.Black, pictureBox1);
         }
 

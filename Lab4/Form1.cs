@@ -77,7 +77,7 @@ namespace Lab4
           
             for (int i = 0; i < dotmatr1.GetLength(0); ++i)
                 for (int j = 0; j < matr2.GetLength(1); ++j)
-                    for (int k = 0; k < matr2.GetLength(1); ++k)
+                    for (int k = 0; k < matr2.GetLength(0); ++k)
                     {
                         res[i, j] += dotmatr1[i, k] * matr2[k, j];
                     }
@@ -89,26 +89,48 @@ namespace Lab4
         {
             if (comboBox1.Text == "Поворот вокруг точки") 
             {
-                double angleInRadians = double.Parse(gradBox1.Text) * Math.PI / 180;
-                double[,] matr = { {Math.Cos(angleInRadians), Math.Sin(angleInRadians), 0},
-                                    {-Math.Sin(angleInRadians), Math.Cos(angleInRadians), 0 },
-                                    {-MyPoint.X * Math.Cos(angleInRadians) - MyPoint.Y * Math.Sin(angleInRadians) + MyPoint.X, -MyPoint.X * Math.Sin(angleInRadians) + MyPoint.Y * Math.Cos(angleInRadians) - MyPoint.Y, 1 }};
+                double angle = double.Parse(gradBox1.Text);
+                double radians = angle * Math.PI / 180;
+                double cos = Math.Cos(radians);
+                double sin = Math.Sin(radians);
 
 
 
-
-                for (int i = 0; i < points.Count(); i++)
+                double[,] translate = new double[,]
                 {
-                    double[,] p = { { points[i].X }, { points[i].Y }, {1} };
-                    double [,] abc = dotRotate(matr, p);
+                    {1,0,0 },
+                    {0,1,0 },
+                    {-MyPoint.X, -MyPoint.Y, 1 }
+                };
+                double[,] angelfi = new double[,]
+                {
+                    {cos, sin, 0 },
+                    {-sin, cos, 0 },
+                    {0, 0, 1 }
+                };
+                double[,] translateBack = new double[,]
+                {
+                    {1, 0, 0 }, {0, 1, 0 },{MyPoint.X, MyPoint.Y, 1 }
+                };
 
-                    points[i] = new Point((int)abc[0, 0], (int)abc[1,0]);
 
+                for (int i = 0; i < points.Count; i++) 
+                {
+
+                    double[,] pointMartr = { { points[i].X, points[i].Y, 1 } };
+
+                    pointMartr = dotRotate(pointMartr, translate);
+                    pointMartr = dotRotate(pointMartr, angelfi);
+                    pointMartr = dotRotate(pointMartr, translateBack);
+
+                    points[i] = new Point((int)pointMartr[0,0], (int)pointMartr[0,1]);
                 }
+
+
             }
-            MessageBox.Show( "GradBox: "+ gradBox1.Text + " X:"+ MyPoint.X +" Y: " + MyPoint.Y);
-            Invalidate();
-            pictureBox1.Refresh();
+            //MessageBox.Show( "GradBox: "+ gradBox1.Text + " X:"+ MyPoint.X +" Y: " + MyPoint.Y);
+            pictureBox1.Invalidate();
+            //pictureBox1.Refresh();
         }
     }
 }
