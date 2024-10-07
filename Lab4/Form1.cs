@@ -87,50 +87,80 @@ namespace Lab4
 
         private void button3_Click(object sender, EventArgs e)
         {
+            double angle = double.Parse(gradBox1.Text);
+            double radians = angle * Math.PI / 180;
+            double cos = Math.Cos(radians);
+            double sin = Math.Sin(radians);
+
             if (comboBox1.Text == "Поворот вокруг точки") 
             {
-                double angle = double.Parse(gradBox1.Text);
-                double radians = angle * Math.PI / 180;
-                double cos = Math.Cos(radians);
-                double sin = Math.Sin(radians);
+                rotate_around_point(angle, radians, cos, sin, MyPoint);
+            }
+            else if (comboBox1.Text == "Поворот вокруг центра")
+            {
+                double x = 0;
+                double y = 0;
+                double A = 0;
 
-
-
-                double[,] translate = new double[,]
+                for (int i = 0; i < points.Count() - 1; i += 1)
                 {
-                    {1,0,0 },
-                    {0,1,0 },
-                    {-MyPoint.X, -MyPoint.Y, 1 }
-                };
-                double[,] angelfi = new double[,]
-                {
-                    {cos, sin, 0 },
-                    {-sin, cos, 0 },
-                    {0, 0, 1 }
-                };
-                double[,] translateBack = new double[,]
-                {
-                    {1, 0, 0 }, {0, 1, 0 },{MyPoint.X, MyPoint.Y, 1 }
-                };
+                    x += (points[i].X + points[i + 1].X) * (points[i].X * -points[i + 1].Y - points[i + 1].X * -points[i].Y);
+                    y += (-points[i].Y - points[i + 1].Y) * (points[i].X * -points[i + 1].Y - points[i + 1].X * -points[i].Y);
 
-
-                for (int i = 0; i < points.Count; i++) 
-                {
-
-                    double[,] pointMartr = { { points[i].X, points[i].Y, 1 } };
-
-                    pointMartr = dotRotate(pointMartr, translate);
-                    pointMartr = dotRotate(pointMartr, angelfi);
-                    pointMartr = dotRotate(pointMartr, translateBack);
-
-                    points[i] = new Point((int)pointMartr[0,0], (int)pointMartr[0,1]);
+                    A += (points[i].X * points[i + 1].Y) - (points[i + 1].X * points[i + 1].Y);
                 }
 
+                A /= 2.0;
 
+                Point CenterPoint = new Point((int)(1 / (6 * A) * x), (int)(1 / (6 * A) * y));
+                rotate_around_point(angle, radians, cos, sin, CenterPoint);
             }
             //MessageBox.Show( "GradBox: "+ gradBox1.Text + " X:"+ MyPoint.X +" Y: " + MyPoint.Y);
             pictureBox1.Invalidate();
             //pictureBox1.Refresh();
+        }
+
+        private void rotate_around_point(double angle, double radians, double cos, double sin, Point mypoint)
+        {
+            double[,] translate = new double[,]
+            {
+                    {1,0,0 },
+                    {0,1,0 },
+                    {-mypoint.X, -mypoint.Y, 1 }
+            };
+            double[,] angelfi = new double[,]
+            {
+                    {cos, sin, 0 },
+                    {-sin, cos, 0 },
+                    {0, 0, 1 }
+            };
+            double[,] translateBack = new double[,]
+            {
+                    {1, 0, 0 }, {0, 1, 0 },{mypoint.X, mypoint.Y, 1 }
+            };
+
+
+            for (int i = 0; i < points.Count; i++)
+            {
+
+                double[,] pointMartr = { { points[i].X, points[i].Y, 1 } };
+
+                pointMartr = dotRotate(pointMartr, translate);
+                pointMartr = dotRotate(pointMartr, angelfi);
+                pointMartr = dotRotate(pointMartr, translateBack);
+
+                points[i] = new Point((int)pointMartr[0, 0], (int)pointMartr[0, 1]);
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
