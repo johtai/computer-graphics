@@ -31,3 +31,13 @@ C:\Users\Danik\Desktop\compgra\computer-graphics\Lab4\obj\Debug\Lab4.csproj.Gene
 C:\Users\Danik\Desktop\compgra\computer-graphics\Lab4\obj\Debug\Lab4.csproj.CoreCompileInputs.cache
 C:\Users\Danik\Desktop\compgra\computer-graphics\Lab4\obj\Debug\Lab3.exe
 C:\Users\Danik\Desktop\compgra\computer-graphics\Lab4\obj\Debug\Lab3.pdb
+D:\UNIVERSITY\computer-graphics\Lab4\bin\Debug\Lab3.exe.config
+D:\UNIVERSITY\computer-graphics\Lab4\bin\Debug\Lab3.exe
+D:\UNIVERSITY\computer-graphics\Lab4\bin\Debug\Lab3.pdb
+D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab4.csproj.AssemblyReference.cache
+D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab4.Form1.resources
+D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab3.Properties.Resources.resources
+D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab4.csproj.GenerateResource.cache
+D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab4.csproj.CoreCompileInputs.cache
+D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab3.exe
+D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab3.pdb
