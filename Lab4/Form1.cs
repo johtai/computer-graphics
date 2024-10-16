@@ -74,17 +74,30 @@ namespace Lab4
                     {1, 0, 0 }, {0, 1, 0 },{mypoint.X, mypoint.Y, 1 }
             };
 
+            double[,] resDP = new double[,]
+            {
+
+                {cos, sin, 0 },
+                { -sin, cos, 0},
+                {-myPoint.X * cos - myPoint.Y * sin + myPoint.X, -myPoint.X * sin + myPoint.Y * cos - myPoint.Y, 1 }
+            };
+
+           
+
 
             for (int i = 0; i < list.Count; i++)
             {
 
                 double[,] pointMartr = { { list[i].X, list[i].Y, 1 } };
 
-                pointMartr = dotRotate(pointMartr, translate);
-                pointMartr = dotRotate(pointMartr, angelfi);
-                pointMartr = dotRotate(pointMartr, translateBack);
+                //pointMartr = dotRotate(pointMartr, translate);
+                //pointMartr = dotRotate(pointMartr, angelfi);
+                //pointMartr = dotRotate(pointMartr, translateBack);
+
+
 
                 list[i] = new Point((int)pointMartr[0, 0], (int)pointMartr[0, 1]);
+                pointMartr = dotRotate(pointMartr, resDP);
             }
         }
 
@@ -208,7 +221,10 @@ namespace Lab4
                 case (int)Transormations.Shift:
                     double dX = System.Convert.ToDouble(textBox1.Text);
                     double dY = -System.Convert.ToDouble(textBox2.Text);
-                    transformationMatrix = new double[,] { { 1.0, 0, 0 }, { 0, 1.0, 0 }, { dX, dY, 1.0 } };
+                    transformationMatrix = new double[,] { 
+                        { 1.0, 0, 0 }, 
+                        { 0, 1.0, 0 }, 
+                        { dX, dY, 1.0 } };
                     break;
                 case (int)Transormations.Rotation:
                     X = System.Convert.ToDouble(myPoint.X);
@@ -463,16 +479,21 @@ namespace Lab4
 
             if (D > 0)
             {
-                return "Слева от отрезка";
+                return "Справа от отрезка";
             }
             else if (D < 0)
             {
-                return "Справа от отрезка";
+                return "Слева от отрезка";
             }
             else
             {
                 return "На отрезке";
             }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

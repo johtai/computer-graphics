@@ -57,19 +57,22 @@
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(403, 15);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(661, 487);
+            this.pictureBox1.Size = new System.Drawing.Size(881, 599);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(682, 12);
+            this.button1.Location = new System.Drawing.Point(13, 15);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(125, 40);
+            this.button1.Size = new System.Drawing.Size(167, 49);
             this.button1.TabIndex = 1;
             this.button1.Text = "Очистить";
             this.button1.UseVisualStyleBackColor = true;
@@ -85,9 +88,10 @@
             "Поворот вокруг центра",
             "Масштабирование относительно точки",
             "Масштабирование относительно центра"});
-            this.comboBox1.Location = new System.Drawing.Point(694, 98);
+            this.comboBox1.Location = new System.Drawing.Point(29, 121);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(237, 21);
+            this.comboBox1.Size = new System.Drawing.Size(315, 24);
             this.comboBox1.TabIndex = 6;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -95,9 +99,10 @@
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(739, 164);
+            this.textBox1.Location = new System.Drawing.Point(89, 202);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(51, 20);
+            this.textBox1.Size = new System.Drawing.Size(67, 22);
             this.textBox1.TabIndex = 8;
             this.textBox1.Text = "0";
             // 
@@ -105,9 +110,10 @@
             // 
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(851, 164);
+            this.textBox2.Location = new System.Drawing.Point(239, 202);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(51, 20);
+            this.textBox2.Size = new System.Drawing.Size(67, 22);
             this.textBox2.TabIndex = 9;
             this.textBox2.Text = "0";
             // 
@@ -116,9 +122,10 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Enabled = false;
-            this.label2.Location = new System.Drawing.Point(679, 141);
+            this.label2.Location = new System.Drawing.Point(9, 174);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 13);
+            this.label2.Size = new System.Drawing.Size(134, 16);
             this.label2.TabIndex = 10;
             this.label2.Text = "Укажите смещение:";
             // 
@@ -126,9 +133,10 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(739, 451);
+            this.button2.Location = new System.Drawing.Point(206, 555);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(163, 48);
+            this.button2.Size = new System.Drawing.Size(158, 59);
             this.button2.TabIndex = 11;
             this.button2.Text = "Применить";
             this.button2.UseVisualStyleBackColor = true;
@@ -138,9 +146,10 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(679, 69);
+            this.label4.Location = new System.Drawing.Point(9, 85);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(150, 13);
+            this.label4.Size = new System.Drawing.Size(196, 16);
             this.label4.TabIndex = 14;
             this.label4.Text = "Аффинное преобразование:";
             // 
@@ -149,9 +158,10 @@
             this.dxLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.dxLabel.AutoSize = true;
             this.dxLabel.Enabled = false;
-            this.dxLabel.Location = new System.Drawing.Point(712, 167);
+            this.dxLabel.Location = new System.Drawing.Point(53, 206);
+            this.dxLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.dxLabel.Name = "dxLabel";
-            this.dxLabel.Size = new System.Drawing.Size(21, 13);
+            this.dxLabel.Size = new System.Drawing.Size(24, 16);
             this.dxLabel.TabIndex = 15;
             this.dxLabel.Text = "dx:";
             // 
@@ -160,9 +170,10 @@
             this.dyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.dyLabel.AutoSize = true;
             this.dyLabel.Enabled = false;
-            this.dyLabel.Location = new System.Drawing.Point(824, 167);
+            this.dyLabel.Location = new System.Drawing.Point(203, 206);
+            this.dyLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.dyLabel.Name = "dyLabel";
-            this.dyLabel.Size = new System.Drawing.Size(21, 13);
+            this.dyLabel.Size = new System.Drawing.Size(25, 16);
             this.dyLabel.TabIndex = 16;
             this.dyLabel.Text = "dy:";
             // 
@@ -170,9 +181,10 @@
             // 
             this.chainButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chainButton.Enabled = false;
-            this.chainButton.Location = new System.Drawing.Point(813, 12);
+            this.chainButton.Location = new System.Drawing.Point(188, 15);
+            this.chainButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chainButton.Name = "chainButton";
-            this.chainButton.Size = new System.Drawing.Size(132, 40);
+            this.chainButton.Size = new System.Drawing.Size(176, 49);
             this.chainButton.TabIndex = 17;
             this.chainButton.Text = "Замкнуть полигон";
             this.chainButton.UseVisualStyleBackColor = true;
@@ -183,9 +195,10 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Enabled = false;
-            this.label1.Location = new System.Drawing.Point(679, 197);
+            this.label1.Location = new System.Drawing.Point(9, 242);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 13);
+            this.label1.Size = new System.Drawing.Size(165, 16);
             this.label1.TabIndex = 18;
             this.label1.Text = "Укажите угол поворота:";
             // 
@@ -194,9 +207,10 @@
             this.degreesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.degreesLabel.AutoSize = true;
             this.degreesLabel.Enabled = false;
-            this.degreesLabel.Location = new System.Drawing.Point(737, 224);
+            this.degreesLabel.Location = new System.Drawing.Point(87, 276);
+            this.degreesLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.degreesLabel.Name = "degreesLabel";
-            this.degreesLabel.Size = new System.Drawing.Size(53, 13);
+            this.degreesLabel.Size = new System.Drawing.Size(65, 16);
             this.degreesLabel.TabIndex = 19;
             this.degreesLabel.Text = "Градусы:";
             // 
@@ -204,9 +218,10 @@
             // 
             this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox3.Enabled = false;
-            this.textBox3.Location = new System.Drawing.Point(796, 221);
+            this.textBox3.Location = new System.Drawing.Point(165, 272);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(51, 20);
+            this.textBox3.Size = new System.Drawing.Size(67, 22);
             this.textBox3.TabIndex = 20;
             this.textBox3.Text = "0";
             // 
@@ -215,9 +230,10 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Enabled = false;
-            this.label3.Location = new System.Drawing.Point(679, 255);
+            this.label3.Location = new System.Drawing.Point(9, 314);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(221, 13);
+            this.label3.Size = new System.Drawing.Size(278, 16);
             this.label3.TabIndex = 21;
             this.label3.Text = "Укажите степень масштабирования (в %):";
             // 
@@ -226,9 +242,10 @@
             this.XLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.XLabel.AutoSize = true;
             this.XLabel.Enabled = false;
-            this.XLabel.Location = new System.Drawing.Point(691, 285);
+            this.XLabel.Location = new System.Drawing.Point(25, 351);
+            this.XLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.XLabel.Name = "XLabel";
-            this.XLabel.Size = new System.Drawing.Size(55, 13);
+            this.XLabel.Size = new System.Drawing.Size(65, 16);
             this.XLabel.TabIndex = 22;
             this.XLabel.Text = "По оси X:";
             // 
@@ -237,9 +254,10 @@
             this.YLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.YLabel.AutoSize = true;
             this.YLabel.Enabled = false;
-            this.YLabel.Location = new System.Drawing.Point(824, 285);
+            this.YLabel.Location = new System.Drawing.Point(203, 351);
+            this.YLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.YLabel.Name = "YLabel";
-            this.YLabel.Size = new System.Drawing.Size(55, 13);
+            this.YLabel.Size = new System.Drawing.Size(66, 16);
             this.YLabel.TabIndex = 23;
             this.YLabel.Text = "По оси Y:";
             // 
@@ -247,9 +265,10 @@
             // 
             this.textBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox4.Enabled = false;
-            this.textBox4.Location = new System.Drawing.Point(750, 282);
+            this.textBox4.Location = new System.Drawing.Point(104, 347);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(51, 20);
+            this.textBox4.Size = new System.Drawing.Size(67, 22);
             this.textBox4.TabIndex = 24;
             this.textBox4.Text = "100";
             // 
@@ -257,18 +276,20 @@
             // 
             this.textBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox5.Enabled = false;
-            this.textBox5.Location = new System.Drawing.Point(880, 282);
+            this.textBox5.Location = new System.Drawing.Point(277, 347);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(51, 20);
+            this.textBox5.Size = new System.Drawing.Size(67, 22);
             this.textBox5.TabIndex = 25;
             this.textBox5.Text = "100";
             // 
             // drawSecondLineButton
             // 
             this.drawSecondLineButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.drawSecondLineButton.Location = new System.Drawing.Point(694, 317);
+            this.drawSecondLineButton.Location = new System.Drawing.Point(1324, 15);
+            this.drawSecondLineButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.drawSecondLineButton.Name = "drawSecondLineButton";
-            this.drawSecondLineButton.Size = new System.Drawing.Size(169, 29);
+            this.drawSecondLineButton.Size = new System.Drawing.Size(225, 49);
             this.drawSecondLineButton.TabIndex = 26;
             this.drawSecondLineButton.Text = "Добавить второе ребро";
             this.drawSecondLineButton.UseVisualStyleBackColor = true;
@@ -277,9 +298,10 @@
             // drawPoint
             // 
             this.drawPoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.drawPoint.Location = new System.Drawing.Point(694, 376);
+            this.drawPoint.Location = new System.Drawing.Point(13, 555);
+            this.drawPoint.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.drawPoint.Name = "drawPoint";
-            this.drawPoint.Size = new System.Drawing.Size(56, 50);
+            this.drawPoint.Size = new System.Drawing.Size(158, 59);
             this.drawPoint.TabIndex = 28;
             this.drawPoint.Text = "Точка";
             this.drawPoint.UseVisualStyleBackColor = true;
@@ -288,9 +310,10 @@
             // checkButton
             // 
             this.checkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkButton.Location = new System.Drawing.Point(756, 364);
+            this.checkButton.Location = new System.Drawing.Point(1324, 98);
+            this.checkButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkButton.Name = "checkButton";
-            this.checkButton.Size = new System.Drawing.Size(161, 38);
+            this.checkButton.Size = new System.Drawing.Size(225, 47);
             this.checkButton.TabIndex = 29;
             this.checkButton.Text = "Проверка принадлежности точки полигону";
             this.checkButton.UseVisualStyleBackColor = true;
@@ -299,9 +322,10 @@
             // classifyButton
             // 
             this.classifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.classifyButton.Location = new System.Drawing.Point(756, 408);
+            this.classifyButton.Location = new System.Drawing.Point(1324, 174);
+            this.classifyButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.classifyButton.Name = "classifyButton";
-            this.classifyButton.Size = new System.Drawing.Size(161, 37);
+            this.classifyButton.Size = new System.Drawing.Size(225, 48);
             this.classifyButton.TabIndex = 30;
             this.classifyButton.Text = "Классификация точки относительно ребра";
             this.classifyButton.UseVisualStyleBackColor = true;
@@ -309,10 +333,10 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.ClientSize = new System.Drawing.Size(957, 511);
+            this.ClientSize = new System.Drawing.Size(1576, 629);
             this.Controls.Add(this.classifyButton);
             this.Controls.Add(this.checkButton);
             this.Controls.Add(this.drawPoint);
@@ -336,6 +360,7 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox1);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.Text = "Аффинные преобразования";
             this.Load += new System.EventHandler(this.Form1_Load);

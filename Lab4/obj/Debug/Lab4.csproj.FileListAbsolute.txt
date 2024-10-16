@@ -41,3 +41,14 @@ D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab4.csproj.GenerateResource.cach
 D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab4.csproj.CoreCompileInputs.cache
 D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab3.exe
 D:\UNIVERSITY\computer-graphics\Lab4\obj\Debug\Lab3.pdb
+C:\Users\Danik\Desktop\CompGrD\Lab4\bin\Debug\Lab3.exe.config
+C:\Users\Danik\Desktop\CompGrD\Lab4\bin\Debug\Lab3.exe
+C:\Users\Danik\Desktop\CompGrD\Lab4\bin\Debug\Lab3.pdb
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab4.csproj.AssemblyReference.cache
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab4.csproj.SuggestedBindingRedirects.cache
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab4.Form1.resources
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab3.Properties.Resources.resources
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab4.csproj.GenerateResource.cache
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab4.csproj.CoreCompileInputs.cache
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab3.exe
+C:\Users\Danik\Desktop\CompGrD\Lab4\obj\Debug\Lab3.pdb
