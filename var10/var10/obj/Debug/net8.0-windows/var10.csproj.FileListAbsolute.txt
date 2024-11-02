@@ -1,0 +1,16 @@
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.csproj.GenerateResource.cache
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.AssemblyInfoInputs.cache
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.AssemblyInfo.cs
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.csproj.CoreCompileInputs.cache
+C:\Users\johtai\source\repos\var10\var10\bin\Debug\net8.0-windows\var10.exe
+C:\Users\johtai\source\repos\var10\var10\bin\Debug\net8.0-windows\var10.deps.json
+C:\Users\johtai\source\repos\var10\var10\bin\Debug\net8.0-windows\var10.runtimeconfig.json
+C:\Users\johtai\source\repos\var10\var10\bin\Debug\net8.0-windows\var10.dll
+C:\Users\johtai\source\repos\var10\var10\bin\Debug\net8.0-windows\var10.pdb
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.dll
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\refint\var10.dll
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.pdb
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.genruntimeconfig.cache
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\ref\var10.dll
+C:\Users\johtai\source\repos\var10\var10\obj\Debug\net8.0-windows\var10.Form1.resources
