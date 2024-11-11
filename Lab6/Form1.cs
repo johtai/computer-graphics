@@ -174,7 +174,7 @@ namespace Affine_transformations_in_space
             double[,] matr = new double[,] {
                 {dx, 0, 0 ,0 },
                 {0, dy, 0, 0 },
-                {0, dz, 0, 0 },
+                {0, 0, dz, 0 },
                 {0, 0, 0, 1 }
             };
 
@@ -264,6 +264,52 @@ namespace Affine_transformations_in_space
         private void button3_Click(object sender, EventArgs e)
         {
             scaleFigure(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text), Convert.ToInt32(textBox3.Text));
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            double[,] translationMatrix = new double[,]
+            {
+                {1, 0, 0, 0 },
+                {0, 1, 0, 0 },
+                {0, 0, 1, 0 },
+                {0, 0, 0, 1 }
+            };
+
+            if (radioButton6.Checked)
+                {
+                MessageBox.Show("зиг хайль 88");
+                translationMatrix = new double[,]
+                    {
+                        {-1, 0, 0, 0 },
+                        {0, -1, 0, 0 },
+                        {0, 0, 1, 0 },
+                        {0, 0, 0, 1 }
+                    };
+                }
+            else if (radioButton7.Checked)
+            {
+                MessageBox.Show("зиг хайль 3");
+                translationMatrix = new double[,]
+                {
+                        {-1, 0, 0, 0 },
+                        {0, 1, 0, 0 },
+                        {0, 0, 1, 0 },
+                        {0, 0, 0, 1 }
+                };
+            }
+            else if (radioButton8.Checked)
+            {
+                MessageBox.Show("зиг хайль");
+                translationMatrix = new double[,]
+                {
+                        {1, 0, 0, 0 },
+                        {0, -1, 0, 0 },
+                        {0, 0, -1, 0 },
+                        {0, 0, 0, 1 }
+                };
+            }
+            multMatr(translationMatrix);
         }
     }
 }
