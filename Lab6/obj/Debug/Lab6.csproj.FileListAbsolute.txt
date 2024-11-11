@@ -1,30 +1,8 @@
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\obj\Debug\Lab6.csproj.AssemblyReference.cache
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\obj\Debug\Lab6.csproj.SuggestedBindingRedirects.cache
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\obj\Debug\Lab6.Properties.Resources.resources
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\obj\Debug\Lab6.csproj.GenerateResource.cache
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\obj\Debug\Lab6.csproj.CoreCompileInputs.cache
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\bin\Debug\Lab6.exe.config
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\bin\Debug\Lab6.exe
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\bin\Debug\Lab6.pdb
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\obj\Debug\Lab6.exe
-D:\Programming2024\Computer Graphics\Repos\ComputerGraphics\Lab6\obj\Debug\Lab6.pdb
-C:\Users\Danik\Desktop\CompGrD\Lab6\bin\Debug\Lab6.exe.config
-C:\Users\Danik\Desktop\CompGrD\Lab6\bin\Debug\Lab6.exe
-C:\Users\Danik\Desktop\CompGrD\Lab6\bin\Debug\Lab6.pdb
 C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.csproj.AssemblyReference.cache
 C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.csproj.SuggestedBindingRedirects.cache
+C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Affine_transformations_in_space.Afins3D.resources
 C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.Properties.Resources.resources
 C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.csproj.GenerateResource.cache
 C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.csproj.CoreCompileInputs.cache
 C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.exe
 C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.pdb
-C:\Users\johtai\Desktop\computer-graphics\Lab6\bin\Debug\Lab6.exe.config
-C:\Users\johtai\Desktop\computer-graphics\Lab6\bin\Debug\Lab6.exe
-C:\Users\johtai\Desktop\computer-graphics\Lab6\bin\Debug\Lab6.pdb
-C:\Users\johtai\Desktop\computer-graphics\Lab6\obj\Debug\Lab6.csproj.AssemblyReference.cache
-C:\Users\johtai\Desktop\computer-graphics\Lab6\obj\Debug\Lab6.Properties.Resources.resources
-C:\Users\johtai\Desktop\computer-graphics\Lab6\obj\Debug\Lab6.csproj.GenerateResource.cache
-C:\Users\johtai\Desktop\computer-graphics\Lab6\obj\Debug\Lab6.csproj.CoreCompileInputs.cache
-C:\Users\johtai\Desktop\computer-graphics\Lab6\obj\Debug\Lab6.exe
-C:\Users\johtai\Desktop\computer-graphics\Lab6\obj\Debug\Lab6.pdb
-C:\Users\johtai\Desktop\computer-graphics\Lab6\obj\Debug\Affine_transformations_in_space.Afins3D.resources
