@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -18,6 +19,7 @@ namespace Affine_transformations_in_space
         polyhedron pop;
         public Func<point, Point> projectFunc;
         public static int scale = 100;
+        public static int spin = 0;
         
         public static double focalLength = 500; //Глубина
         public Afins3D()
@@ -223,11 +225,46 @@ namespace Affine_transformations_in_space
 
         private void xRotation(double a) 
         {
+
+            double radians = (Math.PI / 180) * a;
             double[,] matr = new double[,] {
             { 1,0,0,0 },
-            {0,Math.Cos(a),Math.Sin(a),0 },
-            { 0,-Math.Sin(a),Math.Cos(a),0},
+            {0,Math.Cos(radians),Math.Sin(radians),0 },
+            { 0,-Math.Sin(radians),Math.Cos(radians ),0},
             {0, 0 ,0, 1 }
+            };
+
+            multMatr(matr);
+        }
+
+        private void yRotation(double a) 
+        {
+            double radians = (Math.PI / 180) * a;
+            var cosx = Math.Cos(radians);
+            var sinx = Math.Sin(radians);
+
+            double[,] matr = new double[,] {
+            {cosx, 0 , -sinx, 0 },
+            {0, 1, 0, 0 },
+            {sinx, 0, cosx, 0 },
+            {0, 0, 0, 1 }
+            };
+
+            multMatr(matr);
+
+        }
+
+        private void zRotation(double a) 
+        {
+            double radians = (Math.PI / 180) * a;
+            var cosx = Math.Cos(radians);
+            var sinx = Math.Sin(radians);
+
+            double[,] matr = new double[,] {
+            {cosx, sinx, 0, 0  },
+            {-sinx, cosx, 0, 0  },
+            {0, 0, 1, 0 },
+            {0, 0, 0, 1 }
             };
 
             multMatr(matr);
@@ -256,17 +293,58 @@ namespace Affine_transformations_in_space
             } catch (Exception ex){
                 MessageBox.Show("Впишите корректные значения смещения!");
             }
-          
-
-           
+                    
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            scaleFigure(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text), Convert.ToInt32(textBox3.Text));
+            var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "."});
+            var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            scaleFigure(Convert.ToDouble(dxScale), Convert.ToDouble(dyScale), Convert.ToDouble(dzScale));
         }
 
         private void button4_Click(object sender, EventArgs e)
+        {
+            switch(spin) 
+            {
+                case 0:
+                    xRotation(3);
+                    break;
+                case 1:
+                    yRotation(3);
+                    break;
+                case 2:
+                    zRotation(3);
+                    break;
+            }
+        }
+
+
+        public void radioButtonSwitch(object sender, EventArgs e) 
+        {
+
+            var rb = sender as RadioButton;
+
+            if (rb.Checked) 
+            {
+                switch (rb.Text) 
+                {
+
+                    case "XAxis":
+                        spin = 0;
+                        break;
+                    case "YAxis":
+                        spin = 1;
+                        break;
+                    case "ZAxis":
+                        spin = 2;
+                        break;
+                }
+            }
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
         {
             double[,] translationMatrix = new double[,]
             {
@@ -278,18 +356,29 @@ namespace Affine_transformations_in_space
 
             if (radioButton6.Checked)
                 {
-                MessageBox.Show("зиг хайль 88");
+                MessageBox.Show("XY");
                 translationMatrix = new double[,]
                     {
-                        {-1, 0, 0, 0 },
-                        {0, -1, 0, 0 },
-                        {0, 0, 1, 0 },
+                        {1, 0, 0, 0 },
+                        {0, 1, 0, 0 },
+                        {0, 0, -1, 0 },
                         {0, 0, 0, 1 }
                     };
                 }
             else if (radioButton7.Checked)
             {
-                MessageBox.Show("зиг хайль 3");
+                MessageBox.Show("XZ");
+                translationMatrix = new double[,]
+                {
+                        {1, 0, 0, 0 },
+                        {0, -1, 0, 0 },
+                        {0, 0, 1, 0 },
+                        {0, 0, 0, 1 }
+                };
+            }
+            else if (radioButton8.Checked)
+            {
+                MessageBox.Show("YZ");
                 translationMatrix = new double[,]
                 {
                         {-1, 0, 0, 0 },
@@ -298,18 +387,30 @@ namespace Affine_transformations_in_space
                         {0, 0, 0, 1 }
                 };
             }
-            else if (radioButton8.Checked)
-            {
-                MessageBox.Show("зиг хайль");
-                translationMatrix = new double[,]
-                {
-                        {1, 0, 0, 0 },
-                        {0, -1, 0, 0 },
-                        {0, 0, -1, 0 },
-                        {0, 0, 0, 1 }
-                };
-            }
             multMatr(translationMatrix);
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            switch (spin) 
+            {
+
+                case 0:
+                    xRotation(5);
+                    break;
+                case 1:
+                    yRotation(5);
+                    break;
+                case 2:
+                    zRotation(5);
+                    break;
+
+            }
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
