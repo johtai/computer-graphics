@@ -183,6 +183,20 @@ namespace Affine_transformations_in_space
             multMatr(matr);
         }
 
+        private void LRotation(double fi, double l, double m, double n)
+        {
+
+            double[,] matr = new double[,]
+            {
+                {Math.Pow(l, 2) + Math.Cos(fi) * (1 - Math.Pow(l, 2)), l * (1 - Math.Cos(fi) * m + n * Math.Sin(fi)), l * (1 - Math.Cos(fi)) * n - m * Math.Sin(fi), 0},
+                {l * (1 - Math.Cos(fi)) * m - n * Math.Sin(fi), Math.Pow(m, 2) + Math.Cos(fi) * (1 - Math.Pow(m, 2)), m * (1 - Math.Cos(fi) * n  + l * Math.Sin(fi)), 0},
+                {l * (1 - Math.Cos(fi)) * n + m * Math.Sin(fi), m * (1 - Math.Cos(fi)) * n - l* Math.Sin(fi), Math.Pow(n,2) * Math.Cos(fi) * (1 - Math.Pow(n, 2)), 0  },
+                {0, 0,  0 ,1 }
+
+
+            };
+        }
+
         private void multMatr(double[,] transformationMatrix) 
         {
            
