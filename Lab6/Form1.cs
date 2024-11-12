@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Affine_transformations_in_space
 {
@@ -344,6 +345,25 @@ namespace Affine_transformations_in_space
             multMatr(matr);
         }
 
+
+        private void LRotation(double fi, double l, double m, double n)
+        {
+            double fiRad = (Math.PI / 180) * fi;
+            var cosFi = Math.Cos(fiRad);
+            var sinFI = Math.Sin(fiRad);
+            double[,] matr = new double[,]
+            {
+                {Math.Pow(l, 2) + cosFi * (1 - Math.Pow(l, 2)), l * (1 - cosFi) * m + n * sinFI, l * (1 - cosFi) * n - m * sinFI, 0},
+                {l * (1 - cosFi) * m - n * sinFI, Math.Pow(m, 2) + cosFi * (1 - Math.Pow(m, 2)), m * (1 - cosFi ) *  n  + l * sinFI, 0},
+                {l * (1 - cosFi) * n + m * sinFI, m * (1 - cosFi) * n - l * sinFI, Math.Pow(n,2) + cosFi * (1 - Math.Pow(n, 2)), 0  },
+                {0, 0,  0 ,1 }
+
+
+            };
+
+            multMatr(matr);
+        }
+
         private void multMatr(double[,] transformationMatrix) 
         {
            
@@ -597,6 +617,11 @@ namespace Affine_transformations_in_space
         private void button6_Click(object sender, EventArgs e)
         {
             scaleFigure(Centroid());
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            LRotation(Convert.ToDouble(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
         }
     }
 }

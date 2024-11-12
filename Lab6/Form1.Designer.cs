@@ -52,8 +52,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.rotationBox = new System.Windows.Forms.TextBox();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
@@ -66,10 +64,17 @@
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.button7 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -451,11 +456,69 @@
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.button7);
+            this.groupBox4.Controls.Add(this.textBox7);
+            this.groupBox4.Controls.Add(this.textBox6);
+            this.groupBox4.Controls.Add(this.textBox5);
+            this.groupBox4.Controls.Add(this.textBox4);
+            this.groupBox4.Location = new System.Drawing.Point(826, 12);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(260, 47);
+            this.groupBox4.TabIndex = 29;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "fi l m n";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(19, 16);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(28, 20);
+            this.textBox4.TabIndex = 30;
+            this.textBox4.Text = "0";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(53, 16);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(28, 20);
+            this.textBox5.TabIndex = 31;
+            this.textBox5.Text = "0";
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(87, 16);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(28, 20);
+            this.textBox6.TabIndex = 32;
+            this.textBox6.Text = "0";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(121, 16);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(28, 20);
+            this.textBox7.TabIndex = 33;
+            this.textBox7.Text = "0";
+            // 
+            // button7
+            // 
+            this.button7.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.button7.Location = new System.Drawing.Point(176, 11);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(78, 27);
+            this.button7.TabIndex = 34;
+            this.button7.Text = "Применить";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // Afins3D
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1282, 592);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.groupBox3);
@@ -491,6 +554,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -522,8 +587,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button button3;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.RadioButton radioButton4;
@@ -537,6 +600,12 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.TextBox rotationBox;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox4;
     }
 }
 
