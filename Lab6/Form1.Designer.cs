@@ -65,11 +65,11 @@
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
             this.button7 = new System.Windows.Forms.Button();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -82,6 +82,7 @@
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(128, 65);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(1142, 527);
@@ -463,36 +464,23 @@
             this.groupBox4.Controls.Add(this.textBox6);
             this.groupBox4.Controls.Add(this.textBox5);
             this.groupBox4.Controls.Add(this.textBox4);
-            this.groupBox4.Location = new System.Drawing.Point(826, 12);
+            this.groupBox4.Location = new System.Drawing.Point(689, 7);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(260, 47);
             this.groupBox4.TabIndex = 29;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "fi l m n";
             // 
-            // textBox4
+            // button7
             // 
-            this.textBox4.Location = new System.Drawing.Point(19, 16);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(28, 20);
-            this.textBox4.TabIndex = 30;
-            this.textBox4.Text = "0";
-            // 
-            // textBox5
-            // 
-            this.textBox5.Location = new System.Drawing.Point(53, 16);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(28, 20);
-            this.textBox5.TabIndex = 31;
-            this.textBox5.Text = "0";
-            // 
-            // textBox6
-            // 
-            this.textBox6.Location = new System.Drawing.Point(87, 16);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(28, 20);
-            this.textBox6.TabIndex = 32;
-            this.textBox6.Text = "0";
+            this.button7.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.button7.Location = new System.Drawing.Point(164, 12);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(78, 27);
+            this.button7.TabIndex = 34;
+            this.button7.Text = "Применить";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // textBox7
             // 
@@ -502,16 +490,29 @@
             this.textBox7.TabIndex = 33;
             this.textBox7.Text = "0";
             // 
-            // button7
+            // textBox6
             // 
-            this.button7.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button7.Location = new System.Drawing.Point(176, 11);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(78, 27);
-            this.button7.TabIndex = 34;
-            this.button7.Text = "Применить";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.textBox6.Location = new System.Drawing.Point(87, 16);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(28, 20);
+            this.textBox6.TabIndex = 32;
+            this.textBox6.Text = "0";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(53, 16);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(28, 20);
+            this.textBox5.TabIndex = 31;
+            this.textBox5.Text = "0";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(19, 16);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(28, 20);
+            this.textBox4.TabIndex = 30;
+            this.textBox4.Text = "0";
             // 
             // Afins3D
             // 

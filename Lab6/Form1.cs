@@ -315,20 +315,48 @@ namespace Affine_transformations_in_space
             return new Point(x2D,y2D);
         }
 
+
+        private void DrawAxes(Graphics g, Func<point, Point> pF)
+        {
+            // Определяем длину оси
+            double axisLength = 3;
+
+            // Определяем точки осей
+            point origin = new point(0, 0, 0);
+            point xAxisEnd = new point(axisLength * scale, 0, 0);
+            point yAxisEnd = new point(0, axisLength * scale, 0);
+            point zAxisEnd = new point(0, 0, axisLength * scale);
+
+            // Проецируем 3D-точки осей в 2D для отображения
+            Point origin2D = pF(origin);
+            Point xAxisEnd2D = pF(xAxisEnd); 
+            Point yAxisEnd2D = pF(yAxisEnd);
+            Point zAxisEnd2D = pF(zAxisEnd);
+
+            // Отрисовываем оси
+            g.DrawLine(Pens.Red, origin2D, xAxisEnd2D); // Ось X (красный цвет)
+            g.DrawLine(Pens.Green, origin2D, yAxisEnd2D); // Ось Y (зелёный цвет)
+            g.DrawLine(Pens.Blue, origin2D, zAxisEnd2D); // Ось Z (синий цвет)
+        }
+
+
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             if(pop != null) 
-            {
-               
+            {   
+                
+                DrawAxes(e.Graphics, projectFunc);
                 for (int i = 0; i < pop.Faces.Count(); i++)
                 {
                     // Vertices.Select(v => Isometric2DPoint(v)) // Пожарный гидрант(на всякий)
 
                     Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
+                    
                     e.Graphics.DrawPolygon(Pens.Black, points2D);                   
                 }
-            }            
-            
+            }
+            DrawAxes(e.Graphics, projectFunc);
+
 
         }
 
