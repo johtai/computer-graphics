@@ -19,7 +19,8 @@ namespace Affine_transformations_in_space
 
         polyhedron pop;
         polyhedron AxisPop;
-        public Func<point, Point> projectFunc;
+       
+        public Func<double[,], point> projectFunc;
 
         public static List<polygon> pnts;
         public static List<point> AxesPoints;
@@ -30,8 +31,8 @@ namespace Affine_transformations_in_space
         public Afins3D()
         {
             InitializeComponent();
-            projectFunc = Isometric2DPoint;
-            InitAxes();
+            //projectFunc = IsometricMatrix;
+            //InitAxes();
 
 
         }
@@ -92,8 +93,8 @@ namespace Affine_transformations_in_space
 
             if (radionButton != null && radionButton.Checked) 
             {
-                if (radionButton.Text == "Перспектива") projectFunc = PointTo2D;
-                if (radionButton.Text == "Изометрия") projectFunc = Isometric2DPoint;
+                //if (radionButton.Text == "Перспектива") projectFunc = PointTo2D;
+                //if (radionButton.Text == "Изометрия") projectFunc = Isometric2DPoint;
             }
             
             pictureBox1.Invalidate();         
@@ -136,10 +137,10 @@ namespace Affine_transformations_in_space
 
             public static polyhedron drawTetraedr()
             {       
-                point v1 = new point(1 * scale, 1 * scale, 1 * scale);
-                point v2 = new point(1 * scale, -1 * scale, -1 * scale);
-                point v3 = new point(-1 * scale, 1 * scale, -1 * scale);
-                point v4 = new point(-1 * scale, -1 * scale, 1 * scale) ;
+                point v1 = new point(1 , 1 , 1 );
+                point v2 = new point(1  , -1  , -1  );
+                point v3 = new point(-1  , 1  , -1  );
+                point v4 = new point(-1  , -1  , 1  ) ;
 
                 polygon firstPol = new polygon(new List<point> { v1, v2, v3 });
                 polygon secondPol = new polygon(new List<point> { v1, v2, v4 });
@@ -151,14 +152,14 @@ namespace Affine_transformations_in_space
 
             public static polyhedron drawGexaedr() 
             {
-                point v1 = new point(-1 * scale, -1 * scale, -1 * scale);
-                point v2 = new point(1 * scale, -1 * scale, -1 * scale);
-                point v3 = new point(-1 * scale, 1 * scale, -1 * scale);
-                point v4 = new point(1 * scale, 1 * scale, -1 * scale);              
-                point v5 = new point(-1 * scale, -1 * scale,  1 * scale);
-                point v6 = new point(1 * scale, -1 * scale, 1 * scale);
-                point v7 = new point(-1 * scale, 1 * scale, 1 * scale);
-                point v8 = new point(1 * scale, 1 * scale, 1 * scale);
+                point v1 = new point(-1, -1, -1);
+                point v2 = new point(1, -1, -1);
+                point v3 = new point(-1, 1, -1);
+                point v4 = new point(1, 1, -1);              
+                point v5 = new point(-1, -1, 1);
+                point v6 = new point(1, -1, 1);
+                point v7 = new point(-1, 1, 1);
+                point v8 = new point(1, 1, 1);
 
                 polygon firstPol = new polygon(new List<point> { v1, v2, v4, v3 }); // Нижняя грань
                 polygon secondPol = new polygon(new List<point> { v5, v6, v8, v7 }); // Верхняя грань
@@ -281,89 +282,101 @@ namespace Affine_transformations_in_space
 
         }
 
-
-       
-
-
         //перспективная проекция
-        private Point PointTo2D(point p) 
+        private double[,] perspectiveMatrix(double d)
         {
-            int x2D = (int)(focalLength * p.X / (p.Z + focalLength));
-            int y2D = (int)(focalLength * p.Y / (p.Z + focalLength));
+            return new double[,]
+            {
+                {1, 0, 0, 0 },
+                {0, 1, 0, 0 },
+                {0, 0, 1, -1 / d },
+                {0, 0, 1, 0 }
+            };
+        }
 
-            x2D += pictureBox1.Width / 2;
-            y2D += pictureBox1.Height / 2;
+        private double[,] IsometricMatrix()
+        {
+            return new double[,]
+            {
+                {Math.Sqrt(3), 0, -Math.Sqrt(3), 0},
+                {1, 2, 1, 0},
+                {Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0},
+                {0,0,0,1}
+            };
+        }
+
+
+
+        private Point ApplyProjection(point p, double[,] projectionMatrix)
+        {
+            double newX = p.X * projectionMatrix[0, 0] + p.Y * projectionMatrix[1, 0] + p.Z * projectionMatrix[2, 0];
+            double newY = p.X * projectionMatrix[0, 1] + p.Y * projectionMatrix[1, 1] + p.Z * projectionMatrix[2, 1];
+
+            int x2D = (int)(newX + pictureBox1.Width / 2);
+            int y2D = (int)(newY + pictureBox1.Height / 2);
 
             return new Point(x2D, y2D);
         }
 
-        //Изометрическая проекция
-        private Point Isometric2DPoint(point p ) 
+        private point TransformToWorld(point p, double[,] worldMatrix)
         {
-            double angleCos = Math.Cos(Math.PI / 6);
-            double angleSin = Math.Sin(Math.PI / 6);
+            double x = p.X * worldMatrix[0, 0] + p.Y * worldMatrix[1, 0] + p.Z * worldMatrix[2, 0] + worldMatrix[3, 0];
+            double y = p.X * worldMatrix[0, 1] + p.Y * worldMatrix[1, 1] + p.Z * worldMatrix[2, 1] + worldMatrix[3, 1];
+            double z = p.X * worldMatrix[0, 2] + p.Y * worldMatrix[1, 2] + p.Z * worldMatrix[2, 2] + worldMatrix[3, 2];
 
-            int x2D = (int)((p.X - p.Z) * angleCos);
-            int y2D = (int)((p.Y - (p.X + p.Z) * angleSin) * -1);
-
-            x2D += pictureBox1.Width / 2;
-            y2D += pictureBox1.Height / 2;
-
-            return new Point(x2D,y2D);
-        }
-
-        //Graphics g, Func<point, Point> pF
-        private void InitAxes()
-        {
-            // Определяем длину оси
-            double axisLength = 3;
-
-            // Определяем точки осей
-            List<point> vertices = new List<point>()
-            {
-                new point(0, 0, 0),
-                new point(axisLength * scale, 0, 0),
-                new point(0, axisLength * scale, 0),
-                new point(0, 0, axisLength * scale)
-
-        };
-            List<polygon> faces = new List<polygon>() {
-            new polygon(new List<point>{vertices[0], vertices[1] }),
-            new polygon(new List<point>{vertices[0], vertices[2] }),
-            new polygon(new List<point>{vertices[0], vertices[3] }),
-            };
-            polyhedron ppAxis = new polyhedron(vertices, faces);
-            AxisPop = ppAxis;
-
-        }
-
-        
-
+            return new point(x, y, z);
+        }      
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             if (pop != null)
             {
 
-                //DrawAxes(e.Graphics, projectFunc);
-                for (int i = 0; i < pop.Faces.Count(); i++)
+
+                double translationX = 1, translationY =1 , translationZ = 1;
+                double rotationX = 1,    rotationY = 1,   rotattionZ = 1;
+                double scaleX = 20,       scaleY = 20, scaleZ = 20;
+
+                double[,] worldMatrix = getWorldMatrix(translationX, translationY, translationZ, rotationX, rotationY, rotattionZ, scaleX, scaleY, scaleZ);
+               
+               
+                foreach (var face in pop.Faces) 
                 {
-                    // Vertices.Select(v => Isometric2DPoint(v)) 
+                    List<Point> points2D = new List<Point>();
+                    foreach (var vertex in face.Vertices) 
+                    {
+                        point worldPoint = TransformToWorld(vertex, worldMatrix);
+                        Point projectedPoint = ApplyProjection(worldPoint, IsometricMatrix());
+                        points2D.Add(projectedPoint);
+                    }
+                    e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
+                  
 
-                    Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
-
-                    e.Graphics.DrawPolygon(Pens.Black, points2D);
                 }
 
-                List<Pen> lst = new List<Pen> { Pens.Red, Pens.Blue, Pens.Green };
-                for (int i = 0; i < AxisPop.Faces.Count(); i++)
-                {
-                   
 
-                    Point[] pointsAxis2D = AxisPop.Faces[i].Vertices.Select(projectFunc).ToArray();
+                //e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
 
-                    e.Graphics.DrawPolygon(lst[i], pointsAxis2D);
-                }
+                //for (int i = 0; i < pop.Faces.Count(); i++)
+                //{
+                //    // Vertices.Select(v => Isometric2DPoint(v)) 
+
+                //    Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
+
+                //    e.Graphics.DrawPolygon(Pens.Black, points2D);
+                //}
+
+
+
+                //List<Pen> lst = new List<Pen> { Pens.Red, Pens.Blue, Pens.Green };
+                //for (int i = 0; i < AxisPop.Faces.Count(); i++)
+                //{
+
+
+                //    Point[] pointsAxis2D = AxisPop.Faces[i].Vertices.Select(projectFunc).ToArray();
+
+                //    e.Graphics.DrawPolygon(lst[i], pointsAxis2D);
+                //}
 
             }
            // DrawAxes(e.Graphics, projectFunc);
@@ -371,17 +384,129 @@ namespace Affine_transformations_in_space
 
         }
 
-        private void scaleFigure(point p) 
+
+
+
+        private void multMatr(double[,] transformationMatrix) 
+        {
+           
+           
+            for (int i = 0; i < pop.Faces.Count; i++) 
+            {
+                for (int j = 0; j < pop.Faces[i].Vertices.Count; j++) 
+                {
+                    var po = pop.Faces[i].Vertices[j];
+                    double newX =  po.X * transformationMatrix[0, 0] + po.Y * transformationMatrix[1, 0] + po.Z * transformationMatrix[2, 0] + transformationMatrix[3, 0];
+                    double newY =  po.X * transformationMatrix[0, 1] + po.Y * transformationMatrix[1, 1] + po.Z * transformationMatrix[2, 1] + transformationMatrix[3, 1];
+                    double newZ =  po.X * transformationMatrix[0, 2] + po.Y * transformationMatrix[1, 2] + po.Z * transformationMatrix[2, 2] + transformationMatrix[3, 2];
+                    
+                    pop.Faces[i].Vertices[j] = new point(newX, newY, newZ);
+                }
+            }
+
+            pictureBox1.Invalidate();
+
+        }
+
+        //Матрица перемещения
+        private double[,] translationMatrix(double tx, double ty, double tz)
+        {
+            return new double[,]
+            {
+                { 1, 0, 0, tx },
+                { 0, 1, 0, ty },
+                { 0, 0, 1, tz },
+                { 0, 0, 0, 1 }
+            };         
+        }
+
+        //Матрица Масштабирования
+        private double[,] scalingMatrix(double sx, double sy, double sz)
         {
 
-            double[,] matr = new double[,] {
-                {p.X, 0, 0 ,0 },
-                {0, p.Y, 0, 0 },
-                {0, 0, p.Z, 0 },
+            return new double[,] 
+            {
+                {sx, 0, 0 ,0 },
+                {0, sy, 0, 0 },
+                {0, 0, sz, 0 },
                 {0, 0, 0, 1 }
             };
 
-            multMatr(matr);
+            
+        }
+
+        private double[,] rotationMatrix(double angleX, double angleY, double angleZ)
+        {
+            //Мы короче умножаем по порядку с конца: Z, Y, X
+            //return MultiplyMarices(MultiplyMarices(zRotation(angleZ), yRotation(angleY)), xRotationMatrix(angleX));
+            return MultiplyMarices(MultiplyMarices(xRotationMatrix(angleX), yRotation(angleY)), zRotation(angleZ));
+        }
+
+
+        private double[,] xRotationMatrix(double a) 
+        {
+
+            double radians = (Math.PI / 180) * a;
+            return new double[,] {
+            { 1,0,0,0 },
+            {0, Math.Cos(radians), - Math.Sin(radians), 0 },
+            { 0, Math.Sin(radians), Math.Cos(radians ), 0},
+            {0, 0 ,0, 1 }
+            };
+         
+        }
+
+        private double[,] yRotation(double a) 
+        {
+            double radians = (Math.PI / 180) * a;
+            var cosx = Math.Cos(radians);
+            var sinx = Math.Sin(radians);
+
+            return new double[,] {
+            {cosx, 0 , sinx, 0 },
+            {0, 1, 0, 0 },
+            {-sinx, 0, cosx, 0 },
+            {0, 0, 0, 1 }
+            };
+          
+        }
+
+        private double[,] zRotation(double a) 
+        {
+            double radians = (Math.PI / 180) * a;
+            var cosx = Math.Cos(radians);
+            var sinx = Math.Sin(radians);
+
+            return new double[,] {
+            {cosx, -sinx, 0, 0  },
+            {sinx, cosx, 0, 0  },
+            {0, 0, 1, 0 },
+            {0, 0, 0, 1 }
+            };         
+        }
+
+
+        private double[,] MultiplyMarices(double[,] mat1, double[,] mat2) 
+        {
+            int rows = mat1.GetLength(0);
+            int cols = mat2.GetLength(0);
+            int commonDim = mat1.GetLength(1);
+
+            double[,] result = new double[rows, cols];
+
+            for (int i = 0; i < rows; i++) 
+            {
+
+                for (int j = 0; j < cols; j++) 
+                {
+                    result[i, j] = 0;
+                    for (int k = 0; k < commonDim; k++) 
+                    {
+                        result[i, j] += mat1[i, k] * mat2[k, j];
+                    }
+                }
+            }
+            return result;
         }
 
 
@@ -403,93 +528,14 @@ namespace Affine_transformations_in_space
             multMatr(matr);
         }
 
-        private void multMatr(double[,] transformationMatrix) 
+        private double[,] getWorldMatrix(double tx, double ty, double tz, double angleX, double angleY, double angleZ, double sx, double sy, double sz) 
         {
-           
-           
-            for (int i = 0; i < pop.Faces.Count; i++) 
-            {
-                for (int j = 0; j < pop.Faces[i].Vertices.Count; j++) 
-                {
-                    var po = pop.Faces[i].Vertices[j];
-                    double newX =  po.X * transformationMatrix[0, 0] + po.Y * transformationMatrix[1, 0] + po.Z * transformationMatrix[2, 0] + transformationMatrix[3, 0];
-                    double newY =  po.X * transformationMatrix[0, 1] + po.Y * transformationMatrix[1, 1] + po.Z * transformationMatrix[2, 1] + transformationMatrix[3, 1];
-                    double newZ =  po.X * transformationMatrix[0, 2] + po.Y * transformationMatrix[1, 2] + po.Z * transformationMatrix[2, 2] + transformationMatrix[3, 2];
-                    
-                    pop.Faces[i].Vertices[j] = new point(newX, newY, newZ);
-                }
-            }
+            double[,] translationMatr = translationMatrix(tx, ty, tz);
+            double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
+            double[,] scalingMatr = scalingMatrix(sx, sy, sz);
 
-
-
-
-
-            pictureBox1.Invalidate();
-
-        }
-
-
-        private void translation(int dx, int dy, int dz)
-        {
-            double[,] translationMatrix = new double[,]
-            {
-                {1, 0, 0, 0 },
-                {0, 1, 0, 0 },
-                {0, 0 ,1, 0 },
-                {dx, dy, dz, 1 }
-            };
-
-
-
-            multMatr(translationMatrix);
-        }
-
-
-        private void xRotation(double a) 
-        {
-
-            double radians = (Math.PI / 180) * a;
-            double[,] matr = new double[,] {
-            { 1,0,0,0 },
-            {0,Math.Cos(radians),Math.Sin(radians),0 },
-            { 0,-Math.Sin(radians),Math.Cos(radians ),0},
-            {0, 0 ,0, 1 }
-            };
-
-            multMatr(matr);
-        }
-
-        private void yRotation(double a) 
-        {
-            double radians = (Math.PI / 180) * a;
-            var cosx = Math.Cos(radians);
-            var sinx = Math.Sin(radians);
-
-            double[,] matr = new double[,] {
-            {cosx, 0 , -sinx, 0 },
-            {0, 1, 0, 0 },
-            {sinx, 0, cosx, 0 },
-            {0, 0, 0, 1 }
-            };
-
-            multMatr(matr);
-
-        }
-
-        private void zRotation(double a) 
-        {
-            double radians = (Math.PI / 180) * a;
-            var cosx = Math.Cos(radians);
-            var sinx = Math.Sin(radians);
-
-            double[,] matr = new double[,] {
-            {cosx, sinx, 0, 0  },
-            {-sinx, cosx, 0, 0  },
-            {0, 0, 1, 0 },
-            {0, 0, 0, 1 }
-            };
-
-            multMatr(matr);
+            //Итоговая мировая матрица Translation * Rotation * Scaling
+            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr));
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -522,10 +568,13 @@ namespace Affine_transformations_in_space
            
         }
 
+
+
+
         private void button2_Click(object sender, EventArgs e)
         {
             try {
-                translation(Convert.ToInt32(dxBox.Text), Convert.ToInt32(dyBox.Text), Convert.ToInt32(dzBox.Text));
+                //translation(Convert.ToInt32(dxBox.Text), Convert.ToInt32(dyBox.Text), Convert.ToInt32(dzBox.Text));
             } catch (Exception ex){
                 MessageBox.Show("Впишите корректные значения смещения!");
             }
@@ -539,7 +588,7 @@ namespace Affine_transformations_in_space
             var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
             var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
             point p1 = new point(dxScale, dyScale, dzScale);
-            scaleFigure(p1);
+            //scaleFigure(p1);
         }
 
 
@@ -548,7 +597,7 @@ namespace Affine_transformations_in_space
             switch(spin) 
             {
                 case 0:
-                    xRotation(3);
+                    //xRotation(3);
                     break;
                 case 1:
                     yRotation(3);
@@ -659,7 +708,7 @@ namespace Affine_transformations_in_space
                 switch (spin)
                 {
                     case 0:
-                        xRotation(rbb);
+                        //xRotation(rbb);
                         break;
                     case 1:
                         yRotation(rbb);
@@ -700,7 +749,7 @@ namespace Affine_transformations_in_space
 
         private void button7_Click(object sender, EventArgs e)
         {
-            LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+            //LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
         }
 
         private void button6_Click_1(object sender, EventArgs e)
