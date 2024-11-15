@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Affine_transformations_in_space
 {
@@ -17,7 +18,11 @@ namespace Affine_transformations_in_space
     {
 
         polyhedron pop;
+        polyhedron AxisPop;
         public Func<point, Point> projectFunc;
+
+        public static List<polygon> pnts;
+        public static List<point> AxesPoints;
         public static int scale = 100;
         public static int spin = 0;
         
@@ -26,16 +31,59 @@ namespace Affine_transformations_in_space
         {
             InitializeComponent();
             projectFunc = Isometric2DPoint;
+            InitAxes();
 
 
         }
 
 
-        public void drawTetrahedron()
+        //public void drawTetrahedron()
+        //{
+        //    pop = polyhedron.drawTetraedr();
+        //    pictureBox1.Invalidate();
+        //    pnts = pop.Faces;
+
+
+        //}
+
+        private point chelnok(polygon face) 
         {
-            pop = polyhedron.drawTetraedr();
-            pictureBox1.Invalidate();
-        
+            double sumX = 0; double sumY = 0; double sumZ = 0;
+            
+            foreach (var vertex in face.Vertices)
+            {
+                sumX += vertex.X;
+                sumY += vertex.Y;
+                sumZ += vertex.Z;
+
+            }
+            sumX /= face.Vertices.Count;
+            sumY /= face.Vertices.Count;
+            sumZ /= face.Vertices.Count;
+            return new point(sumX, sumY, sumZ);
+        }
+
+        // Возвращает геометрический центр полигона
+        // Возвращает геометрический центр всего многогранника
+        private point Centroid()
+        {
+            double centerX = 0; double centerY = 0; double centerZ = 0;
+            foreach (polygon face in pnts)
+            {
+                centerX += chelnok(face).X;
+                centerY += chelnok(face).Y;
+                centerZ += chelnok(face).Z;
+            }
+
+             centerX /= pnts.Count; 
+             centerY /= pnts.Count;
+             centerZ /= pnts.Count;
+
+            MessageBox.Show("Центр по X: " + centerX.ToString());
+            MessageBox.Show("Центр по Y: " + centerY.ToString());
+            MessageBox.Show("Центр по Z: " + centerZ.ToString());
+
+            return new point(centerX, centerY, centerZ);
         }
 
         void RadioButton_CheckedChanged(object sender, EventArgs e) 
@@ -48,10 +96,7 @@ namespace Affine_transformations_in_space
                 if (radionButton.Text == "Изометрия") projectFunc = Isometric2DPoint;
             }
             
-            pictureBox1.Invalidate();
-
-
-            
+            pictureBox1.Invalidate();         
         }
 
 
@@ -80,12 +125,12 @@ namespace Affine_transformations_in_space
 
         public class polyhedron
         {
-            public List<point> Verticles;
+            public List<point> Vertices;
             public List<polygon> Faces;
 
             public polyhedron(List<point> verticles , List<polygon> faces)
             {
-                Verticles = verticles;
+                Vertices = verticles;
                 Faces = faces;
             }
 
@@ -124,8 +169,122 @@ namespace Affine_transformations_in_space
 
                 return new polyhedron(new List<point> { v1, v2, v3, v4, v5, v6, v7, v8 }, new List<polygon> {firstPol, secondPol, thirdPol, fourdPol, fivethPol, sixthPol });
             }
+
+
+            public static polyhedron drawIcosahedr()
+            {
+                double phi = (1 + Math.Sqrt(5)) / 2;  // Золотое сечение
+                double scale = 1;  // Масштаб для вершин
+
+                List<point> vertices = new List<point>
+            {
+            new point(-1 * scale,  phi * scale, 0),
+            new point( 1 * scale,  phi * scale, 0 * scale),
+            new point(-1 * scale, -phi * scale, 0),
+            new point( 1 * scale, -phi * scale, 0),
+            new point(0, -1 * scale,  phi * scale),
+            new point(0,  1 * scale,  phi * scale),
+            new point(0, -1 * scale, -phi * scale),
+            new point(0,  1 * scale, -phi * scale),
+            new point( phi * scale, 0, -1 * scale),
+            new point( phi * scale, 0,  1 * scale),
+            new point(-phi * scale, 0, -1 * scale),
+            new point(-phi * scale, 0,  1 * scale)
+            };
+
+                // Определение 20 треугольных граней, каждая из которых указывает на три вершины
+                List<polygon> faces = new List<polygon>
+            {
+            new polygon(new List<point> { vertices[0], vertices[11], vertices[5] }),
+            new polygon(new List<point> { vertices[0], vertices[5], vertices[1] }),
+            new polygon(new List<point> { vertices[0], vertices[1], vertices[7] }),
+            new polygon(new List<point> { vertices[0], vertices[7], vertices[10] }),
+            new polygon(new List<point> { vertices[0], vertices[10], vertices[11] }),
+
+            new polygon(new List<point> { vertices[1], vertices[5], vertices[9] }),
+            new polygon(new List<point> { vertices[5], vertices[11], vertices[4] }),
+            new polygon(new List<point> { vertices[11], vertices[10], vertices[2] }),
+            new polygon(new List<point> { vertices[10], vertices[7], vertices[6] }),
+            new polygon(new List<point> { vertices[7], vertices[1], vertices[8] }),
+
+            new polygon(new List<point> { vertices[3], vertices[9], vertices[4] }),
+            new polygon(new List<point> { vertices[3], vertices[4], vertices[2] }),
+            new polygon(new List<point> { vertices[3], vertices[2], vertices[6] }),
+            new polygon(new List<point> { vertices[3], vertices[6], vertices[8] }),
+            new polygon(new List<point> { vertices[3], vertices[8], vertices[9] }),
+
+            new polygon(new List<point> { vertices[4], vertices[9], vertices[5] }),
+            new polygon(new List<point> { vertices[2], vertices[4], vertices[11] }),
+            new polygon(new List<point> { vertices[6], vertices[2], vertices[10] }),
+            new polygon(new List<point> { vertices[8], vertices[6], vertices[7] }),
+            new polygon(new List<point> { vertices[9], vertices[8], vertices[1] })
+            };
+
+                return new polyhedron(vertices, faces);
+            }
+
+
+            public static polyhedron drawDodecahedr()
+            {
+                double phi = (1 + Math.Sqrt(5)) / 2;  // Золотое сечение
+                double scale = 1;  // Масштаб для вершин
+
+                List<point> vertices = new List<point>
+        {
+            new point(-1 * scale, -1* scale , -1* scale),
+            new point(-1* scale, -1* scale,  1* scale),
+            new point(-1* scale,  1* scale, -1* scale),
+            new point(-1* scale,  1* scale,  1* scale),
+            new point( 1* scale, -1* scale, -1* scale),
+            new point( 1* scale, -1* scale,  1* scale),
+            new point( 1* scale,  1* scale, -1* scale),
+            new point( 1* scale,  1* scale,  1* scale),
+
+            new point(0, -1/phi * scale, -phi * scale),
+            new point(0, -1/phi * scale,  phi * scale),
+            new point(0,  1/phi * scale, -phi * scale),
+            new point(0,  1/phi * scale,  phi * scale),
+
+            new point(-1/phi * scale, -phi * scale, 0),
+            new point(-1/phi * scale,  phi * scale, 0),
+            new point(1/phi * scale, -phi * scale, 0),
+            new point(1/phi * scale,  phi * scale, 0),
+
+            new point(-phi * scale, 0, -1/phi * scale),
+            new point( phi * scale, 0, -1/phi * scale),
+            new point(-phi * scale, 0,  1/phi * scale),
+            new point( phi * scale, 0,  1/phi * scale)
+        };
+
+                // Определение 12 пятиугольных граней
+                List<polygon> faces = new List<polygon>
+        {
+            new polygon(new List<point> { vertices[0], vertices[8], vertices[4], vertices[14], vertices[12] }),
+            new polygon(new List<point> { vertices[0], vertices[12], vertices[2], vertices[13], vertices[10] }),
+            new polygon(new List<point> { vertices[0], vertices[10], vertices[6], vertices[16], vertices[8] }),
+            new polygon(new List<point> { vertices[1], vertices[9], vertices[5], vertices[14], vertices[8] }),
+            new polygon(new List<point> { vertices[1], vertices[8], vertices[16], vertices[11], vertices[3] }),
+
+            new polygon(new List<point> { vertices[1], vertices[3], vertices[12], vertices[4], vertices[9] }),
+            new polygon(new List<point> { vertices[2], vertices[10], vertices[17], vertices[18], vertices[13] }),
+            new polygon(new List<point> { vertices[2], vertices[13], vertices[3], vertices[11], vertices[19] }),
+            new polygon(new List<point> { vertices[3], vertices[19], vertices[7], vertices[15], vertices[9] }),
+            new polygon(new List<point> { vertices[4], vertices[9], vertices[15], vertices[5], vertices[14] }),
+
+            new polygon(new List<point> { vertices[5], vertices[15], vertices[7], vertices[6], vertices[17] }),
+            new polygon(new List<point> { vertices[6], vertices[17], vertices[10], vertices[18], vertices[16] })
+        };
+
+                return new polyhedron(vertices, faces);
+            }
+
+
         }
-        
+
+
+       
+
+
         //перспективная проекция
         private Point PointTo2D(point p) 
         {
@@ -153,48 +312,95 @@ namespace Affine_transformations_in_space
             return new Point(x2D,y2D);
         }
 
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        //Graphics g, Func<point, Point> pF
+        private void InitAxes()
         {
-            if(pop != null) 
-            {
-               
-                for (int i = 0; i < pop.Faces.Count(); i++)
-                {
-                    // Vertices.Select(v => Isometric2DPoint(v)) // Пожарный гидрант(на всякий)
+            // Определяем длину оси
+            double axisLength = 3;
 
-                    Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
-                    e.Graphics.DrawPolygon(Pens.Black, points2D);                   
-                }
-            }            
-            
+            // Определяем точки осей
+            List<point> vertices = new List<point>()
+            {
+                new point(0, 0, 0),
+                new point(axisLength * scale, 0, 0),
+                new point(0, axisLength * scale, 0),
+                new point(0, 0, axisLength * scale)
+
+        };
+            List<polygon> faces = new List<polygon>() {
+            new polygon(new List<point>{vertices[0], vertices[1] }),
+            new polygon(new List<point>{vertices[0], vertices[2] }),
+            new polygon(new List<point>{vertices[0], vertices[3] }),
+            };
+            polyhedron ppAxis = new polyhedron(vertices, faces);
+            AxisPop = ppAxis;
 
         }
 
-        private void scaleFigure(double dx, double dy, double dz) 
+        
+
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            if (pop != null)
+            {
+
+                //DrawAxes(e.Graphics, projectFunc);
+                for (int i = 0; i < pop.Faces.Count(); i++)
+                {
+                    // Vertices.Select(v => Isometric2DPoint(v)) 
+
+                    Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
+
+                    e.Graphics.DrawPolygon(Pens.Black, points2D);
+                }
+
+                List<Pen> lst = new List<Pen> { Pens.Red, Pens.Blue, Pens.Green };
+                for (int i = 0; i < AxisPop.Faces.Count(); i++)
+                {
+                   
+
+                    Point[] pointsAxis2D = AxisPop.Faces[i].Vertices.Select(projectFunc).ToArray();
+
+                    e.Graphics.DrawPolygon(lst[i], pointsAxis2D);
+                }
+
+            }
+           // DrawAxes(e.Graphics, projectFunc);
+
+
+        }
+
+        private void scaleFigure(point p) 
         {
 
             double[,] matr = new double[,] {
-                {dx, 0, 0 ,0 },
-                {0, dy, 0, 0 },
-                {0, 0, dz, 0 },
+                {p.X, 0, 0 ,0 },
+                {0, p.Y, 0, 0 },
+                {0, 0, p.Z, 0 },
                 {0, 0, 0, 1 }
             };
 
             multMatr(matr);
         }
 
-        private void LRotation(double fi, double l, double m, double n)
-        {
 
+        private void LRotation(int fi, double l, double m, double n)
+        {
+            double fiRad = (Math.PI / 180) * fi;
+            double cosFi = Math.Cos(fiRad);
+            double sinFI = Math.Sin(fiRad);
             double[,] matr = new double[,]
             {
-                {Math.Pow(l, 2) + Math.Cos(fi) * (1 - Math.Pow(l, 2)), l * (1 - Math.Cos(fi) * m + n * Math.Sin(fi)), l * (1 - Math.Cos(fi)) * n - m * Math.Sin(fi), 0},
-                {l * (1 - Math.Cos(fi)) * m - n * Math.Sin(fi), Math.Pow(m, 2) + Math.Cos(fi) * (1 - Math.Pow(m, 2)), m * (1 - Math.Cos(fi) * n  + l * Math.Sin(fi)), 0},
-                {l * (1 - Math.Cos(fi)) * n + m * Math.Sin(fi), m * (1 - Math.Cos(fi)) * n - l* Math.Sin(fi), Math.Pow(n,2) * Math.Cos(fi) * (1 - Math.Pow(n, 2)), 0  },
-                {0, 0,  0 ,1 }
+                {Math.Pow(l, 2) + cosFi * (1 - Math.Pow(l, 2)), l * (1 - cosFi) * m + n * sinFI, l * (1 - cosFi) * n - m * sinFI, 0},
+                {l * (1 - cosFi) * m - n * sinFI, Math.Pow(m, 2) + cosFi * (1 - Math.Pow(m, 2)), m * (1 - cosFi ) *  n  + l * sinFI, 0},
+                {l * (1 - cosFi) * n + m * sinFI, m * (1 - cosFi) * n - l * sinFI, Math.Pow(n,2) + cosFi * (1 - Math.Pow(n, 2)), 0  },
+                {0, 0, 0 ,1 }
 
 
             };
+
+            multMatr(matr);
         }
 
         private void multMatr(double[,] transformationMatrix) 
@@ -209,13 +415,15 @@ namespace Affine_transformations_in_space
                     double newX =  po.X * transformationMatrix[0, 0] + po.Y * transformationMatrix[1, 0] + po.Z * transformationMatrix[2, 0] + transformationMatrix[3, 0];
                     double newY =  po.X * transformationMatrix[0, 1] + po.Y * transformationMatrix[1, 1] + po.Z * transformationMatrix[2, 1] + transformationMatrix[3, 1];
                     double newZ =  po.X * transformationMatrix[0, 2] + po.Y * transformationMatrix[1, 2] + po.Z * transformationMatrix[2, 2] + transformationMatrix[3, 2];
-
                     
                     pop.Faces[i].Vertices[j] = new point(newX, newY, newZ);
                 }
-
-
             }
+
+
+
+
+
             pictureBox1.Invalidate();
 
         }
@@ -290,10 +498,24 @@ namespace Affine_transformations_in_space
             switch (comboBox1.Text) 
             {
                 case "Тетраэдр":
-                    drawTetrahedron();
+                    pop = polyhedron.drawTetraedr();
+                    pnts = pop.Faces;
+                    pictureBox1.Invalidate();                  
                     break;
                 case "Гексаэдр":
                     pop = polyhedron.drawGexaedr();
+                    pnts = pop.Faces;
+                    pictureBox1.Invalidate();
+                    break;
+                case "Икосаэдр":
+                    pop = polyhedron.drawIcosahedr();
+                    pnts = pop.Faces;
+                    pictureBox1.Invalidate();
+                    break;
+
+                case "Додекаэдр":
+                    pop = polyhedron.drawDodecahedr();
+                    pnts = pop.Faces;
                     pictureBox1.Invalidate();
                     break;
             }
@@ -312,13 +534,16 @@ namespace Affine_transformations_in_space
 
         private void button3_Click(object sender, EventArgs e)
         {
+            
             var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "."});
             var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
             var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            scaleFigure(Convert.ToDouble(dxScale), Convert.ToDouble(dyScale), Convert.ToDouble(dzScale));
+            point p1 = new point(dxScale, dyScale, dzScale);
+            scaleFigure(p1);
         }
 
-        private void button4_Click(object sender, EventArgs e)
+
+    private void button4_Click(object sender, EventArgs e)
         {
             switch(spin) 
             {
@@ -334,28 +559,158 @@ namespace Affine_transformations_in_space
             }
         }
 
-
-        public void radioButtonSwitch(object sender, EventArgs e) 
+        public void radioButtonSwitch(object sender, EventArgs e)
         {
-
-            var rb = sender as RadioButton;
-
-            if (rb.Checked) 
+            double[,] translationMatrix = new double[,]
             {
-                switch (rb.Text) 
-                {
+                {1, 0, 0, 0 },
+                {0, 1, 0, 0 },
+                {0, 0, 1, 0 },
+                {0, 0, 0, 1 }
+            };
 
-                    case "XAxis":
-                        spin = 0;
+            if (radioButton6.Checked)
+            {
+                translationMatrix = new double[,]
+                    {
+                        {-1, 0, 0, 0 },
+                        {0, -1, 0, 0 },
+                        {0, 0, 1, 0 },
+                        {0, 0, 0, 1 }
+                    };
+            }
+            else if (radioButton7.Checked)
+            {
+                translationMatrix = new double[,]
+                {
+                        {-1, 0, 0, 0 },
+                        {0, 1, 0, 0 },
+                        {0, 0, 1, 0 },
+                        {0, 0, 0, 1 }
+                };
+            }
+            else if (radioButton8.Checked)
+            {
+                translationMatrix = new double[,]
+                {
+                        {1, 0, 0, 0 },
+                        {0, -1, 0, 0 },
+                        {0, 0, -1, 0 },
+                        {0, 0, 0, 1 }
+                };
+            }
+            multMatr(translationMatrix);
+        }
+    
+
+    private void button4_Click_1(object sender, EventArgs e)
+        {
+            double[,] translationMatrix = new double[,]
+            {
+                {1, 0, 0, 0 },
+                {0, 1, 0, 0 },
+                {0, 0, 1, 0 },
+                {0, 0, 0, 1 }
+            };
+
+            if (radioButton6.Checked)
+                {
+                MessageBox.Show("XY");
+                translationMatrix = new double[,]
+                    {
+                        {1, 0, 0, 0 },
+                        {0, 1, 0, 0 },
+                        {0, 0, -1, 0 },
+                        {0, 0, 0, 1 }
+                    };
+                }
+            else if (radioButton7.Checked)
+            {
+                MessageBox.Show("XZ");
+                translationMatrix = new double[,]
+                {
+                        {1, 0, 0, 0 },
+                        {0, -1, 0, 0 },
+                        {0, 0, 1, 0 },
+                        {0, 0, 0, 1 }
+                };
+            }
+            else if (radioButton8.Checked)
+            {
+                MessageBox.Show("YZ");
+                translationMatrix = new double[,]
+                {
+                        {-1, 0, 0, 0 },
+                        {0, 1, 0, 0 },
+                        {0, 0, 1, 0 },
+                        {0, 0, 0, 1 }
+                };
+            }
+            multMatr(translationMatrix);
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            try 
+            {
+                
+                double rbb = Convert.ToDouble(rotationBox.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+
+                switch (spin)
+                {
+                    case 0:
+                        xRotation(rbb);
                         break;
-                    case "YAxis":
-                        spin = 1;
+                    case 1:
+                        yRotation(rbb);
                         break;
-                    case "ZAxis":
-                        spin = 2;
+                    case 2:
+                        zRotation(rbb);
                         break;
                 }
+
+
             }
+            catch (Exception ex) { MessageBox.Show("Введите корректные значения!"); }
+            
+        }
+
+        private void scaleFigureCentroid(point p, point p1)
+        {
+            MessageBox.Show($"{p.X}    {p.Y}      {p.Z}     {p1.X}    {p1.Y}    {p1.Z}");
+            double[,] matr = new double[,] {
+                {p.X, 0, 0, 0 },
+                {0, p.Y, 0, 0 },
+                {0, 0, p.Z, 0 },
+                {0, 0, 0, 1 }
+            };
+
+            multMatr(matr);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            point p1 = new point(dxScale, dyScale, dzScale);
+
+            scaleFigureCentroid(p1, Centroid());
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+        }
+
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            point p1 = new point(dxScale, dyScale, dzScale);
+
+            scaleFigureCentroid(p1, Centroid());
         }
     }
 }
