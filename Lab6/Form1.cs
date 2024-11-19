@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,34 +19,44 @@ namespace Affine_transformations_in_space
     {
 
         polyhedron pop;
-        polyhedron AxisPop;
-       
-        public Func<double[,], point> projectFunc;
-
+        //polyhedron AxisPop;
+        double d = 5;
+        public Func<double[,]> projectFunc;
         public static List<polygon> pnts;
         public static List<point> AxesPoints;
-        public static int scale = 100;
+        //public static int scale = 100;
+        double[,] reflMatr;
         public static int spin = 0;
+        public static int switchRotationCase = 0;
         
+        double translationX = 1, translationY = 1, translationZ = 1;
+        double rotationX = 1, rotationY = 1, rotattionZ = 1;
+        double scaleX = 20, scaleY = 20, scaleZ = 20;
+
         public static double focalLength = 500; //Глубина
         public Afins3D()
         {
             InitializeComponent();
-            //projectFunc = IsometricMatrix;
-            //InitAxes();
-
-
+            projectFunc = perspectiveMatrix;
+            setDefaultWorldPosition();
+            dMeaning.Text = d.ToString();
         }
 
 
-        //public void drawTetrahedron()
-        //{
-        //    pop = polyhedron.drawTetraedr();
-        //    pictureBox1.Invalidate();
-        //    pnts = pop.Faces;
+        private void setDefaultWorldPosition()
+        {
+            translationX = 1; translationY = 1; translationZ = 1;
+            rotationX = 1; rotationY = 1; rotattionZ = 1;
+            scaleX = 20; scaleY = 20; scaleZ = 20;
 
-
-        //}
+            reflMatr = new double[,]
+           {
+                {1, 0, 0, 0 },
+                {0, 1, 0, 0 },
+                {0, 0, 1, 0 },
+                {0, 0, 0, 1 }
+           };
+        }
 
         private point chelnok(polygon face) 
         {
@@ -93,8 +104,8 @@ namespace Affine_transformations_in_space
 
             if (radionButton != null && radionButton.Checked) 
             {
-                //if (radionButton.Text == "Перспектива") projectFunc = PointTo2D;
-                //if (radionButton.Text == "Изометрия") projectFunc = Isometric2DPoint;
+                if (radionButton.Text == "Перспектива") projectFunc = perspectiveMatrix;
+                if (radionButton.Text == "Изометрия") projectFunc = IsometricMatrix;
             }
             
             pictureBox1.Invalidate();         
@@ -265,13 +276,11 @@ namespace Affine_transformations_in_space
             new polygon(new List<point> { vertices[0], vertices[10], vertices[6], vertices[16], vertices[8] }),
             new polygon(new List<point> { vertices[1], vertices[9], vertices[5], vertices[14], vertices[8] }),
             new polygon(new List<point> { vertices[1], vertices[8], vertices[16], vertices[11], vertices[3] }),
-
             new polygon(new List<point> { vertices[1], vertices[3], vertices[12], vertices[4], vertices[9] }),
             new polygon(new List<point> { vertices[2], vertices[10], vertices[17], vertices[18], vertices[13] }),
             new polygon(new List<point> { vertices[2], vertices[13], vertices[3], vertices[11], vertices[19] }),
             new polygon(new List<point> { vertices[3], vertices[19], vertices[7], vertices[15], vertices[9] }),
             new polygon(new List<point> { vertices[4], vertices[9], vertices[15], vertices[5], vertices[14] }),
-
             new polygon(new List<point> { vertices[5], vertices[15], vertices[7], vertices[6], vertices[17] }),
             new polygon(new List<point> { vertices[6], vertices[17], vertices[10], vertices[18], vertices[16] })
         };
@@ -279,12 +288,12 @@ namespace Affine_transformations_in_space
                 return new polyhedron(vertices, faces);
             }
 
-
         }
 
         //перспективная проекция
-        private double[,] perspectiveMatrix(double d)
+        private double[,] perspectiveMatrix()
         {
+           
             return new double[,]
             {
                 {1, 0, 0, 0 },
@@ -304,7 +313,6 @@ namespace Affine_transformations_in_space
                 {0,0,0,1}
             };
         }
-
 
 
         private Point ApplyProjection(point p, double[,] projectionMatrix)
@@ -328,14 +336,10 @@ namespace Affine_transformations_in_space
         }      
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
+        {   
+            
             if (pop != null)
-            {
-
-
-                double translationX = 1, translationY =1 , translationZ = 1;
-                double rotationX = 1,    rotationY = 1,   rotattionZ = 1;
-                double scaleX = 20,       scaleY = 20, scaleZ = 20;
+            {            
 
                 double[,] worldMatrix = getWorldMatrix(translationX, translationY, translationZ, rotationX, rotationY, rotattionZ, scaleX, scaleY, scaleZ);
                
@@ -346,13 +350,13 @@ namespace Affine_transformations_in_space
                     foreach (var vertex in face.Vertices) 
                     {
                         point worldPoint = TransformToWorld(vertex, worldMatrix);
-                        Point projectedPoint = ApplyProjection(worldPoint, IsometricMatrix());
+                        Point projectedPoint = ApplyProjection(worldPoint, projectFunc()); //передаём сюда матрицу перспективы(конверт в 2D)
                         points2D.Add(projectedPoint);
                     }
                     e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
                   
-
                 }
+               
 
 
                 //e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
@@ -383,8 +387,6 @@ namespace Affine_transformations_in_space
 
 
         }
-
-
 
 
         private void multMatr(double[,] transformationMatrix) 
@@ -431,8 +433,7 @@ namespace Affine_transformations_in_space
                 {0, 0, sz, 0 },
                 {0, 0, 0, 1 }
             };
-
-            
+          
         }
 
         private double[,] rotationMatrix(double angleX, double angleY, double angleZ)
@@ -522,7 +523,6 @@ namespace Affine_transformations_in_space
                 {l * (1 - cosFi) * n + m * sinFI, m * (1 - cosFi) * n - l * sinFI, Math.Pow(n,2) + cosFi * (1 - Math.Pow(n, 2)), 0  },
                 {0, 0, 0 ,1 }
 
-
             };
 
             multMatr(matr);
@@ -534,8 +534,9 @@ namespace Affine_transformations_in_space
             double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
             double[,] scalingMatr = scalingMatrix(sx, sy, sz);
 
-            //Итоговая мировая матрица Translation * Rotation * Scaling
-            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr));
+            //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection
+            //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr)); reflMatr
+            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, reflMatr)));
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -569,16 +570,20 @@ namespace Affine_transformations_in_space
         }
 
 
-
-
         private void button2_Click(object sender, EventArgs e)
         {
-            try {
+           
+
+                translationX += Convert.ToInt32(dxBox.Text);
+                translationY += Convert.ToInt32(dyBox.Text);
+                translationZ += Convert.ToInt32(dzBox.Text);
+
+
                 //translation(Convert.ToInt32(dxBox.Text), Convert.ToInt32(dyBox.Text), Convert.ToInt32(dzBox.Text));
-            } catch (Exception ex){
-                MessageBox.Show("Впишите корректные значения смещения!");
-            }
-                    
+                pictureBox1.Invalidate();
+
+                 
+            
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -610,114 +615,149 @@ namespace Affine_transformations_in_space
 
         public void radioButtonSwitch(object sender, EventArgs e)
         {
-            double[,] translationMatrix = new double[,]
-            {
-                {1, 0, 0, 0 },
-                {0, 1, 0, 0 },
-                {0, 0, 1, 0 },
-                {0, 0, 0, 1 }
-            };
+            
+            
+            var rbt = sender as RadioButton;
 
-            if (radioButton6.Checked)
+            if (rbt != null && rbt.Checked) 
             {
-                translationMatrix = new double[,]
-                    {
-                        {-1, 0, 0, 0 },
-                        {0, -1, 0, 0 },
-                        {0, 0, 1, 0 },
-                        {0, 0, 0, 1 }
-                    };
-            }
-            else if (radioButton7.Checked)
-            {
-                translationMatrix = new double[,]
+                switch (rbt.Text) 
                 {
-                        {-1, 0, 0, 0 },
-                        {0, 1, 0, 0 },
-                        {0, 0, 1, 0 },
-                        {0, 0, 0, 1 }
-                };
+
+                    case "XAxis":
+                       spin = 0;
+                        break;
+                    case "YAxis":
+                        spin = 1;
+                        break;
+                    case "ZAxis":
+                        spin = 2;
+                        break;
+
+                }
+
             }
-            else if (radioButton8.Checked)
-            {
-                translationMatrix = new double[,]
-                {
-                        {1, 0, 0, 0 },
-                        {0, -1, 0, 0 },
-                        {0, 0, -1, 0 },
-                        {0, 0, 0, 1 }
-                };
-            }
-            multMatr(translationMatrix);
+
+                   
+            
+            //double[,] translationMatrix = new double[,]
+            //{
+            //    {1, 0, 0, 0 },
+            //    {0, 1, 0, 0 },
+            //    {0, 0, 1, 0 },
+            //    {0, 0, 0, 1 }
+            //};
+
+            //if (radioButton6.Checked)
+            //{
+            //    translationMatrix = new double[,]
+            //        {
+            //            {-1, 0, 0, 0 },
+            //            {0, -1, 0, 0 },
+            //            {0, 0, 1, 0 },
+            //            {0, 0, 0, 1 }
+            //        };
+            //}
+            //else if (radioButton7.Checked)
+            //{
+            //    translationMatrix = new double[,]
+            //    {
+            //            {-1, 0, 0, 0 },
+            //            {0, 1, 0, 0 },
+            //            {0, 0, 1, 0 },
+            //            {0, 0, 0, 1 }
+            //    };
+            //}
+            //else if (radioButton8.Checked)
+            //{
+            //    translationMatrix = new double[,]
+            //    {
+            //            {1, 0, 0, 0 },
+            //            {0, -1, 0, 0 },
+            //            {0, 0, -1, 0 },
+            //            {0, 0, 0, 1 }
+            //    };
+            //}
+           
         }
     
 
     private void button4_Click_1(object sender, EventArgs e)
         {
-            double[,] translationMatrix = new double[,]
-            {
-                {1, 0, 0, 0 },
-                {0, 1, 0, 0 },
-                {0, 0, 1, 0 },
-                {0, 0, 0, 1 }
-            };
+           
+            
 
             if (radioButton6.Checked)
                 {
-                MessageBox.Show("XY");
-                translationMatrix = new double[,]
+               
+                reflMatr = new double[,]
                     {
                         {1, 0, 0, 0 },
                         {0, 1, 0, 0 },
                         {0, 0, -1, 0 },
                         {0, 0, 0, 1 }
                     };
-                }
+
+                pictureBox1.Invalidate();
+
+
+            }
             else if (radioButton7.Checked)
             {
-                MessageBox.Show("XZ");
-                translationMatrix = new double[,]
+               
+                reflMatr = new double[,]
                 {
                         {1, 0, 0, 0 },
                         {0, -1, 0, 0 },
                         {0, 0, 1, 0 },
                         {0, 0, 0, 1 }
                 };
+
+                pictureBox1.Invalidate();
             }
             else if (radioButton8.Checked)
             {
-                MessageBox.Show("YZ");
-                translationMatrix = new double[,]
+               
+                reflMatr = new double[,]
                 {
                         {-1, 0, 0, 0 },
                         {0, 1, 0, 0 },
                         {0, 0, 1, 0 },
                         {0, 0, 0, 1 }
                 };
+
+                pictureBox1.Invalidate();
             }
-            multMatr(translationMatrix);
+            
+        }
+
+        private void switchReflectionRadioButton(object sender, EventArgs e)
+        {
+            
         }
 
         private void button5_Click_1(object sender, EventArgs e)
         {
             try 
             {
-                
+
                 double rbb = Convert.ToDouble(rotationBox.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
 
                 switch (spin)
                 {
                     case 0:
-                        //xRotation(rbb);
+                        rotationX += rbb;
                         break;
                     case 1:
-                        yRotation(rbb);
+                        rotationY += rbb;
                         break;
                     case 2:
-                        zRotation(rbb);
+                        rotattionZ += rbb;
                         break;
                 }
 
+
+                pictureBox1.Invalidate();
 
             }
             catch (Exception ex) { MessageBox.Show("Введите корректные значения!"); }
@@ -760,6 +800,12 @@ namespace Affine_transformations_in_space
             point p1 = new point(dxScale, dyScale, dzScale);
 
             scaleFigureCentroid(p1, Centroid());
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            d = Convert.ToInt32(dMeaning.Text);
+            pictureBox1.Invalidate();
         }
     }
 }
