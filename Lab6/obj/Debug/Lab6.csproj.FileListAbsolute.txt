@@ -9,3 +9,13 @@ C:\Users\Danik\Desktop\CompGrD\Lab6\obj\Debug\Lab6.pdb
 C:\Users\Danik\Desktop\CompGrD\Lab6\bin\Debug\Lab6.exe.config
 C:\Users\Danik\Desktop\CompGrD\Lab6\bin\Debug\Lab6.exe
 C:\Users\Danik\Desktop\CompGrD\Lab6\bin\Debug\Lab6.pdb
+D:\UNIVERSITY\computer-graphics\Lab6\bin\Debug\Lab6.exe.config
+D:\UNIVERSITY\computer-graphics\Lab6\bin\Debug\Lab6.exe
+D:\UNIVERSITY\computer-graphics\Lab6\bin\Debug\Lab6.pdb
+D:\UNIVERSITY\computer-graphics\Lab6\obj\Debug\Lab6.csproj.AssemblyReference.cache
+D:\UNIVERSITY\computer-graphics\Lab6\obj\Debug\Affine_transformations_in_space.Afins3D.resources
+D:\UNIVERSITY\computer-graphics\Lab6\obj\Debug\Lab6.Properties.Resources.resources
+D:\UNIVERSITY\computer-graphics\Lab6\obj\Debug\Lab6.csproj.GenerateResource.cache
+D:\UNIVERSITY\computer-graphics\Lab6\obj\Debug\Lab6.csproj.CoreCompileInputs.cache
+D:\UNIVERSITY\computer-graphics\Lab6\obj\Debug\Lab6.exe
+D:\UNIVERSITY\computer-graphics\Lab6\obj\Debug\Lab6.pdb

@@ -416,10 +416,10 @@ namespace Affine_transformations_in_space
         {
             return new double[,]
             {
-                { 1, 0, 0, tx },
-                { 0, 1, 0, ty },
-                { 0, 0, 1, tz },
-                { 0, 0, 0, 1 }
+                { 1, 0, 0, 0 },
+                { 0, 1, 0, 0 },
+                { 0, 0, 1, 0 },
+                { tx, ty, tz, 1 }
             };         
         }
 
@@ -573,18 +573,11 @@ namespace Affine_transformations_in_space
 
         private void button2_Click(object sender, EventArgs e)
         {
-                    
-                 
-                translationX += Convert.ToInt32(dxBox.Text);
-                translationY += Convert.ToInt32(dyBox.Text);
-                translationZ += Convert.ToInt32(dzBox.Text);
+            translationX += Convert.ToInt32(dxBox.Text);
+            translationY += Convert.ToInt32(dyBox.Text);
+            translationZ += Convert.ToInt32(dzBox.Text);
 
-
-                //translation(Convert.ToInt32(dxBox.Text), Convert.ToInt32(dyBox.Text), Convert.ToInt32(dzBox.Text));
-                pictureBox1.Invalidate();
-
-                 
-            
+            pictureBox1.Invalidate();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -594,9 +587,9 @@ namespace Affine_transformations_in_space
             var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
             var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
 
-            scaleX += dxScale;
-            scaleY += dyScale;
-            scaleZ += dzScale;
+            scaleX *= dxScale;
+            scaleY *= dyScale;
+            scaleZ *= dzScale;
             //point p1 = new point(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text), Convert.ToInt32(textBox3.Text));
 
             //scaleFigure(p1);
