@@ -26,14 +26,15 @@ namespace Affine_transformations_in_space
         public static List<point> AxesPoints;
         //public static int scale = 100;
         double[,] reflMatr;
+        double[,] lRotMatr;
         public static int spin = 0;
         public static int switchRotationCase = 0;
         
-        double translationX = 1, translationY = 1, translationZ = 1;
-        double rotationX = 1, rotationY = 1, rotattionZ = 1;
-        double scaleX = 20, scaleY = 20, scaleZ = 20;
+        double translationX , translationY, translationZ;
+        double rotationX, rotationY, rotattionZ;
+        double scaleX, scaleY, scaleZ;
 
-        public static double focalLength = 500; //Глубина
+ 
         public Afins3D()
         {
             InitializeComponent();
@@ -56,6 +57,14 @@ namespace Affine_transformations_in_space
                 {0, 0, 1, 0 },
                 {0, 0, 0, 1 }
            };
+
+            lRotMatr = new double[,]
+          {
+                {1, 0, 0, 0 },
+                {0, 1, 0, 0 },
+                {0, 0, 1, 0 },
+                {0, 0, 0, 1 }
+          };
         }
 
         private point chelnok(polygon face) 
@@ -512,12 +521,12 @@ namespace Affine_transformations_in_space
         }
 
 
-        private void LRotation(int fi, double l, double m, double n)
+        private double[,] LRotation(int fi, double l, double m, double n)
         {
             double fiRad = (Math.PI / 180) * fi;
             double cosFi = Math.Cos(fiRad);
             double sinFI = Math.Sin(fiRad);
-            double[,] matr = new double[,]
+            return new double[,]
             {
                 {Math.Pow(l, 2) + cosFi * (1 - Math.Pow(l, 2)), l * (1 - cosFi) * m + n * sinFI, l * (1 - cosFi) * n - m * sinFI, 0},
                 {l * (1 - cosFi) * m - n * sinFI, Math.Pow(m, 2) + cosFi * (1 - Math.Pow(m, 2)), m * (1 - cosFi ) *  n  + l * sinFI, 0},
@@ -526,7 +535,7 @@ namespace Affine_transformations_in_space
 
             };
 
-            multMatr(matr);
+          
         }
 
         private double[,] getWorldMatrix(double tx, double ty, double tz, double angleX, double angleY, double angleZ, double sx, double sy, double sz) 
@@ -535,9 +544,10 @@ namespace Affine_transformations_in_space
             double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
             double[,] scalingMatr = scalingMatrix(sx, sy, sz);
 
-            //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection
+            //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection * Lrotation
             //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr)); reflMatr
-            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, reflMatr)));
+            //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, reflMatr)));
+            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, MultiplyMarices(reflMatr, lRotMatr))));
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -690,13 +700,15 @@ namespace Affine_transformations_in_space
             if (radioButton6.Checked)
                 {
                
-                reflMatr = new double[,]
+                var reflXYMatr = new double[,]
                     {
                         {1, 0, 0, 0 },
                         {0, 1, 0, 0 },
                         {0, 0, -1, 0 },
                         {0, 0, 0, 1 }
                     };
+
+                reflMatr = MultiplyMarices(reflMatr, reflXYMatr);
 
                 pictureBox1.Invalidate();
 
@@ -705,7 +717,7 @@ namespace Affine_transformations_in_space
             else if (radioButton7.Checked)
             {
                
-                reflMatr = new double[,]
+                var reflXZMatr = new double[,]
                 {
                         {1, 0, 0, 0 },
                         {0, -1, 0, 0 },
@@ -713,18 +725,22 @@ namespace Affine_transformations_in_space
                         {0, 0, 0, 1 }
                 };
 
+                reflMatr = MultiplyMarices(reflMatr, reflXZMatr);
+
                 pictureBox1.Invalidate();
             }
             else if (radioButton8.Checked)
             {
                
-                reflMatr = new double[,]
+                var reflYZMatr = new double[,]
                 {
                         {-1, 0, 0, 0 },
                         {0, 1, 0, 0 },
                         {0, 0, 1, 0 },
                         {0, 0, 0, 1 }
                 };
+
+                reflMatr = MultiplyMarices(reflMatr, reflYZMatr);
 
                 pictureBox1.Invalidate();
             }
@@ -766,7 +782,7 @@ namespace Affine_transformations_in_space
 
         private void scaleFigureCentroid(point p, point p1)
         {
-            MessageBox.Show($"{p.X}    {p.Y}      {p.Z}     {p1.X}    {p1.Y}    {p1.Z}");
+            //MessageBox.Show($"{p.X}    {p.Y}      {p.Z}     {p1.X}    {p1.Y}    {p1.Z}");
             double[,] matr = new double[,] {
                 {p.X, 0, 0, 0 },
                 {0, p.Y, 0, 0 },
@@ -774,7 +790,7 @@ namespace Affine_transformations_in_space
                 {0, 0, 0, 1 }
             };
 
-            multMatr(matr);
+            
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -789,7 +805,9 @@ namespace Affine_transformations_in_space
 
         private void button7_Click(object sender, EventArgs e)
         {
-            //LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+            var lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+            lRotMatr =  MultiplyMarices(lRotMatr, lRotMatr1);
+            pictureBox1.Invalidate();
         }
 
         private void button6_Click_1(object sender, EventArgs e)
