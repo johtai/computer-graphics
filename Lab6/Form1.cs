@@ -354,6 +354,7 @@ namespace Affine_transformations_in_space
                         points2D.Add(projectedPoint);
                     }
                     e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
+                    
                   
                 }
                
@@ -572,8 +573,8 @@ namespace Affine_transformations_in_space
 
         private void button2_Click(object sender, EventArgs e)
         {
-           
-
+                    
+                 
                 translationX += Convert.ToInt32(dxBox.Text);
                 translationY += Convert.ToInt32(dyBox.Text);
                 translationZ += Convert.ToInt32(dzBox.Text);
@@ -592,8 +593,14 @@ namespace Affine_transformations_in_space
             var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "."});
             var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
             var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            point p1 = new point(dxScale, dyScale, dzScale);
+
+            scaleX += dxScale;
+            scaleY += dyScale;
+            scaleZ += dzScale;
+            //point p1 = new point(Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text), Convert.ToInt32(textBox3.Text));
+
             //scaleFigure(p1);
+            pictureBox1.Invalidate();
         }
 
 
