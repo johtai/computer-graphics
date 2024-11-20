@@ -207,7 +207,26 @@ namespace Affine_transformations_in_space
 
                 return new polyhedron(new List<point> { v1, v2, v3, v4, v5, v6, v7, v8 }, new List<polygon> {firstPol, secondPol, thirdPol, fourdPol, fivethPol, sixthPol });
             }
+            public static polyhedron DrawOctaedr()
+            {
+                point v1 = new point(1, 0, 1);
+                point v2 = new point(1, 0, -1);
+                point v3 = new point(-1, 0, -1);
+                point v4 = new point(-1, 0, 1);
+                point v5 = new point(0, 1, 0);
+                point v6 = new point(0, -1, 0);
 
+                polygon firstPol = new polygon(new List<point> { v1, v2, v5 });
+                polygon secondPol = new polygon(new List<point> { v2, v3, v5 });
+                polygon thirdPol = new polygon(new List<point> { v3, v4, v5 });
+                polygon fourdPol = new polygon(new List<point> { v4, v1, v5 });
+                polygon fivethPol = new polygon(new List<point> { v1, v2, v6 });
+                polygon sixthPol = new polygon(new List<point> { v2, v3, v6 });
+                polygon sevenPol = new polygon(new List<point> { v3, v4, v6 });
+                polygon eightPol = new polygon(new List<point> { v4, v1, v6 });
+
+                return new polyhedron(new List<point> { v1, v2, v3, v4, v5, v6 }, new List<polygon> { firstPol, secondPol, thirdPol, fourdPol, fivethPol, sixthPol, secondPol, eightPol });
+            }
 
             public static polyhedron drawIcosahedr()
             {
@@ -264,52 +283,54 @@ namespace Affine_transformations_in_space
 
             public static polyhedron drawDodecahedr()
             {
-                double phi = (1 + Math.Sqrt(5)) / 2;  // Золотое сечение
-                double scale = 1;  // Масштаб для вершин
+                double phi = (1 + Math.Sqrt(5)) / 2; // Золотое сечение
+                double scale = 1; // Масштаб для вершин
 
                 List<point> vertices = new List<point>
-        {
-            new point(-1 * scale, -1* scale , -1* scale),
-            new point(-1* scale, -1* scale,  1* scale),
-            new point(-1* scale,  1* scale, -1* scale),
-            new point(-1* scale,  1* scale,  1* scale),
-            new point( 1* scale, -1* scale, -1* scale),
-            new point( 1* scale, -1* scale,  1* scale),
-            new point( 1* scale,  1* scale, -1* scale),
-            new point( 1* scale,  1* scale,  1* scale),
+{
+new point(-1 * scale, -1* scale , -1* scale), //0
+new point(-1* scale, -1* scale, 1* scale), //1
+new point(-1* scale, 1* scale, -1* scale), //2
+new point(-1* scale, 1* scale, 1* scale), //3
+new point( 1* scale, -1* scale, -1* scale), //4
+new point( 1* scale, -1* scale, 1* scale), //5
+new point( 1* scale, 1* scale, -1* scale), //6
+new point( 1* scale, 1* scale, 1* scale),//7
 
-            new point(0, -1/phi * scale, -phi * scale),
-            new point(0, -1/phi * scale,  phi * scale),
-            new point(0,  1/phi * scale, -phi * scale),
-            new point(0,  1/phi * scale,  phi * scale),
+new point(0, -1/phi * scale, -phi * scale), //8
+new point(0, -1/phi * scale, phi * scale),//9
+new point(0, 1/phi * scale, -phi * scale),//10
+new point(0, 1/phi * scale, phi * scale),//11
 
-            new point(-1/phi * scale, -phi * scale, 0),
-            new point(-1/phi * scale,  phi * scale, 0),
-            new point(1/phi * scale, -phi * scale, 0),
-            new point(1/phi * scale,  phi * scale, 0),
+new point(-1/phi * scale, -phi * scale, 0),//12
+new point(-1/phi * scale, phi * scale, 0),//13
+new point(1/phi * scale, -phi * scale, 0),//14
+new point(1/phi * scale, phi * scale, 0),//15
 
-            new point(-phi * scale, 0, -1/phi * scale),
-            new point( phi * scale, 0, -1/phi * scale),
-            new point(-phi * scale, 0,  1/phi * scale),
-            new point( phi * scale, 0,  1/phi * scale)
-        };
+new point(-phi * scale, 0, -1/phi * scale),//16
+new point( phi * scale, 0, -1/phi * scale),//17
+new point(-phi * scale, 0, 1/phi * scale),//18
+new point( phi * scale, 0, 1/phi * scale)//19
+};
 
                 // Определение 12 пятиугольных граней
                 List<polygon> faces = new List<polygon>
-        {
-            new polygon(new List<point> { vertices[0], vertices[8], vertices[4], vertices[14], vertices[12] }),
-            new polygon(new List<point> { vertices[0], vertices[12], vertices[2], vertices[13], vertices[10] }),
-            new polygon(new List<point> { vertices[0], vertices[10], vertices[6], vertices[16], vertices[8] }),
-            new polygon(new List<point> { vertices[1], vertices[9], vertices[5], vertices[14], vertices[8] }),
-            new polygon(new List<point> { vertices[1], vertices[8], vertices[16], vertices[11], vertices[3] }),
-            new polygon(new List<point> { vertices[1], vertices[3], vertices[12], vertices[4], vertices[9] }),
-            new polygon(new List<point> { vertices[2], vertices[10], vertices[17], vertices[18], vertices[13] }),
-            new polygon(new List<point> { vertices[2], vertices[13], vertices[3], vertices[11], vertices[19] }),
-            new polygon(new List<point> { vertices[3], vertices[19], vertices[7], vertices[15], vertices[9] }),
-            new polygon(new List<point> { vertices[4], vertices[9], vertices[15], vertices[5], vertices[14] }),
-            new polygon(new List<point> { vertices[5], vertices[15], vertices[7], vertices[6], vertices[17] }),
-            new polygon(new List<point> { vertices[6], vertices[17], vertices[10], vertices[18], vertices[16] })
-        };
+{
+//new polygon(new List<point> { vertices[0], vertices[1], vertices[2], vertices[3] }),
+new polygon(new List<point> { vertices[0], vertices[8], vertices[4], vertices[14], vertices[12] }),
+new polygon(new List<point> { vertices[15], vertices[7], vertices[11], vertices[3], vertices[13] }),
+new polygon(new List<point> { vertices[0], vertices[16], vertices[2], vertices[10], vertices[8] }),
+//new polygon(new List<point> { vertices[0], vertices[19] }),
+new polygon(new List<point> { vertices[14], vertices[4], vertices[17], vertices[19], vertices[5] }),
+new polygon(new List<point> { vertices[8], vertices[4], vertices[17], vertices[6], vertices[10] }),
+new polygon(new List<point> { vertices[0], vertices[12], vertices[1], vertices[18], vertices[16] }),
+new polygon(new List<point> { vertices[1], vertices[12], vertices[14], vertices[5], vertices[9] }),
+new polygon(new List<point> { vertices[3], vertices[13], vertices[2], vertices[16], vertices[18] }),
+new polygon(new List<point> { vertices[3], vertices[18], vertices[1], vertices[9], vertices[11] }),
+new polygon(new List<point> { vertices[7], vertices[11], vertices[9], vertices[5], vertices[19] }),
+new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[6], vertices[15] }),
+//new polygon(new List<point> { vertices[19], vertices[18], vertices[17], vertices[16], vertices[16] })
+};
 
                 return new polyhedron(vertices, faces);
             }
@@ -381,35 +402,53 @@ namespace Affine_transformations_in_space
                     }
                     e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
                     
-                  
+                    
                 }
-               
 
 
-                //e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
-
-                //for (int i = 0; i < pop.Faces.Count(); i++)
-                //{
-                //    // Vertices.Select(v => Isometric2DPoint(v)) 
-
-                //    Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
-
-                //    e.Graphics.DrawPolygon(Pens.Black, points2D);
-                //}
+                SolidBrush sb = new SolidBrush(Color.FromArgb(255, 255, 0, 0));
+                List<Point> points2D_1 = new List<Point>();
+                foreach (var ver in pop.Vertices)
+                {
 
 
+                    point worldPoint = TransformToWorld(ver, worldMatrix);
+                    Point projectedPoint = ApplyProjection(worldPoint, projectFunc()); //передаём сюда матрицу перспективы(конверт в 2D)
+                    points2D_1.Add(projectedPoint);
 
-                //List<Pen> lst = new List<Pen> { Pens.Red, Pens.Blue, Pens.Green };
-                //for (int i = 0; i < AxisPop.Faces.Count(); i++)
-                //{
+                    foreach (var vr in points2D_1)
+                    {
+                        e.Graphics.FillEllipse(sb, vr.X, vr.Y, 5, 5);
+
+                    }
+                }
 
 
-                //    Point[] pointsAxis2D = AxisPop.Faces[i].Vertices.Select(projectFunc).ToArray();
 
-                //    e.Graphics.DrawPolygon(lst[i], pointsAxis2D);
-                //}
+                    //e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
 
-            }
+                    //for (int i = 0; i < pop.Faces.Count(); i++)
+                    //{
+                    //    // Vertices.Select(v => Isometric2DPoint(v)) 
+
+                    //    Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
+
+                    //    e.Graphics.DrawPolygon(Pens.Black, points2D);
+                    //}
+
+
+
+                    //List<Pen> lst = new List<Pen> { Pens.Red, Pens.Blue, Pens.Green };
+                    //for (int i = 0; i < AxisPop.Faces.Count(); i++)
+                    //{
+
+
+                    //    Point[] pointsAxis2D = AxisPop.Faces[i].Vertices.Select(projectFunc).ToArray();
+
+                    //    e.Graphics.DrawPolygon(lst[i], pointsAxis2D);
+                    //}
+
+                }
            // DrawAxes(e.Graphics, projectFunc);
 
 
@@ -560,7 +599,7 @@ namespace Affine_transformations_in_space
             double[,] translationMatr = translationMatrix(tx, ty, tz);
             double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
             double[,] scalingMatr = scalingMatrix(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
-            MessageBox.Show($"{scaleXCenter} {scaleYCenter} {scaleZCenter}");
+            //MessageBox.Show($"{scaleXCenter} {scaleYCenter} {scaleZCenter}");
             //double[,] scalingMatrCenter = scaleFigureCentroid(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
 
             //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection * Lrotation
@@ -584,6 +623,12 @@ namespace Affine_transformations_in_space
                     pnts = pop.Faces;
                     pictureBox1.Invalidate();
                     break;
+                case "Октаэдр":
+                    pop = polyhedron.DrawOctaedr();
+                    pnts = pop.Faces;
+                    pictureBox1.Invalidate();
+                    break;
+
                 case "Икосаэдр":
                     pop = polyhedron.drawIcosahedr();
                     pnts = pop.Faces;
