@@ -367,10 +367,10 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
             double newX = p.X * projectionMatrix[0, 0] + p.Y * projectionMatrix[1, 0] + p.Z * projectionMatrix[2, 0];
             double newY = p.X * projectionMatrix[0, 1] + p.Y * projectionMatrix[1, 1] + p.Z * projectionMatrix[2, 1];
 
-            int x2D = (int)(newX + pictureBox1.Width / 2);
-            int y2D = (int)(newY + pictureBox1.Height / 2);
+            //int x2D = (int)(newX + pictureBox1.Width / 2);
+            //int y2D = (int)(newY + pictureBox1.Height / 2);
 
-            return new Point(x2D, y2D);
+            return new Point((int)newX, (int) newY);
         }
 
         private point TransformToWorld(point p, double[,] worldMatrix)
@@ -425,56 +425,16 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
 
 
 
-                    //e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
 
-                    //for (int i = 0; i < pop.Faces.Count(); i++)
-                    //{
-                    //    // Vertices.Select(v => Isometric2DPoint(v)) 
-
-                    //    Point[] points2D = pop.Faces[i].Vertices.Select(projectFunc).ToArray();
-
-                    //    e.Graphics.DrawPolygon(Pens.Black, points2D);
-                    //}
-
-
-
-                    //List<Pen> lst = new List<Pen> { Pens.Red, Pens.Blue, Pens.Green };
-                    //for (int i = 0; i < AxisPop.Faces.Count(); i++)
-                    //{
-
-
-                    //    Point[] pointsAxis2D = AxisPop.Faces[i].Vertices.Select(projectFunc).ToArray();
-
-                    //    e.Graphics.DrawPolygon(lst[i], pointsAxis2D);
-                    //}
 
                 }
-           // DrawAxes(e.Graphics, projectFunc);
+
 
 
         }
 
 
-        private void multMatr(double[,] transformationMatrix) 
-        {
-           
-           
-            for (int i = 0; i < pop.Faces.Count; i++) 
-            {
-                for (int j = 0; j < pop.Faces[i].Vertices.Count; j++) 
-                {
-                    var po = pop.Faces[i].Vertices[j];
-                    double newX =  po.X * transformationMatrix[0, 0] + po.Y * transformationMatrix[1, 0] + po.Z * transformationMatrix[2, 0] + transformationMatrix[3, 0];
-                    double newY =  po.X * transformationMatrix[0, 1] + po.Y * transformationMatrix[1, 1] + po.Z * transformationMatrix[2, 1] + transformationMatrix[3, 1];
-                    double newZ =  po.X * transformationMatrix[0, 2] + po.Y * transformationMatrix[1, 2] + po.Z * transformationMatrix[2, 2] + transformationMatrix[3, 2];
-                    
-                    pop.Faces[i].Vertices[j] = new point(newX, newY, newZ);
-                }
-            }
 
-            pictureBox1.Invalidate();
-
-        }
 
         //Матрица перемещения
         private double[,] translationMatrix(double tx, double ty, double tz)
@@ -714,44 +674,7 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
 
                    
             
-            //double[,] translationMatrix = new double[,]
-            //{
-            //    {1, 0, 0, 0 },
-            //    {0, 1, 0, 0 },
-            //    {0, 0, 1, 0 },
-            //    {0, 0, 0, 1 }
-            //};
 
-            //if (radioButton6.Checked)
-            //{
-            //    translationMatrix = new double[,]
-            //        {
-            //            {-1, 0, 0, 0 },
-            //            {0, -1, 0, 0 },
-            //            {0, 0, 1, 0 },
-            //            {0, 0, 0, 1 }
-            //        };
-            //}
-            //else if (radioButton7.Checked)
-            //{
-            //    translationMatrix = new double[,]
-            //    {
-            //            {-1, 0, 0, 0 },
-            //            {0, 1, 0, 0 },
-            //            {0, 0, 1, 0 },
-            //            {0, 0, 0, 1 }
-            //    };
-            //}
-            //else if (radioButton8.Checked)
-            //{
-            //    translationMatrix = new double[,]
-            //    {
-            //            {1, 0, 0, 0 },
-            //            {0, -1, 0, 0 },
-            //            {0, 0, -1, 0 },
-            //            {0, 0, 0, 1 }
-            //    };
-            //}
            
         }
     
