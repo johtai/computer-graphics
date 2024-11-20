@@ -1,0 +1,151 @@
+Методы загрузки и сохранения:
+
+private polyhedron LoadFromOBJ(string filePath)
+{
+    List<point> vertices = new List<point>();
+    List<polygon> faces = new List<polygon>();
+
+    foreach (var line in File.ReadLines(filePath))
+    {
+        if (line.StartsWith("v "))
+        {
+            var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
+            double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+            double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
+            vertices.Add(new point(x, y, z));
+        }
+        else if (line.StartsWith("f "))
+        {
+            var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            List<point> faceVertices = parts.Skip(1)
+                                             .Select(index => vertices[int.Parse(index) - 1])
+                                             .ToList();
+            faces.Add(new polygon(faceVertices));
+        }
+    }
+
+    return new polyhedron(vertices, faces);
+}
+
+private void SaveToOBJ(polyhedron polyhedron, string filePath)
+{
+    using (StreamWriter writer = new StreamWriter(filePath))
+    {
+        foreach (var vertex in polyhedron.Vertices)
+        {
+            writer.WriteLine($"v {vertex.X} {vertex.Y} {vertex.Z}");
+        }
+
+        foreach (var face in polyhedron.Faces)
+        {
+            var indices = face.Vertices.Select(v => polyhedron.Vertices.IndexOf(v) + 1);
+            writer.WriteLine("f " + string.Join(" ", indices));
+        }
+    }
+}
+
+
+
+Пример использования:
+private void LoadButton_Click(object sender, EventArgs e)
+{
+    OpenFileDialog openFileDialog = new OpenFileDialog();
+    if (openFileDialog.ShowDialog() == DialogResult.OK)
+    {
+        pop = LoadFromOBJ(openFileDialog.FileName);
+        pictureBox1.Invalidate();
+    }
+}
+
+private void SaveButton_Click(object sender, EventArgs e)
+{
+    SaveFileDialog saveFileDialog = new SaveFileDialog();
+    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+    {
+        SaveToOBJ(pop, saveFileDialog.FileName);
+    }
+}
+
+
+2. Построение фигуры вращения
+Фигура вращения строится путём вращения набора точек (образующей) вокруг заданной оси на определённый угол. Например, если образующая задана в плоскости 
+𝑋
+𝑍
+XZ, вращение вокруг оси 
+𝑌
+Y создаст цилиндрическую форму.
+
+Метод построения фигуры вращения:
+private polyhedron BuildRevolutionFigure(List<point> generatingCurve, int segments, string axis)
+{
+    List<point> vertices = new List<point>();
+    List<polygon> faces = new List<polygon>();
+
+    double angleStep = 360.0 / segments;
+
+    for (int i = 0; i < segments; i++)
+    {
+        double angle = i * angleStep;
+        double[,] rotationMatrix;
+
+        switch (axis.ToUpper())
+        {
+            case "X":
+                rotationMatrix = xRotationMatrix(angle);
+                break;
+            case "Y":
+                rotationMatrix = yRotation(angle);
+                break;
+            case "Z":
+                rotationMatrix = zRotation(angle);
+                break;
+            default:
+                throw new ArgumentException("Invalid axis");
+        }
+
+        foreach (var point in generatingCurve)
+        {
+            vertices.Add(TransformToWorld(point, rotationMatrix));
+        }
+    }
+
+    // Создаём грани между сегментами
+    int count = generatingCurve.Count;
+    for (int i = 0; i < segments; i++)
+    {
+        for (int j = 0; j < count - 1; j++)
+        {
+            var v1 = vertices[i * count + j];
+            var v2 = vertices[i * count + j + 1];
+            var v3 = vertices[((i + 1) % segments) * count + j + 1];
+            var v4 = vertices[((i + 1) % segments) * count + j];
+
+            faces.Add(new polygon(new List<point> { v1, v2, v3, v4 }));
+        }
+    }
+
+    return new polyhedron(vertices, faces);
+}
+
+
+Пример использования:
+private void BuildRevolutionButton_Click(object sender, EventArgs e)
+{
+    List<point> generatingCurve = new List<point>
+    {
+        new point(0, 0, 1),
+        new point(0, 0, 2),
+        new point(0, 1, 2)
+    };
+
+    pop = BuildRevolutionFigure(generatingCurve, 36, "Y");
+    pictureBox1.Invalidate();
+}
+
+
+Итог
+Теперь ваша программа позволяет:
+
+Загружать и сохранять модели многогранников в формате OBJ.
+Создавать фигуры вращения на основе заданной образующей, оси вращения и количества сегментов.
