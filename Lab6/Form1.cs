@@ -19,6 +19,7 @@ namespace Affine_transformations_in_space
     {
 
         polyhedron pop;
+        double[,] worldMatrix;
         //polyhedron AxisPop;
         double d = 5;
         public Func<double[,]> projectFunc;
@@ -33,8 +34,9 @@ namespace Affine_transformations_in_space
         double translationX , translationY, translationZ;
         double rotationX, rotationY, rotattionZ;
         double scaleX, scaleY, scaleZ;
+        double scaleXCenter, scaleYCenter, scaleZCenter;
 
- 
+
         public Afins3D()
         {
             InitializeComponent();
@@ -49,6 +51,7 @@ namespace Affine_transformations_in_space
             translationX = 1; translationY = 1; translationZ = 1;
             rotationX = 1; rotationY = 1; rotattionZ = 1;
             scaleX = 20; scaleY = 20; scaleZ = 20;
+            scaleXCenter = 0; scaleYCenter = 0; scaleZCenter = 0;
 
             reflMatr = new double[,]
            {
@@ -67,15 +70,29 @@ namespace Affine_transformations_in_space
           };
         }
 
+        private double pointXOnMatrix(double point, double[,] matrix)
+        {
+            return point * matrix[0, 0] + point * matrix[1, 0] + point * matrix[2, 0] + matrix[3, 0];
+        }
+
+        private double pointYOnMatrix(double point, double[,] matrix)
+        {
+            return point * matrix[0, 1] + point * matrix[1, 1] + point * matrix[2, 1] + matrix[3, 1];
+        }
+
+        private double pointZOnMatrix(double point, double[,] matrix)
+        {
+            return point * matrix[0, 2] + point * matrix[1, 2] + point * matrix[2, 2] + matrix[3, 2];
+        }
         private point chelnok(polygon face) 
         {
             double sumX = 0; double sumY = 0; double sumZ = 0;
             
             foreach (var vertex in face.Vertices)
             {
-                sumX += vertex.X;
-                sumY += vertex.Y;
-                sumZ += vertex.Z;
+                sumX += pointXOnMatrix(vertex.X, worldMatrix);
+                sumY += pointYOnMatrix(vertex.Y, worldMatrix);
+                sumZ += pointYOnMatrix(vertex.Z, worldMatrix);
 
             }
             sumX /= face.Vertices.Count;
@@ -86,7 +103,7 @@ namespace Affine_transformations_in_space
 
         // Возвращает геометрический центр полигона
         // Возвращает геометрический центр всего многогранника
-        private point Centroid()
+        private (double, double, double) Centroid()
         {
             double centerX = 0; double centerY = 0; double centerZ = 0;
             foreach (polygon face in pnts)
@@ -100,11 +117,11 @@ namespace Affine_transformations_in_space
              centerY /= pnts.Count;
              centerZ /= pnts.Count;
 
-            MessageBox.Show("Центр по X: " + centerX.ToString());
-            MessageBox.Show("Центр по Y: " + centerY.ToString());
-            MessageBox.Show("Центр по Z: " + centerZ.ToString());
+            //MessageBox.Show("Центр по X: " + centerX.ToString());
+            //MessageBox.Show("Центр по Y: " + centerY.ToString());
+            //MessageBox.Show("Центр по Z: " + centerZ.ToString());
 
-            return new point(centerX, centerY, centerZ);
+            return (centerX, centerY, centerZ);
         }
 
         void RadioButton_CheckedChanged(object sender, EventArgs e) 
@@ -350,7 +367,7 @@ namespace Affine_transformations_in_space
             if (pop != null)
             {            
 
-                double[,] worldMatrix = getWorldMatrix(translationX, translationY, translationZ, rotationX, rotationY, rotattionZ, scaleX, scaleY, scaleZ);
+                worldMatrix = getWorldMatrix(translationX, translationY, translationZ, rotationX, rotationY, rotattionZ, scaleX, scaleY, scaleZ);
                
                
                 foreach (var face in pop.Faces) 
@@ -433,7 +450,7 @@ namespace Affine_transformations_in_space
         }
 
         //Матрица Масштабирования
-        private double[,] scalingMatrix(double sx, double sy, double sz)
+        private double[,] scalingMatrix(double sx, double sy, double sz, double cx, double cy, double cz)
         {
 
             return new double[,] 
@@ -441,7 +458,7 @@ namespace Affine_transformations_in_space
                 {sx, 0, 0 ,0 },
                 {0, sy, 0, 0 },
                 {0, 0, sz, 0 },
-                {0, 0, 0, 1 }
+                {cx, cy, cz, 1 }
             };
           
         }
@@ -542,7 +559,9 @@ namespace Affine_transformations_in_space
         {
             double[,] translationMatr = translationMatrix(tx, ty, tz);
             double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
-            double[,] scalingMatr = scalingMatrix(sx, sy, sz);
+            double[,] scalingMatr = scalingMatrix(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
+            MessageBox.Show($"{scaleXCenter} {scaleYCenter} {scaleZCenter}");
+            //double[,] scalingMatrCenter = scaleFigureCentroid(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
 
             //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection * Lrotation
             //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr)); reflMatr
@@ -780,34 +799,18 @@ namespace Affine_transformations_in_space
             
         }
 
-        private void scaleFigureCentroid(point p, point p1)
+        private double[,] scaleFigureCentroid(double sx, double sy, double sz, double cx,
+            double cy, double cz)
         {
-            //MessageBox.Show($"{p.X}    {p.Y}      {p.Z}     {p1.X}    {p1.Y}    {p1.Z}");
-            double[,] matr = new double[,] {
-                {p.X, 0, 0, 0 },
-                {0, p.Y, 0, 0 },
-                {0, 0, p.Z, 0 },
-                {0, 0, 0, 1 }
+            return new double[,]
+            {
+                {sx, 0, 0 ,0 },
+                {0, sy, 0, 0 },
+                {0, 0, sz, 0 },
+                {cx, cy, cz, 1 }
             };
 
-            
-        }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            point p1 = new point(dxScale, dyScale, dzScale);
-
-            scaleFigureCentroid(p1, Centroid());
-        }
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-            var lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
-            lRotMatr =  MultiplyMarices(lRotMatr, lRotMatr1);
-            pictureBox1.Invalidate();
         }
 
         private void button6_Click_1(object sender, EventArgs e)
@@ -815,9 +818,21 @@ namespace Affine_transformations_in_space
             var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
             var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
             var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            point p1 = new point(dxScale, dyScale, dzScale);
 
-            scaleFigureCentroid(p1, Centroid());
+            scaleX *= dxScale;
+            scaleY *= dyScale;
+            scaleZ *= dzScale;
+
+            (scaleXCenter, scaleYCenter, scaleZCenter) = Centroid();
+
+            pictureBox1.Invalidate();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            var lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+            lRotMatr =  MultiplyMarices(lRotMatr, lRotMatr1);
+            pictureBox1.Invalidate();
         }
 
         private void button8_Click(object sender, EventArgs e)
