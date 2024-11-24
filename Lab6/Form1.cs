@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
@@ -43,8 +44,14 @@ namespace Affine_transformations_in_space
             projectFunc = perspectiveMatrix;
             setDefaultWorldPosition();
             dMeaning.Text = d.ToString();
+            pictureBox1.MouseMove += Form_MouseMove;
         }
 
+
+        private void Form_MouseMove(object sender, MouseEventArgs e) 
+        {
+            MousepositionLabel.Text = $"X:{e.X}, Y:{e.Y}";
+        }
 
         private void setDefaultWorldPosition()
         {
@@ -367,8 +374,8 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
             double newX = p.X * projectionMatrix[0, 0] + p.Y * projectionMatrix[1, 0] + p.Z * projectionMatrix[2, 0];
             double newY = p.X * projectionMatrix[0, 1] + p.Y * projectionMatrix[1, 1] + p.Z * projectionMatrix[2, 1];
 
-            //int x2D = (int)(newX + pictureBox1.Width / 2);
-            //int y2D = (int)(newY + pictureBox1.Height / 2);
+            int x2D = (int)(newX + pictureBox1.Width / 2);
+           int y2D = (int)(newY + pictureBox1.Height / 2);
 
             return new Point((int)newX, (int) newY);
         }
@@ -556,16 +563,29 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
 
         private double[,] getWorldMatrix(double tx, double ty, double tz, double angleX, double angleY, double angleZ, double sx, double sy, double sz) 
         {
-            double[,] translationMatr = translationMatrix(tx, ty, tz);
-            double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
-            double[,] scalingMatr = scalingMatrix(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
-            //MessageBox.Show($"{scaleXCenter} {scaleYCenter} {scaleZCenter}");
-            //double[,] scalingMatrCenter = scaleFigureCentroid(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
+            //(scaleXCenter, scaleYCenter, scaleZCenter) = Centroid();
+            //MessageBox.Show(scaleXCenter.ToString());
+            //    double cx = scaleXCenter;
+            //    double cy = scaleYCenter;
+            //    double cz = scaleZCenter;
 
-            //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection * Lrotation
-            //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr)); reflMatr
-            //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, reflMatr)));
-            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, MultiplyMarices(reflMatr, lRotMatr))));
+            //    double[,] translationToOrigin = translationMatrix(-cx, -cy, -cz);
+            //    double[,] translationBack = translationMatrix(cx, cy, cz);
+
+
+            //    double[,] translationMatr = translationMatrix(tx, ty, tz);
+            //    double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
+            //    double[,] scalingMatr = scalingMatrix(sx, sy, sz, 0, 0, 0);
+
+            //    //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection * Lrotation
+            //    return MultiplyMarices(translationMatr, MultiplyMarices(translationBack, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, translationToOrigin))));
+            double[,] translationMatr = translationMatrix(tx, ty, tz);
+            double[,] scalingMatr = scalingMatrix(sx, sy, sz, 0, 0, 0);
+            double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
+
+            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr));
+
+
         }
 
         private void button1_Click(object sender, EventArgs e)
