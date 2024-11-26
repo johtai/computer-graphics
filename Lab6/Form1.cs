@@ -43,7 +43,6 @@ namespace Affine_transformations_in_space
             InitializeComponent();
             projectFunc = perspectiveMatrix;
             setDefaultWorldPosition();
-            dMeaning.Text = d.ToString();
             pictureBox1.MouseMove += Form_MouseMove;
         }
 
@@ -54,22 +53,23 @@ namespace Affine_transformations_in_space
         }
 
         private void setDefaultWorldPosition()
-        {
-            translationX = 1; translationY = 1; translationZ = 1;
+        {   
+            
+            translationX = 50; translationY = 50; translationZ = 1;
             rotationX = 1; rotationY = 1; rotattionZ = 1;
             scaleX = 20; scaleY = 20; scaleZ = 20;
             scaleXCenter = 0; scaleYCenter = 0; scaleZCenter = 0;
 
             reflMatr = new double[,]
-           {
+            {
                 {1, 0, 0, 0 },
                 {0, 1, 0, 0 },
                 {0, 0, 1, 0 },
                 {0, 0, 0, 1 }
-           };
+            };
 
             lRotMatr = new double[,]
-          {
+           {
                 {1, 0, 0, 0 },
                 {0, 1, 0, 0 },
                 {0, 0, 1, 0 },
@@ -294,50 +294,50 @@ namespace Affine_transformations_in_space
                 double scale = 1; // Масштаб для вершин
 
                 List<point> vertices = new List<point>
-{
-new point(-1 * scale, -1* scale , -1* scale), //0
-new point(-1* scale, -1* scale, 1* scale), //1
-new point(-1* scale, 1* scale, -1* scale), //2
-new point(-1* scale, 1* scale, 1* scale), //3
-new point( 1* scale, -1* scale, -1* scale), //4
-new point( 1* scale, -1* scale, 1* scale), //5
-new point( 1* scale, 1* scale, -1* scale), //6
-new point( 1* scale, 1* scale, 1* scale),//7
+                {
+                new point(-1 * scale, -1* scale , -1* scale), //0
+                new point(-1* scale, -1* scale, 1* scale), //1
+                new point(-1* scale, 1* scale, -1* scale), //2
+                new point(-1* scale, 1* scale, 1* scale), //3
+                new point( 1* scale, -1* scale, -1* scale), //4
+                new point( 1* scale, -1* scale, 1* scale), //5
+                new point( 1* scale, 1* scale, -1* scale), //6
+                new point( 1* scale, 1* scale, 1* scale),//7
 
-new point(0, -1/phi * scale, -phi * scale), //8
-new point(0, -1/phi * scale, phi * scale),//9
-new point(0, 1/phi * scale, -phi * scale),//10
-new point(0, 1/phi * scale, phi * scale),//11
+                new point(0, -1/phi * scale, -phi * scale), //8
+                new point(0, -1/phi * scale, phi * scale),//9
+                new point(0, 1/phi * scale, -phi * scale),//10
+                new point(0, 1/phi * scale, phi * scale),//11
 
-new point(-1/phi * scale, -phi * scale, 0),//12
-new point(-1/phi * scale, phi * scale, 0),//13
-new point(1/phi * scale, -phi * scale, 0),//14
-new point(1/phi * scale, phi * scale, 0),//15
+                new point(-1/phi * scale, -phi * scale, 0),//12
+                new point(-1/phi * scale, phi * scale, 0),//13
+                new point(1/phi * scale, -phi * scale, 0),//14
+                new point(1/phi * scale, phi * scale, 0),//15
 
-new point(-phi * scale, 0, -1/phi * scale),//16
-new point( phi * scale, 0, -1/phi * scale),//17
-new point(-phi * scale, 0, 1/phi * scale),//18
-new point( phi * scale, 0, 1/phi * scale)//19
-};
+                new point(-phi * scale, 0, -1/phi * scale),//16
+                new point( phi * scale, 0, -1/phi * scale),//17
+                new point(-phi * scale, 0, 1/phi * scale),//18
+                new point( phi * scale, 0, 1/phi * scale)//19
+                };
 
                 // Определение 12 пятиугольных граней
                 List<polygon> faces = new List<polygon>
-{
-//new polygon(new List<point> { vertices[0], vertices[1], vertices[2], vertices[3] }),
-new polygon(new List<point> { vertices[0], vertices[8], vertices[4], vertices[14], vertices[12] }),
-new polygon(new List<point> { vertices[15], vertices[7], vertices[11], vertices[3], vertices[13] }),
-new polygon(new List<point> { vertices[0], vertices[16], vertices[2], vertices[10], vertices[8] }),
-//new polygon(new List<point> { vertices[0], vertices[19] }),
-new polygon(new List<point> { vertices[14], vertices[4], vertices[17], vertices[19], vertices[5] }),
-new polygon(new List<point> { vertices[8], vertices[4], vertices[17], vertices[6], vertices[10] }),
-new polygon(new List<point> { vertices[0], vertices[12], vertices[1], vertices[18], vertices[16] }),
-new polygon(new List<point> { vertices[1], vertices[12], vertices[14], vertices[5], vertices[9] }),
-new polygon(new List<point> { vertices[3], vertices[13], vertices[2], vertices[16], vertices[18] }),
-new polygon(new List<point> { vertices[3], vertices[18], vertices[1], vertices[9], vertices[11] }),
-new polygon(new List<point> { vertices[7], vertices[11], vertices[9], vertices[5], vertices[19] }),
-new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[6], vertices[15] }),
-//new polygon(new List<point> { vertices[19], vertices[18], vertices[17], vertices[16], vertices[16] })
-};
+                {
+                //new polygon(new List<point> { vertices[0], vertices[1], vertices[2], vertices[3] }),
+                new polygon(new List<point> { vertices[0], vertices[8], vertices[4], vertices[14], vertices[12] }),
+                new polygon(new List<point> { vertices[15], vertices[7], vertices[11], vertices[3], vertices[13] }),
+                new polygon(new List<point> { vertices[0], vertices[16], vertices[2], vertices[10], vertices[8] }),
+                //new polygon(new List<point> { vertices[0], vertices[19] }),
+                new polygon(new List<point> { vertices[14], vertices[4], vertices[17], vertices[19], vertices[5] }),
+                new polygon(new List<point> { vertices[8], vertices[4], vertices[17], vertices[6], vertices[10] }),
+                new polygon(new List<point> { vertices[0], vertices[12], vertices[1], vertices[18], vertices[16] }),
+                new polygon(new List<point> { vertices[1], vertices[12], vertices[14], vertices[5], vertices[9] }),
+                new polygon(new List<point> { vertices[3], vertices[13], vertices[2], vertices[16], vertices[18] }),
+                new polygon(new List<point> { vertices[3], vertices[18], vertices[1], vertices[9], vertices[11] }),
+                new polygon(new List<point> { vertices[7], vertices[11], vertices[9], vertices[5], vertices[19] }),
+                new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[6], vertices[15] }),
+                //new polygon(new List<point> { vertices[19], vertices[18], vertices[17], vertices[16], vertices[16] })
+                };
 
                 return new polyhedron(vertices, faces);
             }
@@ -396,8 +396,16 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
             {            
 
                 worldMatrix = getWorldMatrix(translationX, translationY, translationZ, rotationX, rotationY, rotattionZ, scaleX, scaleY, scaleZ);
-               
-               
+
+                //foreach (var vertex in pop.Vertices)
+                //{
+                //    var transformedPoint = TransformToWorld(vertex, worldMatrix);
+                //    Console.WriteLine($"Transformed Point: X = {transformedPoint.X}, Y = {transformedPoint.Y}, Z = {transformedPoint.Z}");
+
+                //}
+                //Console.WriteLine("\n");
+
+
                 foreach (var face in pop.Faces) 
                 {
                     List<Point> points2D = new List<Point>();
@@ -431,16 +439,9 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
                 }
 
 
-
-
-
-                }
-
-
+            }
 
         }
-
-
 
 
         //Матрица перемещения
@@ -471,11 +472,10 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
 
         private double[,] rotationMatrix(double angleX, double angleY, double angleZ)
         {
-            //Мы короче умножаем по порядку с конца: Z, Y, X
             //return MultiplyMarices(MultiplyMarices(zRotation(angleZ), yRotation(angleY)), xRotationMatrix(angleX));
             return MultiplyMarices(MultiplyMarices(xRotationMatrix(angleX), yRotation(angleY)), zRotation(angleZ));
+            //return MultiplyMarices(zRotation(angleZ), MultiplyMarices(yRotation(angleY), xRotationMatrix(angleX)));
         }
-
 
         private double[,] xRotationMatrix(double a) 
         {
@@ -557,7 +557,6 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
                 {0, 0, 0 ,1 }
 
             };
-
           
         }
 
@@ -580,12 +579,16 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
             //    //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection * Lrotation
             //    return MultiplyMarices(translationMatr, MultiplyMarices(translationBack, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, translationToOrigin))));
             double[,] translationMatr = translationMatrix(tx, ty, tz);
-            double[,] scalingMatr = scalingMatrix(sx, sy, sz, 0, 0, 0);
+            double[,] scalingMatr = scalingMatrix(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
             double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
-
-            return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr));
-
-
+            scaleXCenter = 0;
+            scaleYCenter = 0;
+            scaleZCenter = 0;
+            //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr));
+            //return translationMatr;
+            //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr));
+            //return MultiplyMarices(scalingMatr, MultiplyMarices(rotationMatr, translationMatr));   //работает
+            return MultiplyMarices(lRotMatr, MultiplyMarices(reflMatr, MultiplyMarices(scalingMatr, MultiplyMarices(rotationMatr, translationMatr))));
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -667,10 +670,9 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
             }
         }
 
+
         public void radioButtonSwitch(object sender, EventArgs e)
-        {
-            
-            
+        {                      
             var rbt = sender as RadioButton;
 
             if (rbt != null && rbt.Checked) 
@@ -690,30 +692,24 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
 
                 }
 
-            }
-
-                   
-            
-
+            }                          
            
         }
     
 
     private void button4_Click_1(object sender, EventArgs e)
-        {
-           
-            
+    {                    
 
             if (radioButton6.Checked)
-                {
+            {
                
                 var reflXYMatr = new double[,]
-                    {
+                {
                         {1, 0, 0, 0 },
                         {0, 1, 0, 0 },
                         {0, 0, -1, 0 },
                         {0, 0, 0, 1 }
-                    };
+                };
 
                 reflMatr = MultiplyMarices(reflMatr, reflXYMatr);
 
@@ -752,7 +748,7 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
                 pictureBox1.Invalidate();
             }
             
-        }
+    }
 
         private void switchReflectionRadioButton(object sender, EventArgs e)
         {
@@ -823,10 +819,6 @@ new polygon(new List<point> { vertices[13], vertices[2], vertices[10], vertices[
             pictureBox1.Invalidate();
         }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-            d = Convert.ToInt32(dMeaning.Text);
-            pictureBox1.Invalidate();
-        }
+
     }
 }

@@ -70,9 +70,6 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button6 = new System.Windows.Forms.Button();
-            this.dMeaning = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.button8 = new System.Windows.Forms.Button();
             this.MousepositionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -255,7 +252,7 @@
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(17, 242);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(27, 20);
             this.textBox1.TabIndex = 17;
@@ -264,7 +261,7 @@
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(50, 242);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(27, 20);
             this.textBox2.TabIndex = 18;
@@ -273,7 +270,7 @@
             // textBox3
             // 
             this.textBox3.Location = new System.Drawing.Point(83, 242);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(2);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(27, 20);
             this.textBox3.TabIndex = 19;
@@ -309,7 +306,7 @@
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(19, 274);
-            this.button3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button3.Margin = new System.Windows.Forms.Padding(2);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(86, 25);
             this.button3.TabIndex = 23;
@@ -324,9 +321,9 @@
             this.groupBox2.Controls.Add(this.radioButton5);
             this.groupBox2.Controls.Add(this.radioButton4);
             this.groupBox2.Location = new System.Drawing.Point(128, 5);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox2.Size = new System.Drawing.Size(210, 49);
             this.groupBox2.TabIndex = 24;
             this.groupBox2.TabStop = false;
@@ -344,7 +341,7 @@
             // 
             this.radioButton3.AutoSize = true;
             this.radioButton3.Location = new System.Drawing.Point(118, 17);
-            this.radioButton3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioButton3.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(51, 17);
             this.radioButton3.TabIndex = 28;
@@ -357,7 +354,7 @@
             // 
             this.radioButton5.AutoSize = true;
             this.radioButton5.Location = new System.Drawing.Point(67, 17);
-            this.radioButton5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioButton5.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton5.Name = "radioButton5";
             this.radioButton5.Size = new System.Drawing.Size(51, 17);
             this.radioButton5.TabIndex = 27;
@@ -371,7 +368,7 @@
             this.radioButton4.AutoSize = true;
             this.radioButton4.Checked = true;
             this.radioButton4.Location = new System.Drawing.Point(16, 16);
-            this.radioButton4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioButton4.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton4.Name = "radioButton4";
             this.radioButton4.Size = new System.Drawing.Size(51, 17);
             this.radioButton4.TabIndex = 26;
@@ -386,9 +383,9 @@
             this.groupBox3.Controls.Add(this.radioButton7);
             this.groupBox3.Controls.Add(this.radioButton8);
             this.groupBox3.Location = new System.Drawing.Point(437, 7);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox3.Size = new System.Drawing.Size(130, 49);
             this.groupBox3.TabIndex = 25;
             this.groupBox3.TabStop = false;
@@ -398,7 +395,7 @@
             // 
             this.radioButton6.AutoSize = true;
             this.radioButton6.Location = new System.Drawing.Point(92, 16);
-            this.radioButton6.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioButton6.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton6.Name = "radioButton6";
             this.radioButton6.Size = new System.Drawing.Size(39, 17);
             this.radioButton6.TabIndex = 28;
@@ -411,7 +408,7 @@
             // 
             this.radioButton7.AutoSize = true;
             this.radioButton7.Location = new System.Drawing.Point(55, 16);
-            this.radioButton7.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioButton7.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton7.Name = "radioButton7";
             this.radioButton7.Size = new System.Drawing.Size(39, 17);
             this.radioButton7.TabIndex = 27;
@@ -424,7 +421,7 @@
             // 
             this.radioButton8.AutoSize = true;
             this.radioButton8.Location = new System.Drawing.Point(16, 16);
-            this.radioButton8.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioButton8.Margin = new System.Windows.Forms.Padding(2);
             this.radioButton8.Name = "radioButton8";
             this.radioButton8.Size = new System.Drawing.Size(39, 17);
             this.radioButton8.TabIndex = 26;
@@ -515,39 +512,13 @@
             // button6
             // 
             this.button6.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button6.Location = new System.Drawing.Point(28, 534);
+            this.button6.Location = new System.Drawing.Point(27, 417);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(78, 46);
             this.button6.TabIndex = 30;
-            this.button6.Text = "Центроид? Чё это?";
+            this.button6.Text = "Центроид";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click_1);
-            // 
-            // dMeaning
-            // 
-            this.dMeaning.Location = new System.Drawing.Point(17, 419);
-            this.dMeaning.Name = "dMeaning";
-            this.dMeaning.Size = new System.Drawing.Size(32, 20);
-            this.dMeaning.TabIndex = 31;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(47, 401);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(13, 13);
-            this.label8.TabIndex = 32;
-            this.label8.Text = "d";
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(63, 417);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(42, 23);
-            this.button8.TabIndex = 33;
-            this.button8.Text = "appl";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // MousepositionLabel
             // 
@@ -564,9 +535,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1291, 592);
             this.Controls.Add(this.MousepositionLabel);
-            this.Controls.Add(this.button8);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.dMeaning);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.button5);
@@ -655,9 +623,6 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.TextBox dMeaning;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Label MousepositionLabel;
     }
 }
