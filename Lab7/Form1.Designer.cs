@@ -70,9 +70,8 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button6 = new System.Windows.Forms.Button();
-            this.dMeaning = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.button8 = new System.Windows.Forms.Button();
+            this.MousepositionLabel = new System.Windows.Forms.Label();
+            this.LoadFile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -88,7 +87,7 @@
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(128, 65);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1142, 527);
+            this.pictureBox1.Size = new System.Drawing.Size(1151, 500);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
@@ -96,7 +95,7 @@
             // button1
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button1.Location = new System.Drawing.Point(27, 65);
+            this.button1.Location = new System.Drawing.Point(31, 65);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(78, 27);
             this.button1.TabIndex = 1;
@@ -120,6 +119,7 @@
             this.comboBox1.Items.AddRange(new object[] {
             "Тетраэдр",
             "Гексаэдр",
+            "Октаэдр",
             "Икосаэдр",
             "Додекаэдр"});
             this.comboBox1.Location = new System.Drawing.Point(12, 34);
@@ -434,7 +434,7 @@
             // button4
             // 
             this.button4.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button4.Location = new System.Drawing.Point(572, 19);
+            this.button4.Location = new System.Drawing.Point(576, 19);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(78, 27);
             this.button4.TabIndex = 26;
@@ -445,7 +445,7 @@
             // button5
             // 
             this.button5.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button5.Location = new System.Drawing.Point(343, 17);
+            this.button5.Location = new System.Drawing.Point(347, 17);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(78, 27);
             this.button5.TabIndex = 27;
@@ -513,48 +513,40 @@
             // button6
             // 
             this.button6.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button6.Location = new System.Drawing.Point(24, 534);
+            this.button6.Location = new System.Drawing.Point(27, 417);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(78, 46);
             this.button6.TabIndex = 30;
-            this.button6.Text = "Центроид? Чё это?";
+            this.button6.Text = "Центроид";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click_1);
             // 
-            // dMeaning
+            // MousepositionLabel
             // 
-            this.dMeaning.Location = new System.Drawing.Point(17, 419);
-            this.dMeaning.Name = "dMeaning";
-            this.dMeaning.Size = new System.Drawing.Size(32, 20);
-            this.dMeaning.TabIndex = 31;
+            this.MousepositionLabel.AutoSize = true;
+            this.MousepositionLabel.Location = new System.Drawing.Point(999, 28);
+            this.MousepositionLabel.Name = "MousepositionLabel";
+            this.MousepositionLabel.Size = new System.Drawing.Size(35, 13);
+            this.MousepositionLabel.TabIndex = 34;
+            this.MousepositionLabel.Text = "label9";
             // 
-            // label8
+            // LoadFile
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(47, 401);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(13, 13);
-            this.label8.TabIndex = 32;
-            this.label8.Text = "d";
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(63, 417);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(42, 23);
-            this.button8.TabIndex = 33;
-            this.button8.Text = "appl";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.LoadFile.Location = new System.Drawing.Point(31, 500);
+            this.LoadFile.Name = "LoadFile";
+            this.LoadFile.Size = new System.Drawing.Size(75, 33);
+            this.LoadFile.TabIndex = 35;
+            this.LoadFile.Text = "Загрузить";
+            this.LoadFile.UseVisualStyleBackColor = true;
+            this.LoadFile.Click += new System.EventHandler(this.LoadFile_Click);
             // 
             // Afins3D
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1282, 592);
-            this.Controls.Add(this.button8);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.dMeaning);
+            this.ClientSize = new System.Drawing.Size(1291, 592);
+            this.Controls.Add(this.LoadFile);
+            this.Controls.Add(this.MousepositionLabel);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.button5);
@@ -643,9 +635,8 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.TextBox dMeaning;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label MousepositionLabel;
+        private System.Windows.Forms.Button LoadFile;
     }
 }
 
