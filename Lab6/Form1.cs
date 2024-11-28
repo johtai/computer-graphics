@@ -113,20 +113,16 @@ namespace Affine_transformations_in_space
         private (double, double, double) Centroid(Matrix3D world)
         {
             double centerX = 0; double centerY = 0; double centerZ = 0;
-            foreach (polygon face in pnts)
+            foreach (point center in pnts.Select(face => face.GetCenter()))
             {
-                centerX += chelnok(face, world).X;
-                centerY += chelnok(face, world).Y;
-                centerZ += chelnok(face, world).Z;
+                centerX += center.X;
+                centerY += center.Y;
+                centerZ += center.Z;
             }
 
-             centerX /= pnts.Count; 
-             centerY /= pnts.Count;
-             centerZ /= pnts.Count;
-
-            //MessageBox.Show("Центр по X: " + centerX.ToString());
-            //MessageBox.Show("Центр по Y: " + centerY.ToString());
-            //MessageBox.Show("Центр по Z: " + centerZ.ToString());
+            centerX /= pnts.Count;
+            centerY /= pnts.Count;
+            centerZ /= pnts.Count;
 
             return (centerX, centerY, centerZ);
         }
@@ -199,6 +195,14 @@ namespace Affine_transformations_in_space
             public polygon(List<point> vertices) 
             {
                 Vertices = vertices;
+            }
+
+            public point GetCenter()
+            {
+                double x = Vertices.Average(point => point.X);
+                double y = Vertices.Average(point => point.Y);
+                double z = Vertices.Average(point => point.Z);
+                return new point(x, y, z);
             }
         }
 
@@ -436,7 +440,7 @@ namespace Affine_transformations_in_space
                 Matrix3D translationMatr = translationMatrix(translationX, translationY, translationZ);
                 Matrix3D scalingMatr = scalingMatrix(scaleX, scaleY, scaleZ, scaleXCenter, scaleYCenter, scaleZCenter);
                 Matrix3D rotationMatr = rotationMatrix(rotationX, rotationY, rotattionZ);
-
+                Matrix3D LRotationMatr = LRotation( Convert.ToInt32( textBox4.Text), Convert.ToInt32( textBox5.Text), Convert.ToInt32 (textBox6.Text),Convert.ToInt32( textBox7.Text));
                 var (xg1, yg2, zg3) = Centroid(translationMatr * rotationMatr * scalingMatr);
                 Matrix3D fromCenter = translationMatrix(xg1, yg2, zg3);
                 Matrix3D toCenter = translationMatrix(-xg1, -yg2, -zg3);
@@ -446,7 +450,7 @@ namespace Affine_transformations_in_space
                 scaleZCenter = 0;
 
                 //Matrix3D worldMatrix = toCenter * translationMatr * rotationMatr * scalingMatr * fromCenter;
-                Matrix3D worldMatrix = fromCenter * scalingMatr * rotationMatr * translationMatr * toCenter;
+                Matrix3D worldMatrix = fromCenter * scalingMatr * rotationMatr * translationMatr * LRotationMatr * toCenter;
                 //foreach (var vertex in pop.Vertices)
                 //{
                 //    var transformedPoint = TransformToWorld(vertex, worldMatrix);
@@ -465,10 +469,20 @@ namespace Affine_transformations_in_space
                         Point projectedPoint = ApplyProjection(worldPoint, projectFunc()); //передаём сюда матрицу перспективы(конверт в 2D)
                         points2D.Add(projectedPoint);
                     }
-                    e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
                     
-                    
+
+                    int clientWidth = e.ClipRectangle.Width;
+                    int clientHeight = e.ClipRectangle.Height;
+
+                    int offsetX = clientWidth / 2;
+                    int offsetY = clientHeight / 2;
+
+                    var centeredPoints = points2D.Select(p => new Point(p.X + offsetX, p.Y + offsetY)).ToArray();
+
+                    e.Graphics.DrawPolygon(Pens.Black, centeredPoints);
+
                 }
+
 
 
                 SolidBrush sb = new SolidBrush(Color.FromArgb(255, 255, 0, 0));
