@@ -10,3 +10,9 @@
 - [Lab7.](./Lab7/) building three-dimensional models
 - [Lab10.](./lab10/) The Green Triangle
 - [Lab11.](./lab11/) construction of various 2D shapes. Flat and gradient painting. Uniform and A tribute Assignment
+
+# Lab6: Affine transformations program interface 
+![Lab6 screenshot](./screenshots/Affins.png)
+
+# Lab 10 Triangle(not green :) )
+![Lab11 screenshot](./screenshots/YellowTriangle.png)
