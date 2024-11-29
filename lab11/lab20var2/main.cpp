@@ -2,6 +2,9 @@
 #include <GL/glew.h>
 #include <iostream>
 
+
+int currentFigure = 0; // 0 -  треугольник, 1 - четырёхугольник, 2 - веер, 3 - пятиугольник
+
 // ID шейдерной программы
 GLuint Program;
 // ID атрибута
@@ -91,14 +94,33 @@ void Draw() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Отключаем VBO
 
 	// начиная с нулевой вершины берем 3
-	glDrawArrays(GL_TRIANGLES, 0, 3); // Передаем данные на видеокарту (рисуем)
+	//glDrawArrays(GL_TRIANGLES, 0, 3); // Передаем данные на видеокарту (рисуем)
+
+	if (currentFigure == 0) 
+	{
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+	}
+	else if(currentFigure == 1) 
+	{
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+	if (currentFigure == 2)
+	{
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+	}
+	else if (currentFigure == 3)
+	{
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+
+
 	glDisableVertexAttribArray(Attrib_vertex); // Отключаем массив атрибутов
 	glUseProgram(0); // Отключаем шейдерную программу
 	//checkOpenGLerror();
 }
 
 void InitShader() {
-	// Создаем вершинный шейдер
+	// Создаем вершинный шейдер (сохраняем дескриптор)
 	GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
 	
 	// Передаем исходный код
@@ -132,6 +154,7 @@ void InitShader() {
 	// Линкуем шейдерную программу
 	glLinkProgram(Program);
 	
+	//Локации используются для ссылок на эти переменные при передаче данных.
 	uniformR = glGetUniformLocation(Program, "R");
 	uniformG = glGetUniformLocation(Program, "G");
 	uniformB = glGetUniformLocation(Program, "B");
@@ -169,21 +192,52 @@ void UpdateUniforms() {
 	glUseProgram(0);
 }
 
-struct  figures 
-{
-
-	Vertex triangle[3] = {
-	{ -1.0f, -1.0f },
-	{ 0.0f, 1.0f },
-	{ 1.0f, -1.0f }
-	};
-
-};
+//struct  figures 
+//{
+//
+//	Vertex triangle[3] = {
+//	{ -1.0f, -1.0f },
+//	{ 0.0f, 1.0f },
+//	{ 1.0f, -1.0f }
+//	};
+//
+//};
 
 
 void InitVBO() {
 	glGenBuffers(1, &VBO);
-	figures fig;
+	Vertex vertices[10];
+	int vertexCount = 0;
+
+	if (currentFigure == 0) 
+	{
+			Vertex triangle[3] = {
+			{ -1.0f, -1.0f },
+			{ 0.0f, 1.0f },
+			{ 1.0f, -1.0f }
+			};
+
+			std::copy(triangle, triangle + 3, vertices);
+			vertexCount = 3;
+	}
+	else if (currentFigure == 1) 
+	{
+		Vertex quadro[6] = {
+			{ -0.5f, -0.5f },
+			{  0.5f, -0.5f },
+			{  0.5f,  0.5f },
+			{ -0.5f, -0.5f },
+			{  0.5f,  0.5f },
+			{ -0.5f,  0.5f }
+
+		};
+
+		std::copy(quadro, quadro + 6, vertices);
+		vertexCount = 6;
+
+	}
+
+
 	//// Вершины нашего треугольника
 	//Vertex triangle[3] = {
 	//	{ -1.0f, -1.0f },
@@ -191,11 +245,11 @@ void InitVBO() {
 	//	{ 1.0f, -1.0f }
 	//};
 
-	Vertex*  BufferFigure = fig.triangle;
+	//Vertex*  BufferFigure = fig.triangle;
 
 	// Передаем вершины в буфер
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(fig.triangle), BufferFigure, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, vertices, GL_STATIC_DRAW);
 	//checkOpenGLerror(); //Пример функции есть в лабораторной
 	// Проверка ошибок OpenGL, если есть, то вывод в консоль тип ошибки
 }
@@ -216,11 +270,19 @@ int main() {
 	// Шейдеры и вершинный буфер
 	Init();
 	
-	while (window.isOpen()) {
+	while (window.isOpen()) 
+	{
 		sf::Event event;
-		while (window.pollEvent(event)) {
+
+		while (window.pollEvent(event)) 
+		{
 			if (event.type == sf::Event::Closed) { window.close(); }
 			else if (event.type == sf::Event::Resized) { glViewport(0, 0, event.size.width, event.size.height); }
+			else if (event.type == sf::Event::MouseButtonPressed) 
+			{
+				currentFigure = (currentFigure + 1 ) % 4; // переключаем фигуру
+				InitVBO();
+			}
 		}
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
