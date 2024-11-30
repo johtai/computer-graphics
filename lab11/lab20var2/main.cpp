@@ -2,7 +2,6 @@
 #include <GL/glew.h>
 #include <iostream>
 
-
 int currentFigure = 0; // 0 -  треугольник, 1 - четырёхугольник, 2 - веер, 3 - пятиугольник
 
 // ID шейдерной программы
@@ -11,7 +10,6 @@ GLuint Program;
 GLint Attrib_vertex;
 // ID Vertex Buffer Object
 GLuint VBO;
-
 GLint uniformR, uniformG, uniformB;
 
 struct Vertex {
@@ -98,21 +96,16 @@ void Draw() {
 
 	if (currentFigure == 0) 
 	{
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_QUADS, 0, 4);
 	}
 	else if(currentFigure == 1) 
 	{
-		glDrawArrays(GL_QUADS, 0, 4);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 	}
 	if (currentFigure == 2)
 	{
 		glDrawArrays(GL_POLYGON, 0, 5);
 	}
-	else if (currentFigure == 3)
-	{
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
-
 
 	glDisableVertexAttribArray(Attrib_vertex); // Отключаем массив атрибутов
 	glUseProgram(0); // Отключаем шейдерную программу
@@ -192,69 +185,51 @@ void UpdateUniforms() {
 	glUseProgram(0);
 }
 
-//struct  figures 
-//{
-//
-//	Vertex triangle[3] = {
-//	{ -1.0f, -1.0f },
-//	{ 0.0f, 1.0f },
-//	{ 1.0f, -1.0f }
-//	};
-//
-//};
-
-
 void InitVBO() {
 	glGenBuffers(1, &VBO);
-	Vertex vertices[10];
+	Vertex vertices[6];
 	int vertexCount = 0;
 
 	if (currentFigure == 0) 
-	{
-			Vertex triangle[3] = {
-			{ -1.0f, -1.0f },
-			{ 0.0f, 1.0f },
-			{ 1.0f, -1.0f }
-			};
-
-			std::copy(triangle, triangle + 3, vertices);
-			vertexCount = 3;
-	}
-	else if (currentFigure == 1) 
 	{
 		Vertex quadro[4] = {
 			{ -0.5f, -0.5f },
 			{  -0.5f, 0.5f },
 			{  0.5f,  0.5f },
 			{ 0.5f, -0.5f }
-
 		};
 
 		std::copy(quadro, quadro + 4, vertices);
 		vertexCount = 4;
 	}
+	else if (currentFigure == 1) 
+	{
+		Vertex veer[6] = {
+			{ 0.0f, 0.0f },
+			{ -0.6f, 0.2f },
+			{ -0.4f, 0.4f },
+			{ 0.0f, 0.5f },
+			{ 0.5f, 0.5f },
+			{ 0.8f, 0.0f }
+		};
+
+		std::copy(veer, veer + 6, vertices);
+		vertexCount = 6;
+	}
 	else if (currentFigure == 2)
 	{
-		Vertex quadro[5] = {
-			{ -0.6f, -1.0f },
-			{ -1.0f, 0.0f },
+		Vertex penta[5] = {
 			{ 0.0f, 1.0f },
-			{ 1.0f, 0.0f },
-			{ 0.6f, -1.0f }
+			{ 1.0f, 0.3f },
+			{ 0.6f, -0.8f },
+			{ -0.6f, -0.8f },
+			{ -1.0f, 0.3f }
 
 		};
 
-		std::copy(quadro, quadro + 5, vertices);
+		std::copy(penta, penta + 5, vertices);
 		vertexCount = 5;
 	}
-
-
-	//// Вершины нашего треугольника
-	//Vertex triangle[3] = {
-	//	{ -1.0f, -1.0f },
-	//	{ 0.0f, 1.0f },
-	//	{ 1.0f, -1.0f }
-	//};
 
 	//Vertex*  BufferFigure = fig.triangle;
 
