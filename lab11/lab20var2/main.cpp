@@ -102,11 +102,11 @@ void Draw() {
 	}
 	else if(currentFigure == 1) 
 	{
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_QUADS, 0, 4);
 	}
 	if (currentFigure == 2)
 	{
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_POLYGON, 0, 5);
 	}
 	else if (currentFigure == 3)
 	{
@@ -222,19 +222,30 @@ void InitVBO() {
 	}
 	else if (currentFigure == 1) 
 	{
-		Vertex quadro[6] = {
+		Vertex quadro[4] = {
 			{ -0.5f, -0.5f },
-			{  0.5f, -0.5f },
+			{  -0.5f, 0.5f },
 			{  0.5f,  0.5f },
-			{ -0.5f, -0.5f },
-			{  0.5f,  0.5f },
-			{ -0.5f,  0.5f }
+			{ 0.5f, -0.5f }
 
 		};
 
-		std::copy(quadro, quadro + 6, vertices);
-		vertexCount = 6;
+		std::copy(quadro, quadro + 4, vertices);
+		vertexCount = 4;
+	}
+	else if (currentFigure == 2)
+	{
+		Vertex quadro[5] = {
+			{ -0.6f, -1.0f },
+			{ -1.0f, 0.0f },
+			{ 0.0f, 1.0f },
+			{ 1.0f, 0.0f },
+			{ 0.6f, -1.0f }
 
+		};
+
+		std::copy(quadro, quadro + 5, vertices);
+		vertexCount = 5;
 	}
 
 

@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\johtai\\Desktop\\computer-graphics\\lab11\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{123043D9-82AA-443D-A302-67A51FD6A1B9}|lab20var2\\lab20var2.vcxproj|C:\\Users\\johtai\\Desktop\\computer-graphics\\lab11\\lab20var2\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{123043D9-82AA-443D-A302-67A51FD6A1B9}|lab20var2\\lab20var2.vcxproj|solutionrelative:lab20var2\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\johtai\\Desktop\\computer-graphics\\lab11\\lab20var2\\main.cpp",
+              "RelativeDocumentMoniker": "lab20var2\\main.cpp",
+              "ToolTip": "C:\\Users\\johtai\\Desktop\\computer-graphics\\lab11\\lab20var2\\main.cpp",
+              "RelativeToolTip": "lab20var2\\main.cpp",
+              "ViewState": "AgIAAN8AAAAAAAAAAAAgwO4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-30T11:07:07.271Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

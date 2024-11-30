@@ -1,1 +1,7 @@
-﻿
+﻿  main.cpp
+C:\Users\johtai\Desktop\computer-graphics\lab11\lab20var2\main.cpp(189,24): warning C4244: 'argument': conversion from 'GLint' to 'GLfloat', possible loss of data
+C:\Users\johtai\Desktop\computer-graphics\lab11\lab20var2\main.cpp(190,24): warning C4244: 'argument': conversion from 'GLint' to 'GLfloat', possible loss of data
+C:\Users\johtai\Desktop\computer-graphics\lab11\lab20var2\main.cpp(191,24): warning C4244: 'argument': conversion from 'GLint' to 'GLfloat', possible loss of data
+  lab20var2.vcxproj -> C:\Users\johtai\Desktop\computer-graphics\lab11\x64\Debug\lab20var2.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
