@@ -3,18 +3,20 @@
 #include <iostream>
 
 int currentFigure = 0; // 0 -  треугольник, 1 - четырёхугольник, 2 - веер, 3 - пятиугольник
+int currentColorMode = 0; // 0 - uniform цвет, 1 - градиент
 
 // ID шейдерной программы
 GLuint Program;
 // ID атрибута
 GLint Attrib_vertex;
+GLint Attrib_color;
 // ID Vertex Buffer Object
 GLuint VBO;
 GLint uniformR, uniformG, uniformB;
 
 struct Vertex {
-	GLfloat x;
-	GLfloat y;
+	GLfloat x, y;
+	GLfloat r, g, b;
 };
 
 // Вершинный шейдер
@@ -22,10 +24,22 @@ struct Vertex {
 const char* VertexShaderSource = R"(
 	#version 330 core
 	in vec2 coord;
+	in vec3 colorVertex; //Цвет вершины (для градиента)
+	out vec3 vertexColor; //Передача цвета в фрагментный шейдер
+
 	void main() {
-		gl_Position = vec4(coord, 0.0, 1.0);
+		gl_Position = vec4(coord, 0.0, 1.0); 
+		vertexColor = colorVertex;
+	
 	}
 )";
+//uniform int useGradient; // Переключатель между uniform и градиентом
+//if (useGradient == 1) {
+//	VertexColor = colorVertex; //Градиент
+//}
+//else {
+//	VertexColor = vec3(0.0); // Если градиент не нужен
+//}
 GLint R = 1;
 GLint G = 1;
 GLint B = 0;
@@ -34,12 +48,21 @@ GLint B = 0;
 // R = 0; G = 1; B = 0; Alpha = 1
 const char* FragShaderSource = R"(
 	#version 330 core
+	in vec3 vertexColor;
 	out vec4 color;
+	
+	uniform int useGradient; // Переключатель между uniform и градиентом
 	uniform float R;
 	uniform float G;
 	uniform float B;
+
 	void main() {
-		color = vec4(R, G, B, 1);
+		if(useGradient == 1){
+			color = vec4(vertexColor, 1.0); // Градиент
+		}else{
+			color = vec4(R, G, B, 1);
+		}
+		
 	}
 )";
 
@@ -88,7 +111,12 @@ void Draw() {
 	// GL_FALSE - нормализация (от 0 до 2)
 	// 0 шаг (берем каждый, он сам считает)
 	// берем с 0 элемента буфера (с начала)
-	glVertexAttribPointer(Attrib_vertex, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(Attrib_vertex, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), 0);
+
+	GLint Attrib_color = glGetAttribLocation(Program, "vertexColor");
+	std::cout << Attrib_color;
+
+	glVertexAttribPointer(Attrib_color, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void *)(sizeof(GL_FLOAT) * 2));
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Отключаем VBO
 
 	// начиная с нулевой вершины берем 3
@@ -108,6 +136,7 @@ void Draw() {
 	}
 
 	glDisableVertexAttribArray(Attrib_vertex); // Отключаем массив атрибутов
+	glDisableVertexAttribArray(Attrib_color);
 	glUseProgram(0); // Отключаем шейдерную программу
 	//checkOpenGLerror();
 }
@@ -174,14 +203,29 @@ void InitShader() {
 		std::cout << "could not bind attrib " << attr_name << std::endl;
 		return;
 	}
+	const char* attr_name2 = "vertexColor";
+	Attrib_color = glGetAttribLocation(Program, attr_name2);
+	if (Attrib_color == -1) 
+	{
+		std::cout << "" << attr_name2 << "" << std::endl;
+	}
 	//checkOpenGLerror();
 }
 
 void UpdateUniforms() {
 	glUseProgram(Program);
+
 	glUniform1f(uniformR, R);
 	glUniform1f(uniformG, G);
 	glUniform1f(uniformB, B);
+
+	//Передача текущего режима
+	GLint uniformGradient = glGetUniformLocation(Program, "useGradient");
+	glUniform1i(uniformGradient, currentColorMode);
+
+
+
+
 	glUseProgram(0);
 }
 
@@ -193,14 +237,20 @@ void InitVBO() {
 	if (currentFigure == 0) 
 	{
 		Vertex quadro[4] = {
-			{ -0.5f, -0.5f },
-			{  -0.5f, 0.5f },
-			{  0.5f,  0.5f },
-			{ 0.5f, -0.5f }
+			{ -0.5f, -0.5f, 1.0, 0.0, 0.0},
+			{  -0.5f, 0.5f, 0.0, 1.0, 0.0 },
+			{  0.5f,  0.5f, 0.0, 0.0, 1.0 },
+			{  0.5f, -0.5f, 1.0, 1.0, 0.0  }
 		};
-
-		std::copy(quadro, quadro + 4, vertices);
 		vertexCount = 4;
+		std::copy(quadro, quadro + 4, vertices);
+		for (int i = 0; i < vertexCount; i++) 
+		{
+			vertices[i].r = (vertices[i].x + 1.0) / 2.0f;
+			vertices[i].g = (vertices[i].y + 1.0) / 2.0f;
+			vertices[i].b = 1.0f - vertices[i].r - vertices[i].g;
+		}
+
 	}
 	else if (currentFigure == 1) 
 	{
@@ -215,6 +265,14 @@ void InitVBO() {
 
 		std::copy(veer, veer + 6, vertices);
 		vertexCount = 6;
+
+		for (int i = 0; i < vertexCount; i++)
+		{
+			vertices[i].r = (vertices[i].x + 1.0) / 2.0f;
+			vertices[i].g = (vertices[i].y + 1.0) / 2.0f;
+			vertices[i].b = 1.0f - vertices[i].r - vertices[i].g;
+		}
+
 	}
 	else if (currentFigure == 2)
 	{
@@ -229,6 +287,15 @@ void InitVBO() {
 
 		std::copy(penta, penta + 5, vertices);
 		vertexCount = 5;
+
+		for (int i = 0; i < vertexCount; i++)
+		{
+			vertices[i].r = (vertices[i].x + 1.0) / 2.0f;
+			vertices[i].g = (vertices[i].y + 1.0) / 2.0f;
+			vertices[i].b = 1.0f - vertices[i].r - vertices[i].g;
+		}
+
+
 	}
 
 	//Vertex*  BufferFigure = fig.triangle;
@@ -238,6 +305,12 @@ void InitVBO() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, vertices, GL_STATIC_DRAW);
 	//checkOpenGLerror(); //Пример функции есть в лабораторной
 	// Проверка ошибок OpenGL, если есть, то вывод в консоль тип ошибки
+	glVertexAttribPointer(Attrib_vertex, 5, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	glEnableVertexAttribArray(Attrib_vertex);
+
+	//GLuint Attrib_color = glGetAttribLocation(Program, "colorVertex");
+	//glVertexAttribPointer(Attrib_color, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(2 * sizeof(GLfloat)));
+	//glEnableVertexAttribArray(Attrib_color);
 }
 
 void Init() {
@@ -266,7 +339,9 @@ int main() {
 			else if (event.type == sf::Event::Resized) { glViewport(0, 0, event.size.width, event.size.height); }
 			else if (event.type == sf::Event::MouseButtonPressed) 
 			{
-				currentFigure = (currentFigure + 1 ) % 4; // переключаем фигуру
+				currentFigure = (currentFigure + 1 ) % 3; // переключаем фигуру
+				currentColorMode = (currentColorMode + 1) % 2;
+				std::cout << "colormode: " << currentColorMode << "\n";
 				InitVBO();
 			}
 		}
