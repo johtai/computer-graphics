@@ -9,6 +9,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,15 +23,15 @@ namespace Affine_transformations_in_space
     {
 
         polyhedron pop;
-        double[,] worldMatrix;
+        //double[,] worldMatrix;
         //polyhedron AxisPop;
         double d = 5;
-        public Func<double[,]> projectFunc;
+        public Func<Matrix3D> projectFunc;
         public static List<polygon> pnts;
         public static List<point> AxesPoints;
         //public static int scale = 100;
-        double[,] reflMatr;
-        double[,] lRotMatr;
+        Matrix3D reflMatr;
+        Matrix3D lRotMatr;
         public static int spin = 0;
         public static int switchRotationCase = 0;
         
@@ -56,26 +58,26 @@ namespace Affine_transformations_in_space
         private void setDefaultWorldPosition()
         {   
             
-            translationX = 50; translationY = 50; translationZ = 1;
-            rotationX = 1; rotationY = 1; rotattionZ = 1;
-            scaleX = 20; scaleY = 20; scaleZ = 20;
+            translationX = 0; translationY = 0; translationZ = 0;
+            rotationX = 0; rotationY = 0; rotattionZ = 0;
+            scaleX = 1; scaleY = 1; scaleZ = 1;
             scaleXCenter = 0; scaleYCenter = 0; scaleZCenter = 0;
 
-            reflMatr = new double[,]
+            reflMatr =  new Matrix3D( new double[,]
             {
                 {1, 0, 0, 0 },
                 {0, 1, 0, 0 },
                 {0, 0, 1, 0 },
                 {0, 0, 0, 1 }
-            };
+            });
 
-            lRotMatr = new double[,]
+            lRotMatr = new Matrix3D (new double[,]
            {
                 {1, 0, 0, 0 },
                 {0, 1, 0, 0 },
                 {0, 0, 1, 0 },
                 {0, 0, 0, 1 }
-          };
+          });
         }
 
         private double pointXOnMatrix(double point, double[,] matrix)
@@ -92,15 +94,14 @@ namespace Affine_transformations_in_space
         {
             return point * matrix[0, 2] + point * matrix[1, 2] + point * matrix[2, 2] + matrix[3, 2];
         }
-        private point chelnok(polygon face) 
+        private point chelnok(polygon face, Matrix3D world) 
         {
             double sumX = 0; double sumY = 0; double sumZ = 0;
-            
             foreach (var vertex in face.Vertices)
             {
-                sumX += pointXOnMatrix(vertex.X, worldMatrix);
-                sumY += pointYOnMatrix(vertex.Y, worldMatrix);
-                sumZ += pointYOnMatrix(vertex.Z, worldMatrix);
+                sumX += pointXOnMatrix(vertex.X, world.Matrix);
+                sumY += pointYOnMatrix(vertex.Y, world.Matrix);
+                sumZ += pointYOnMatrix(vertex.Z, world.Matrix);
 
             }
             sumX /= face.Vertices.Count;
@@ -111,23 +112,19 @@ namespace Affine_transformations_in_space
 
         // Возвращает геометрический центр полигона
         // Возвращает геометрический центр всего многогранника
-        private (double, double, double) Centroid()
+        private (double, double, double) Centroid(Matrix3D world)
         {
             double centerX = 0; double centerY = 0; double centerZ = 0;
-            foreach (polygon face in pnts)
+            foreach (point center in pnts.Select(face => face.GetCenter()))
             {
-                centerX += chelnok(face).X;
-                centerY += chelnok(face).Y;
-                centerZ += chelnok(face).Z;
+                centerX += center.X;
+                centerY += center.Y;
+                centerZ += center.Z;
             }
 
-             centerX /= pnts.Count; 
-             centerY /= pnts.Count;
-             centerZ /= pnts.Count;
-
-            //MessageBox.Show("Центр по X: " + centerX.ToString());
-            //MessageBox.Show("Центр по Y: " + centerY.ToString());
-            //MessageBox.Show("Центр по Z: " + centerZ.ToString());
+            centerX /= pnts.Count;
+            centerY /= pnts.Count;
+            centerZ /= pnts.Count;
 
             return (centerX, centerY, centerZ);
         }
@@ -143,6 +140,46 @@ namespace Affine_transformations_in_space
             }
             
             pictureBox1.Invalidate();         
+        }
+
+        public class Matrix3D 
+        {
+            public double[,] Matrix { get; set; }
+
+            public Matrix3D(double[,] _worldMatrix) 
+            {
+                Matrix = _worldMatrix;
+            }
+
+            public Matrix3D() 
+            {
+
+            }
+
+            public static Matrix3D operator* (Matrix3D mat1, Matrix3D mat2)
+            {
+                int rows = mat1.Matrix.GetLength(0);
+                int cols = mat2.Matrix.GetLength(0);
+                int commonDim = mat1.Matrix.GetLength(1);
+
+                double[,] result = new double[rows, cols];
+
+                for (int i = 0; i < rows; i++)
+                {
+
+                    for (int j = 0; j < cols; j++)
+                    {
+                        result[i, j] = 0;
+                        for (int k = 0; k < commonDim; k++)
+                        {
+                            result[i, j] += mat1.Matrix[i, k] * mat2.Matrix[k, j];
+                        }
+                    }
+                }
+                return new Matrix3D(result);
+            }
+
+
         }
 
 
@@ -166,6 +203,86 @@ namespace Affine_transformations_in_space
             {
                 Vertices = vertices;
             }
+
+            public point GetCenter()
+            {
+                double x = Vertices.Average(point => point.X);
+                double y = Vertices.Average(point => point.Y);
+                double z = Vertices.Average(point => point.Z);
+                return new point(x, y, z);
+            }
+        }
+
+        public class Polyrotation 
+        {
+
+            List<point> _generatingCurve;
+            string _axisRotation;
+            int _segments;
+            double _angelRotation;
+
+            Polyrotation(List<point> generatingCurve, string axisRotation, int segments) 
+            {
+                _generatingCurve = generatingCurve;
+                _axisRotation = axisRotation;
+                _segments = segments;
+                _angelRotation = 360.0 / segments;
+            }
+
+            public polyhedron buildRotationFigure() 
+            {
+                List<point> vertices = new List<point>();
+                List<polygon> faces = new List<polygon>();
+                Matrix3D m = new Matrix3D();
+                for (int i = 0; i < _segments; i++) 
+                {
+                    //Matrix3D rotationMatrix = new Matrix3D();
+                    double angle = i * _angelRotation;
+                    switch (_axisRotation.ToUpper()) 
+                    {
+                        case "X":
+                            
+                            Matrix3D rotationMatrix = xRotationMatrix(angle);
+                            break;
+                        case "Y":
+                            break;
+                        case "Z":
+                            break;
+                    };
+
+                    foreach (var point in _generatingCurve) 
+                    {
+                        point rotatedPoint = TransformToWorld(point, rotationMatrix);
+                        vertices.Add(rotatedPoint);
+                    }
+
+                }
+
+                for (int segment = 0; segment < _segments; segment++)
+                {
+                    for (int i = 0; i < curvePointsCount - 1; i++)
+                    {
+                        // Индексы текущего сегмента
+                        int v1 = segment * curvePointsCount + i;
+                        int v2 = segment * curvePointsCount + i + 1;
+
+                        // Индексы следующего сегмента (с учётом замыкания)
+                        int nextSegment = (segment + 1) % _segments;
+                        int v3 = nextSegment * curvePointsCount + i + 1;
+                        int v4 = nextSegment * curvePointsCount + i;
+
+                        // Создаём грань из 4-х точек
+                        polygon face = new polygon(new List<point> { vertices[v1], vertices[v2], vertices[v3], vertices[v4] });
+                        faces.Add(face);
+                    }
+                }
+
+
+
+                return new polyhedron(vertices, faces);
+
+            }
+
         }
 
 
@@ -233,7 +350,7 @@ namespace Affine_transformations_in_space
                 polygon sevenPol = new polygon(new List<point> { v3, v4, v6 });
                 polygon eightPol = new polygon(new List<point> { v4, v1, v6 });
 
-                return new polyhedron(new List<point> { v1, v2, v3, v4, v5, v6 }, new List<polygon> { firstPol, secondPol, thirdPol, fourdPol, fivethPol, sixthPol, secondPol, eightPol });
+                return new polyhedron(new List<point> { v1, v2, v3, v4, v5, v6 }, new List<polygon> { firstPol, secondPol, thirdPol, fourdPol, fivethPol, sixthPol, sevenPol, eightPol });
             }
 
             public static polyhedron drawIcosahedr()
@@ -346,36 +463,34 @@ namespace Affine_transformations_in_space
         }
 
         //перспективная проекция
-        private double[,] perspectiveMatrix()
+        private Matrix3D perspectiveMatrix()
         {
            
-            return new double[,]
+            return new Matrix3D(new double[,]
             {
                 {1, 0, 0, 0 },
                 {0, 1, 0, 0 },
                 {0, 0, 1, -1 / d },
                 {0, 0, 1, 0 }
-            };
+            });
         }
 
-        private double[,] IsometricMatrix()
+        private Matrix3D IsometricMatrix()
         {
-            return new double[,]
+            return new Matrix3D(new double[,]
             {
                 {Math.Sqrt(3), 0, -Math.Sqrt(3), 0},
                 {1, 2, 1, 0},
                 {Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0},
                 {0,0,0,1}
-            };
+            });
         }
 
 
-
-
-        private Point ApplyProjection(point p, double[,] projectionMatrix)
+        private Point ApplyProjection(point p, Matrix3D projectionMatrix)
         {
-            double newX = p.X * projectionMatrix[0, 0] + p.Y * projectionMatrix[1, 0] + p.Z * projectionMatrix[2, 0];
-            double newY = p.X * projectionMatrix[0, 1] + p.Y * projectionMatrix[1, 1] + p.Z * projectionMatrix[2, 1];
+            double newX = p.X * projectionMatrix.Matrix[0, 0] + p.Y * projectionMatrix.Matrix[1, 0] + p.Z * projectionMatrix.Matrix[2, 0];
+            double newY = p.X * projectionMatrix.Matrix[0, 1] + p.Y * projectionMatrix.Matrix[1, 1] + p.Z * projectionMatrix.Matrix[2, 1];
 
             int x2D = (int)(newX + pictureBox1.Width / 2);
            int y2D = (int)(newY + pictureBox1.Height / 2);
@@ -396,10 +511,25 @@ namespace Affine_transformations_in_space
         {   
             
             if (pop != null)
-            {            
+            {
 
-                worldMatrix = getWorldMatrix(translationX, translationY, translationZ, rotationX, rotationY, rotattionZ, scaleX, scaleY, scaleZ);
+                //worldMatrix = //getWorldMatrix(translationX, translationY, translationZ, rotationX, rotationY, rotattionZ, scaleX, scaleY, scaleZ);
+                //return MultiplyMarices(lRotMatr, MultiplyMarices(reflMatr, MultiplyMarices(scalingMatr, MultiplyMarices(rotationMatr, translationMatr))));
 
+                Matrix3D translationMatr = translationMatrix(translationX, translationY, translationZ);
+                Matrix3D scalingMatr = scalingMatrix(scaleX, scaleY, scaleZ, scaleXCenter, scaleYCenter, scaleZCenter);
+                Matrix3D rotationMatr = rotationMatrix(rotationX, rotationY, rotattionZ);
+                Matrix3D LRotationMatr = LRotation( Convert.ToInt32( textBox4.Text), Convert.ToInt32( textBox5.Text), Convert.ToInt32 (textBox6.Text),Convert.ToInt32( textBox7.Text));
+                var (xg1, yg2, zg3) = Centroid(translationMatr * rotationMatr * scalingMatr);
+                Matrix3D fromCenter = translationMatrix(xg1, yg2, zg3);
+                Matrix3D toCenter = translationMatrix(-xg1, -yg2, -zg3);
+
+                scaleXCenter = 0;
+                scaleYCenter = 0;
+                scaleZCenter = 0;
+
+                //Matrix3D worldMatrix = toCenter * translationMatr * rotationMatr * scalingMatr * fromCenter;
+                Matrix3D worldMatrix = fromCenter * scalingMatr * rotationMatr * translationMatr * LRotationMatr * toCenter;
                 //foreach (var vertex in pop.Vertices)
                 //{
                 //    var transformedPoint = TransformToWorld(vertex, worldMatrix);
@@ -414,14 +544,24 @@ namespace Affine_transformations_in_space
                     List<Point> points2D = new List<Point>();
                     foreach (var vertex in face.Vertices) 
                     {
-                        point worldPoint = TransformToWorld(vertex, worldMatrix);
+                        point worldPoint = TransformToWorld(vertex, worldMatrix.Matrix);
                         Point projectedPoint = ApplyProjection(worldPoint, projectFunc()); //передаём сюда матрицу перспективы(конверт в 2D)
                         points2D.Add(projectedPoint);
                     }
-                    e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
                     
-                    
+
+                    int clientWidth = e.ClipRectangle.Width;
+                    int clientHeight = e.ClipRectangle.Height;
+
+                    int offsetX = clientWidth / 2;
+                    int offsetY = clientHeight / 2;
+
+                    var centeredPoints = points2D.Select(p => new Point(p.X + offsetX, p.Y + offsetY)).ToArray();
+
+                    e.Graphics.DrawPolygon(Pens.Black, centeredPoints);
+
                 }
+
 
 
                 SolidBrush sb = new SolidBrush(Color.FromArgb(255, 255, 0, 0));
@@ -430,7 +570,7 @@ namespace Affine_transformations_in_space
                 {
 
 
-                    point worldPoint = TransformToWorld(ver, worldMatrix);
+                    point worldPoint = TransformToWorld(ver, worldMatrix.Matrix);
                     Point projectedPoint = ApplyProjection(worldPoint, projectFunc()); //передаём сюда матрицу перспективы(конверт в 2D)
                     points2D_1.Add(projectedPoint);
 
@@ -448,122 +588,123 @@ namespace Affine_transformations_in_space
 
 
         //Матрица перемещения
-        private double[,] translationMatrix(double tx, double ty, double tz)
+        private Matrix3D translationMatrix(double tx, double ty, double tz)
         {
-            return new double[,]
+            return new Matrix3D(new double[,]
             {
                 { 1, 0, 0, 0 },
                 { 0, 1, 0, 0 },
                 { 0, 0, 1, 0 },
                 { tx, ty, tz, 1 }
-            };         
+            });         
         }
 
         //Матрица Масштабирования
-        private double[,] scalingMatrix(double sx, double sy, double sz, double cx, double cy, double cz)
+        private Matrix3D scalingMatrix(double sx, double sy, double sz, double cx, double cy, double cz)
         {
 
-            return new double[,] 
+            return new Matrix3D( new double[,] 
             {
                 {sx, 0, 0 ,0 },
                 {0, sy, 0, 0 },
                 {0, 0, sz, 0 },
-                {cx, cy, cz, 1 }
-            };
+                {0, 0, 0, 1 }
+            });
           
         }
 
-        private double[,] rotationMatrix(double angleX, double angleY, double angleZ)
+        private Matrix3D rotationMatrix(double angleX, double angleY, double angleZ)
         {
             //return MultiplyMarices(MultiplyMarices(zRotation(angleZ), yRotation(angleY)), xRotationMatrix(angleX));
-            return MultiplyMarices(MultiplyMarices(xRotationMatrix(angleX), yRotation(angleY)), zRotation(angleZ));
+            //return MultiplyMarices(MultiplyMarices(xRotationMatrix(angleX), yRotation(angleY)), zRotation(angleZ));
+            return xRotationMatrix(angleX) * yRotation(angleY) * zRotation(angleZ);
             //return MultiplyMarices(zRotation(angleZ), MultiplyMarices(yRotation(angleY), xRotationMatrix(angleX)));
         }
 
-        private double[,] xRotationMatrix(double a) 
+        public Matrix3D xRotationMatrix(double a) 
         {
 
             double radians = (Math.PI / 180) * a;
-            return new double[,] {
+            return new Matrix3D(new double[,] {
             { 1,0,0,0 },
             {0, Math.Cos(radians), - Math.Sin(radians), 0 },
             { 0, Math.Sin(radians), Math.Cos(radians ), 0},
             {0, 0 ,0, 1 }
-            };
+            });
          
         }
 
-        private double[,] yRotation(double a) 
+        private Matrix3D yRotation(double a) 
         {
             double radians = (Math.PI / 180) * a;
             var cosx = Math.Cos(radians);
             var sinx = Math.Sin(radians);
 
-            return new double[,] {
+            return new Matrix3D(new double[,] {
             {cosx, 0 , sinx, 0 },
             {0, 1, 0, 0 },
             {-sinx, 0, cosx, 0 },
             {0, 0, 0, 1 }
-            };
+            });
           
         }
 
-        private double[,] zRotation(double a) 
+        private Matrix3D zRotation(double a) 
         {
             double radians = (Math.PI / 180) * a;
             var cosx = Math.Cos(radians);
             var sinx = Math.Sin(radians);
 
-            return new double[,] {
+            return new Matrix3D( new double[,] {
             {cosx, -sinx, 0, 0  },
             {sinx, cosx, 0, 0  },
             {0, 0, 1, 0 },
             {0, 0, 0, 1 }
-            };         
+            });         
         }
 
 
-        private double[,] MultiplyMarices(double[,] mat1, double[,] mat2) 
-        {
-            int rows = mat1.GetLength(0);
-            int cols = mat2.GetLength(0);
-            int commonDim = mat1.GetLength(1);
+        //private double[,] MultiplyMarices(double[,] mat1, double[,] mat2) 
+        //{
+        //    int rows = mat1.GetLength(0);
+        //    int cols = mat2.GetLength(0);
+        //    int commonDim = mat1.GetLength(1);
 
-            double[,] result = new double[rows, cols];
+        //    double[,] result = new double[rows, cols];
 
-            for (int i = 0; i < rows; i++) 
-            {
+        //    for (int i = 0; i < rows; i++) 
+        //    {
 
-                for (int j = 0; j < cols; j++) 
-                {
-                    result[i, j] = 0;
-                    for (int k = 0; k < commonDim; k++) 
-                    {
-                        result[i, j] += mat1[i, k] * mat2[k, j];
-                    }
-                }
-            }
-            return result;
-        }
+        //        for (int j = 0; j < cols; j++) 
+        //        {
+        //            result[i, j] = 0;
+        //            for (int k = 0; k < commonDim; k++) 
+        //            {
+        //                result[i, j] += mat1[i, k] * mat2[k, j];
+        //            }
+        //        }
+        //    }
+        //    return result;
+        //}
 
 
-        private double[,] LRotation(int fi, double l, double m, double n)
+        private Matrix3D LRotation(int fi, double l, double m, double n)
         {
             double fiRad = (Math.PI / 180) * fi;
             double cosFi = Math.Cos(fiRad);
             double sinFI = Math.Sin(fiRad);
-            return new double[,]
+            return new Matrix3D( new double[,]
             {
                 {Math.Pow(l, 2) + cosFi * (1 - Math.Pow(l, 2)), l * (1 - cosFi) * m + n * sinFI, l * (1 - cosFi) * n - m * sinFI, 0},
                 {l * (1 - cosFi) * m - n * sinFI, Math.Pow(m, 2) + cosFi * (1 - Math.Pow(m, 2)), m * (1 - cosFi ) *  n  + l * sinFI, 0},
                 {l * (1 - cosFi) * n + m * sinFI, m * (1 - cosFi) * n - l * sinFI, Math.Pow(n,2) + cosFi * (1 - Math.Pow(n, 2)), 0  },
                 {0, 0, 0 ,1 }
 
-            };
+            });
           
         }
 
-        private double[,] getWorldMatrix(double tx, double ty, double tz, double angleX, double angleY, double angleZ, double sx, double sy, double sz) 
+        private Matrix3D getWorldMatrix(double tx, double ty, double tz, double angleX, double angleY, double angleZ, double sx, double sy, double sz) 
         {
             //(scaleXCenter, scaleYCenter, scaleZCenter) = Centroid();
             //MessageBox.Show(scaleXCenter.ToString());
@@ -581,9 +722,9 @@ namespace Affine_transformations_in_space
 
             //    //Итоговая мировая матрица Translation * Rotation * Scaling * Reflection * Lrotation
             //    return MultiplyMarices(translationMatr, MultiplyMarices(translationBack, MultiplyMarices(rotationMatr, MultiplyMarices(scalingMatr, translationToOrigin))));
-            double[,] translationMatr = translationMatrix(tx, ty, tz);
-            double[,] scalingMatr = scalingMatrix(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
-            double[,] rotationMatr = rotationMatrix(angleX, angleY, angleZ);
+            Matrix3D translationMatr = translationMatrix(tx, ty, tz);
+            Matrix3D scalingMatr = scalingMatrix(sx, sy, sz, scaleXCenter, scaleYCenter, scaleZCenter);
+            Matrix3D rotationMatr = rotationMatrix(angleX, angleY, angleZ);
             scaleXCenter = 0;
             scaleYCenter = 0;
             scaleZCenter = 0;
@@ -591,7 +732,8 @@ namespace Affine_transformations_in_space
             //return translationMatr;
             //return MultiplyMarices(translationMatr, MultiplyMarices(rotationMatr, scalingMatr));
             //return MultiplyMarices(scalingMatr, MultiplyMarices(rotationMatr, translationMatr));   //работает
-            return MultiplyMarices(lRotMatr, MultiplyMarices(reflMatr, MultiplyMarices(scalingMatr, MultiplyMarices(rotationMatr, translationMatr))));
+            //return MultiplyMarices(lRotMatr, MultiplyMarices(reflMatr, MultiplyMarices(scalingMatr, MultiplyMarices(rotationMatr, translationMatr))));
+            return translationMatr * scalingMatr * rotationMatr;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -656,64 +798,7 @@ namespace Affine_transformations_in_space
             pictureBox1.Invalidate();
         }
 
-        private polyhedron LoadFromOBJ(string filePath)
-        {
-            List<point> vertices = new List<point>();
-            List<polygon> faces = new List<polygon>();
 
-            foreach (var line in File.ReadLines(filePath))
-            {
-                if (line.StartsWith("v "))
-                {
-                    var parts = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
-                    double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
-                    double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
-                    double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
-                    vertices.Add(new point(x, y, z));
-                }
-                else if (line.StartsWith("f "))
-                {
-                    var parts = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
-                    List<point> faceVertices = parts.Skip(1)
-                                                     .Select(index => vertices[int.Parse(index) - 1])
-                                                     .ToList();
-                    faces.Add(new polygon(faceVertices));
-                }
-            }
-
-            return new polyhedron(vertices, faces);
-        }
-
-        private void SaveToOBJ(polyhedron polyhedron, string filePath)
-        {
-            using (StreamWriter writer = new StreamWriter(filePath))
-            {
-                foreach (var vertex in polyhedron.Vertices)
-                {
-                    writer.WriteLine($"v {vertex.X} {vertex.Y} {vertex.Z}");
-                }
-
-                foreach (var face in polyhedron.Faces)
-                {
-                    var indices = face.Vertices.Select(v => polyhedron.Vertices.IndexOf(v) + 1);
-                    writer.WriteLine("f " + string.Join(" ", indices));
-                }
-            }
-        }
-
-
-        //Кнопка загрузки фигуры из файла
-        private void LoadFile_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == DialogResult.OK) 
-            {
-
-                pop = LoadFromOBJ(openFileDialog.FileName);
-                pictureBox1.Invalidate();
-            }
-            
-        }
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -764,15 +849,16 @@ namespace Affine_transformations_in_space
             if (radioButton6.Checked)
             {
                
-                var reflXYMatr = new double[,]
+                var reflXYMatr = new Matrix3D( new double[,]
                 {
                         {1, 0, 0, 0 },
                         {0, 1, 0, 0 },
                         {0, 0, -1, 0 },
                         {0, 0, 0, 1 }
-                };
+                });
 
-                reflMatr = MultiplyMarices(reflMatr, reflXYMatr);
+                //reflMatr = MultiplyMarices(reflMatr, reflXYMatr);
+                reflMatr = reflMatr * reflXYMatr;
 
                 pictureBox1.Invalidate();
 
@@ -781,30 +867,31 @@ namespace Affine_transformations_in_space
             else if (radioButton7.Checked)
             {
                
-                var reflXZMatr = new double[,]
+                var reflXZMatr = new Matrix3D( new double[,]
                 {
                         {1, 0, 0, 0 },
                         {0, -1, 0, 0 },
                         {0, 0, 1, 0 },
                         {0, 0, 0, 1 }
-                };
+                });
 
-                reflMatr = MultiplyMarices(reflMatr, reflXZMatr);
-
+                //reflMatr = MultiplyMarices(reflMatr, reflXZMatr);
+                reflMatr = reflMatr * reflXZMatr;
                 pictureBox1.Invalidate();
             }
             else if (radioButton8.Checked)
             {
                
-                var reflYZMatr = new double[,]
+                var reflYZMatr = new Matrix3D( new double[,]
                 {
                         {-1, 0, 0, 0 },
                         {0, 1, 0, 0 },
                         {0, 0, 1, 0 },
                         {0, 0, 0, 1 }
-                };
+                });
 
-                reflMatr = MultiplyMarices(reflMatr, reflYZMatr);
+                //reflMatr = MultiplyMarices(reflMatr, reflYZMatr);
+                reflMatr = reflMatr * reflYZMatr;
 
                 pictureBox1.Invalidate();
             }
@@ -868,18 +955,81 @@ namespace Affine_transformations_in_space
             scaleY *= dyScale;
             scaleZ *= dzScale;
 
-            (scaleXCenter, scaleYCenter, scaleZCenter) = Centroid();
+            //(scaleXCenter, scaleYCenter, scaleZCenter) = Centroid();
 
             pictureBox1.Invalidate();
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            var lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
-            lRotMatr =  MultiplyMarices(lRotMatr, lRotMatr1);
+            Matrix3D lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+            //lRotMatr =  MultiplyMarices(lRotMatr, lRotMatr1);
+            lRotMatr = lRotMatr * lRotMatr1;
             pictureBox1.Invalidate();
         }
 
 
+        private polyhedron LoadFromOBJ(string filePath)
+        {
+            List<point> vertices = new List<point>();
+            List<polygon> faces = new List<polygon>();
+
+            foreach (var line in File.ReadLines(filePath))
+            {
+                if (line.StartsWith("v "))
+                {
+                    var parts = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
+                    double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
+                    double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+                    double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
+                    vertices.Add(new point(x, y, z));
+                }
+                else if (line.StartsWith("f "))
+                {
+                    var parts = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
+                    List<point> faceVertices = parts.Skip(1)
+                                                     .Select(index => vertices[int.Parse(index) - 1])
+                                                     .ToList();
+                    faces.Add(new polygon(faceVertices));
+                }
+            }
+
+            return new polyhedron(vertices, faces);
+        }
+
+        private void SaveToOBJ(polyhedron polyhedron, string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                foreach (var vertex in polyhedron.Vertices)
+                {
+                    writer.WriteLine($"v {vertex.X} {vertex.Y} {vertex.Z}");
+                }
+
+                foreach (var face in polyhedron.Faces)
+                {
+                    var indices = face.Vertices.Select(v => polyhedron.Vertices.IndexOf(v) + 1);
+                    writer.WriteLine("f " + string.Join(" ", indices));
+                }
+            }
+        }
+
+        private void LoadFile_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+
+                pop = LoadFromOBJ(openFileDialog.FileName);
+                pnts = pop.Faces;
+                pictureBox1.Invalidate();
+            }
+        }
+
+
     }
+
+
+
+
 }

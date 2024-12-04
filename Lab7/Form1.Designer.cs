@@ -532,9 +532,9 @@
             // 
             // LoadFile
             // 
-            this.LoadFile.Location = new System.Drawing.Point(31, 500);
+            this.LoadFile.Location = new System.Drawing.Point(25, 499);
             this.LoadFile.Name = "LoadFile";
-            this.LoadFile.Size = new System.Drawing.Size(75, 33);
+            this.LoadFile.Size = new System.Drawing.Size(75, 35);
             this.LoadFile.TabIndex = 35;
             this.LoadFile.Text = "Загрузить";
             this.LoadFile.UseVisualStyleBackColor = true;
