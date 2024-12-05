@@ -1,4 +1,4 @@
-﻿namespace Affine_transformations_in_space
+﻿namespace Lab6
 {
     partial class Afins3D
     {
@@ -243,7 +243,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(21, 210);
+            this.label3.Location = new System.Drawing.Point(9, 213);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(106, 13);
             this.label3.TabIndex = 16;
