@@ -5,6 +5,8 @@ namespace Lab6
 {
     public class Polyhedron
     {
+        //Transformer transformer;
+        Projection p = new Projection(); //Заглушка
         private Polyhedron(List<Vertex> vertices, List<Face> faces)
         {
             Vertices = vertices;
@@ -188,7 +190,7 @@ namespace Lab6
             double centerX = 0; double centerY = 0; double centerZ = 0;
             foreach (Vertex vertex in Vertices)
             {
-                var v = Transformer.TransformToWorld(vertex, matrix);
+                var v = Transformer.TransformToWorld(vertex, matrix, p);
                 centerX += v.X;
                 centerY += v.Y;
                 centerZ += v.Z;

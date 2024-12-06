@@ -14,8 +14,8 @@ namespace Lab6
 
         private Polyhedron _polyhedron;
         double d = 5;
-        private Func<Matrix> _projectionFunction;
-
+        Projection projectionFunction = new Projection();
+        
         private Matrix _reflection;
         private Matrix _rotation;
 
@@ -27,7 +27,8 @@ namespace Lab6
         {
             InitializeComponent();
             Initialize();
-            _projectionFunction = PerspectiveMatrix;
+            projectionFunction.setProjection(Projection.enumprojection.perspective);
+         
             pictureBox1.MouseMove += Form_MouseMove;
         }
         private void Form_MouseMove(object sender, MouseEventArgs e)
@@ -35,6 +36,7 @@ namespace Lab6
             MousepositionLabel.Text = $@"X:{e.X}, Y:{e.Y}";
         }
 
+       
         private void Initialize()
         {
             _translationX = 0; _translationY = 0; _translationZ = 0;
@@ -67,35 +69,14 @@ namespace Lab6
 
             if (radionButton != null && radionButton.Checked)
             {
-                if (radionButton.Text == "Перспектива") _projectionFunction = PerspectiveMatrix;
-                if (radionButton.Text == "Изометрия") _projectionFunction = IsometricMatrix;
+                if (radionButton.Text == "Перспектива") projectionFunction.setProjection(Projection.enumprojection.perspective);
+                if (radionButton.Text == "Изометрия") projectionFunction.setProjection(Projection.enumprojection.isometric);
             }
 
             pictureBox1.Invalidate();
         }
 
-        //Перспективная проекция
-        private Matrix PerspectiveMatrix()
-        {
-            return new Matrix(new[,]
-            {
-                { 1, 0, 0, 0 },
-                { 0, 1, 0, 0 },
-                { 0, 0, 1, -1 / d },
-                { 0, 0, 1, 0 }
-            });
-        }
-
-        private Matrix IsometricMatrix()
-        {
-            return new Matrix(new[,]
-            {
-                { Math.Sqrt(3), 0, -Math.Sqrt(3), 0 },
-                { 1, 2, 1, 0 },
-                { Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0 },
-                { 0, 0, 0, 1 }
-            });
-        }
+       
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
@@ -137,7 +118,7 @@ namespace Lab6
             {
                 foreach (Vertex vertex in face.Vertices)
                 {
-                    Vertex worldVertex = Transformer.TransformToWorld(vertex, _polyhedron.LocalToWorld * _projectionFunction());
+                    Vertex worldVertex = Transformer.TransformToWorld(vertex, _polyhedron.LocalToWorld * projectionFunction.getProjection(), projectionFunction);
                     points2D.Add(new Point((int)worldVertex.X, (int)worldVertex.Y));
                 }
                 var centeredPoints = points2D.Select(p => new Point(p.X + offsetX, p.Y + offsetY)).ToArray();
@@ -456,15 +437,85 @@ namespace Lab6
     }
 
 
+        
+
     }
 
-    public static class Transformer
-    {
-        public static Vertex TransformToWorld(Vertex vertex, Matrix matrix)
+    public class Transformer
+    {   
+        
+        public static Vertex TransformToWorld(Vertex vertex, Matrix matrix, Projection projection)
         {
             var point = new Matrix(new[,] { { vertex.X, vertex.Y, vertex.Z, 1 } });
             point *= matrix;
-            return new Vertex(point[0, 0], point[0, 1], point[0, 2]);
+
+            var result = new Vertex(point[0, 0], point[0, 1], point[0, 2]);
+
+            if (projection.getEnumProjection() == Projection.enumprojection.perspective)
+            {
+                return result / point[0, 3];
+            }
+
+            return result;
+            //return new Vertex(point[0, 0], point[0, 1], point[0, 2]);
         }
     }
+
+
+    public class Projection
+    {
+        //private Func<Matrix> _projectionFunction { get; set; }
+        private Matrix _projMatrix;
+        public enum enumprojection
+        {
+            none,
+            perspective,
+            isometric
+        }
+        enumprojection en = enumprojection.perspective;
+        public void setProjection(enumprojection proj)
+        {
+
+            switch (en)
+            {
+                case enumprojection.perspective:
+                    _projMatrix = PerspectiveMatrix();
+                    break;
+                case enumprojection.isometric:
+                    _projMatrix = IsometricMatrix();
+                    break;
+            }
+        }
+        public enumprojection getEnumProjection()
+        {
+            return en;
+        }
+
+        public Matrix getProjection() { return _projMatrix; }
+
+        //Перспективная проекция
+        private Matrix PerspectiveMatrix()
+        {
+            return new Matrix(new[,]
+            {
+                { 1, 0, 0, 0 },
+                { 0, 1, 0, 0 },
+                { 0, 0, 1, -1/-300d },
+                { 0, 0, 0 ,1 }
+            });
+        }
+
+        private Matrix IsometricMatrix()
+        {
+            return new Matrix(new[,]
+            {
+                { Math.Sqrt(3), 0, -Math.Sqrt(3), 0 },
+                { 1, 2, 1, 0 },
+                { Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0 },
+                { 0, 0, 0, 1 }
+            });
+        }
+
+    }
+
 }
