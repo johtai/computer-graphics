@@ -1,11 +1,10 @@
-﻿using Affine_transformations_in_space;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Lab6
+namespace Lab7
 {
     internal static class Program
     {

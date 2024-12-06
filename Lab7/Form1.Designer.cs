@@ -1,4 +1,4 @@
-﻿namespace Affine_transformations_in_space
+﻿namespace Lab7
 {
     partial class Afins3D
     {
@@ -71,7 +71,6 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button6 = new System.Windows.Forms.Button();
             this.MousepositionLabel = new System.Windows.Forms.Label();
-            this.LoadFile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -81,8 +80,8 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(128, 65);
@@ -244,7 +243,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(21, 210);
+            this.label3.Location = new System.Drawing.Point(9, 213);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(106, 13);
             this.label3.TabIndex = 16;
@@ -530,22 +529,11 @@
             this.MousepositionLabel.TabIndex = 34;
             this.MousepositionLabel.Text = "label9";
             // 
-            // LoadFile
-            // 
-            this.LoadFile.Location = new System.Drawing.Point(25, 499);
-            this.LoadFile.Name = "LoadFile";
-            this.LoadFile.Size = new System.Drawing.Size(75, 35);
-            this.LoadFile.TabIndex = 35;
-            this.LoadFile.Text = "Загрузить";
-            this.LoadFile.UseVisualStyleBackColor = true;
-            this.LoadFile.Click += new System.EventHandler(this.LoadFile_Click);
-            // 
             // Afins3D
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1291, 592);
-            this.Controls.Add(this.LoadFile);
             this.Controls.Add(this.MousepositionLabel);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.groupBox4);
@@ -636,7 +624,6 @@
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label MousepositionLabel;
-        private System.Windows.Forms.Button LoadFile;
     }
 }
 
