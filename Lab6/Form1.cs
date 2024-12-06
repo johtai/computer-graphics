@@ -15,10 +15,14 @@ namespace Lab6
         private Polyhedron _polyhedron;
         double d = 5;
         Projection projectionFunction = new Projection();
-        
-        private Matrix _reflection;
-        private Matrix _rotation;
 
+        int _fi;
+        double _l;
+        double _m;
+        double _n;
+
+        private Matrix _reflection;
+        //private Matrix _rotation;
         private double _translationX , _translationY, _translationZ;
         private double _scaleX, _scaleY, _scaleZ;
         private double _rotationX, _rotationY, _rotationZ;
@@ -51,13 +55,21 @@ namespace Lab6
                 {0, 0, 0, 1 }
             });
 
-            _rotation = new Matrix (new double[,]
-           {
-                {1, 0, 0, 0 },
-                {0, 1, 0, 0 },
-                {0, 0, 1, 0 },
-                {0, 0, 0, 1 }
-          });
+          //  _rotation = new Matrix (new double[,]
+          // {
+          //      {1, 0, 0, 0 },
+          //      {0, 1, 0, 0 },
+          //      {0, 0, 1, 0 },
+          //      {0, 0, 0, 1 }
+          //});
+
+          //  _lrotationIs = new Matrix(new double[,]
+          // {
+          //      {1, 0, 0, 0 },
+          //      {0, 1, 0, 0 },
+          //      {0, 0, 1, 0 },
+          //      {0, 0, 0, 1 }
+          //});
         }
 
         // Возвращает геометрический центр полигона
@@ -86,7 +98,7 @@ namespace Lab6
             Matrix translationMatrix = TranslationMatrix(_translationX, _translationY, _translationZ);
             Matrix scalingMatrix = ScalingMatrix(_scaleX, _scaleY, _scaleZ);
             Matrix rotationMatrix = RotationMatrix(_rotationX, _rotationY, _rotationZ);
-            
+            Matrix lrotation = LRotation(_fi, _l, _m, _n);
             Vertex centroid = _polyhedron.Centroid(_polyhedron.LocalToWorld);
 
             Matrix toCenter = TranslationMatrix(-centroid.X, -centroid.Y, -centroid.Z);
@@ -96,11 +108,11 @@ namespace Lab6
             if (!IsCentroid)
             {
                 IsCentroid = true;
-                worldMatrix = translationMatrix * scalingMatrix * rotationMatrix *  _reflection;
+                worldMatrix = translationMatrix * scalingMatrix * rotationMatrix * lrotation *  _reflection;
             }
             else
             {
-                worldMatrix = toCenter * translationMatrix * scalingMatrix * rotationMatrix * _reflection * fromCenter;
+                worldMatrix = toCenter * translationMatrix * scalingMatrix * rotationMatrix * lrotation * _reflection * fromCenter;
             }
             _polyhedron.LocalToWorld *= worldMatrix;
 
@@ -378,8 +390,13 @@ namespace Lab6
 
     private void button7_Click(object sender, EventArgs e)
     {
-        Matrix lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
-        _rotation *= lRotMatr1;
+            _fi = Convert.ToInt32(textBox4.Text);
+            _l = Convert.ToInt32(textBox5.Text);
+            _m = Convert.ToInt32(textBox6.Text);
+            _n = Convert.ToInt32(textBox7.Text);
+        //    Matrix lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+        //_lrotationIs = lRotMatr1;
+            //_rotation *= lRotMatr1;
         pictureBox1.Invalidate();
     }
 
