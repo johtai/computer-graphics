@@ -19,8 +19,8 @@ public:
 };
 // extern указывает, что массивы будут определены в другом файле.
 //extern  Vertex cubeVertices2[];
-extern const std::vector<GLfloat> cubeVertices;
-extern const std::vector<GLfloat> tetrahedronVertices;
+extern const std::vector<GLfloat> tetrafigure;
+extern const std::vector<GLfloat> cubefigure;
 
 
 

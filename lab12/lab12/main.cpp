@@ -31,41 +31,6 @@ const char* FragmentGradientShaderSource = R"(
 
 
 
-
-
-const std::vector<GLfloat> cube{
-    -1.0f,   1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-     1.0f,   1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-     1.0f,  -1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-     -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-
-
-        -1.0f, 1.0f, -1.0f, 0.5f, 0.5f, 0.5f,
-        -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f,
-
-        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-
-        1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 
-        1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-
-        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 
-        -1.0f, 1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 
-        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 
-        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-
-        1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-        -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        -1.0f, 1.0f, -1.0f, 0.5f, 0.5f, 0.5f,
-        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
-
-};
      
 
 
@@ -125,13 +90,17 @@ GLuint createShaderProgram(int filename) {
 // Создает фигуру в VBO по вершинам
 void getShape(GLuint& VBO, GLuint count) 
 {
- 
     glGenBuffers(1, &VBO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    if (count == 0) 
+    {
+        glBufferData(GL_ARRAY_BUFFER, cubefigure.size() * sizeof(GLfloat), cubefigure.data(), GL_STATIC_DRAW);
+    }
+    else if (count == 1) 
+    {
+        glBufferData(GL_ARRAY_BUFFER, tetrafigure.size() * sizeof(GLfloat), tetrafigure.data(), GL_STATIC_DRAW);
+    }
 
-    glBufferData(GL_ARRAY_BUFFER, cube.size() *  sizeof(GLfloat), cube.data(), GL_STATIC_DRAW);
-    
     glBindBuffer(GL_ARRAY_BUFFER, NULL);
 }
 
@@ -164,7 +133,7 @@ int main()
 
     glm::mat4 mvp = projection * view * model;
 
-
+    GLuint count = 0;
     while (window.isOpen()) 
     {
         sf::Event event;
@@ -173,8 +142,9 @@ int main()
             if (event.type == sf::Event::Closed) { window.close(); }
             else if (event.type == sf::Event::MouseButtonPressed) 
             {               
-                shaderProgram = createShaderProgram(progID);         
-                    getShape(VBO, shaderProgram);
+                count = (count + 1) % 2;
+                shaderProgram = createShaderProgram(count);         
+                    getShape(VBO, count);
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -196,16 +166,19 @@ int main()
         glEnableVertexAttribArray(Color_vertex);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        //Куб
-        glDrawArrays(GL_QUADS, 0, 24);
+        if (count == 0) 
+        {
+            //Куб
+            glDrawArrays(GL_QUADS, 0, 24);
+        }
+        else if(count == 1) 
+        {
+            //Тетраэдр
+            glDrawArrays(GL_TRIANGLES, 0, 12);
+        }
         glDisableVertexAttribArray(Attrib_vertex);
         glDisableVertexAttribArray(Color_vertex);
         //glBindVertexArray(0);
-
-        // Считываем цвета r, g, b и передаем по индексу 1
-        //glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(1 * sizeof(GLfloat))); 
-        //glEnableVertexAttribArray(1);
-
         // uniform - для любых двух шейдеров
         // attrib - для вершинного
 
