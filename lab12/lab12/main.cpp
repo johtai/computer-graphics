@@ -120,7 +120,7 @@ int main()
     GLuint Color_vertex = glGetAttribLocation(shaderProgram, "colorVertex");
     getShape(VBO, progID);
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    //model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
     glm::mat4 view = glm::lookAt(
         glm::vec3(5.0f, 5.0f, 5.0f),//Положение 
@@ -131,8 +131,9 @@ int main()
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-    glm::mat4 mvp = projection * view * model;
-
+    glm::mat4 mvp;
+    mvp = projection * view * model;
+    GLfloat moveX = 0.0f;
     GLuint count = 0;
     while (window.isOpen()) 
     {
@@ -145,6 +146,20 @@ int main()
                 count = (count + 1) % 2;
                 shaderProgram = createShaderProgram(count);         
                     getShape(VBO, count);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {
+                
+                //std::cout << "Key left pressed" << std::endl;
+                moveX = 0.5f;
+                model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
+                mvp = projection * view * model;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
+            {
+                moveX = -0.5f;
+                model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
+                mvp = projection * view * model;
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
