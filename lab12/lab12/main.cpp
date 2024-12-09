@@ -1,54 +1,76 @@
 ﻿#include "shapes.h"
-
-
-
-//TODO ИСПРАВИТЬ ОШИБКУ НАРУШЕНИЯ ДОСТУПА К ЧТЕНИЮ
+// Window dimensions
+const GLuint WIDTH = 800, HEIGHT = 600;
 
 const char* VertexShaderSource = R"(
 	        #version 330 core
-            uniform vec3 translation;
 	        in vec3 coord;
 	        in vec3 colorVertex; //Цвет вершины (для градиента)
+            uniform mat4 matr;
 	        out vec3 vertexColor; //Передача цвета в фрагментный шейдер
 
+
 	        void main() {
-		        gl_Position = vec4(coord.x * scale.x, coord.y * scale.y, 0.0, 1.0);
-		        vertexColor = colorVertex;
+		        gl_Position = matr *  vec4(coord, 1.0f);
+                vertexColor = colorVertex;
+                
+		       
 	        }
         )";
 
 const char* FragmentGradientShaderSource = R"(
 	        #version 330 core
-            in vec3 vertexColor;
             out vec4 color;
-
+            in vec3 vertexColor;
             void main()
             {
                 color = vec4(vertexColor, 1.0);
             }
         )";
+//projection* view* model* vec4(coord, 1.0f);
 
-const char* FragmentTextureShaderSource = R"(
-	        #version 330 core
-            in vec3 vertexColor;
-            out vec4 color;
 
-            void main()
-            {
-                color = vec4(vertexColor, 1.0);
-            }
-        )";
 
-//const char* UniformFragmentShaderSource = R"(
-//	        #version 330 core
-//            uniform vec3 uniformcolor;
-//            out vec4 color;
-//
-//            void main()
-//            {
-//                color = vec4(uniformcolor, 1.0);
-//            }
-//        )";
+
+
+const std::vector<GLfloat> cube{
+    -1.0f,   1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+     1.0f,   1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+     1.0f,  -1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+     -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+
+
+        -1.0f, 1.0f, -1.0f, 0.5f, 0.5f, 0.5f,
+        -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f,
+
+        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+
+        1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 
+        1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+
+        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 
+        -1.0f, 1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 
+        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+
+        1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -1.0f, 1.0f, -1.0f, 0.5f, 0.5f, 0.5f,
+        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
+
+};
+     
+
+
+
+
 
 // Компиляция шейдера
 GLuint compileShader(const GLchar* source, GLenum type) {
@@ -56,24 +78,40 @@ GLuint compileShader(const GLchar* source, GLenum type) {
     glShaderSource(shader, 1, &source, nullptr);
     glCompileShader(shader);
 
+    GLint success;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
     return shader;
 }
 
 // Создание шейдера
-GLuint createShaderProgram(int shaderindex) {
-    GLuint fragmentShader = compileShader(FragmentGradientShaderSource, GL_FRAGMENT_SHADER);
+GLuint createShaderProgram(int filename) {
+    
+    //Вертексный шейдер и проверка на ошибку создания
     GLuint vertexShader = compileShader(VertexShaderSource, GL_VERTEX_SHADER);
-
-
-    //Градиентная фигура
-    if (shaderindex == 0)
+    
+    GLint success;
+    GLchar infolog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) 
     {
-        fragmentShader = compileShader(FragmentGradientShaderSource, GL_FRAGMENT_SHADER);
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infolog);
+        std::cout << "Error compiling vertex shader: " << infolog << std::endl;
     }
-    //Куб с текстурой
-    else if (shaderindex == 1)
+
+    //Фрагментный шейдер и проверка на ошибку создания
+    GLuint fragmentShader = compileShader(FragmentGradientShaderSource, GL_FRAGMENT_SHADER);
+        
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success) 
     {
-        fragmentShader = compileShader(FragmentTextureShaderSource, GL_FRAGMENT_SHADER);
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infolog);
+        std::cout << "Error compiling fragment shader: " << infolog << std::endl;
     }
 
     GLuint shaderProgram = glCreateProgram();
@@ -85,52 +123,47 @@ GLuint createShaderProgram(int shaderindex) {
 }
 
 // Создает фигуру в VBO по вершинам
-void getShape(GLuint& VBO, GLuint count) {
+void getShape(GLuint& VBO, GLuint count) 
+{
+ 
     glGenBuffers(1, &VBO);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    if (count == 0)
-        glBufferData(GL_ARRAY_BUFFER, cubeVertices.size() * sizeof(GLfloat), cubeVertices.data(), GL_STATIC_DRAW);
-    else if (count == 1)
-        glBufferData(GL_ARRAY_BUFFER, tetrahedronVertices.size() * sizeof(GLfloat), tetrahedronVertices.data(), GL_STATIC_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, cube.size() *  sizeof(GLfloat), cube.data(), GL_STATIC_DRAW);
+    
     glBindBuffer(GL_ARRAY_BUFFER, NULL);
 }
 
-//GLuint loadTexture(const std::string& filepath) 
-//{
-//    sf::Image image;
-//    if (!image.loadFromFile(filepath))
-//    {
-//        std::cerr << "Failed to load texture1.png" << std::endl;
-//        return -1;
-//    }
-//
-//    GLuint textureID;
-//    glGenTextures(1, &textureID);
-//    glBindTexture(GL_TEXTURE_2D, textureID);
-//
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-//
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//
-//    glBindTexture(GL_TEXTURE_2D, 0); // Отключаем текстуру
-//
-//    return textureID;
-//
-//}
-
-int main() {
-    
-    sf::RenderWindow window(sf::VideoMode(500, 500), "Window");
+int main() 
+{
+    sf::Clock clock; 
+    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
     glewInit();
 
     GLuint VBO;
-    GLuint count = 0; 
+    GLuint progID = 0;
+    glEnable(GL_DEPTH_TEST);     //Включаем проверку глубины
+    GLuint shaderProgram = createShaderProgram(progID);
 
-    GLuint shaderProgram = createShaderProgram(count);
-    getShape(VBO, count);
+    // Вытягиваем ID атрибута вершин из собранной программы
+    GLuint Attrib_vertex = glGetAttribLocation(shaderProgram, "coord");
+    GLuint Color_vertex = glGetAttribLocation(shaderProgram, "colorVertex");
+    getShape(VBO, progID);
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(5.0f, 5.0f, 5.0f),//Положение 
+        glm::vec3(0.0f, 0.0f, 0.0f),//Куда должна быть направлена камера
+        glm::vec3(0.0f, 1.0f, 0.0f) //Для ориентации
+    );
+
+
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+
+    glm::mat4 mvp = projection * view * model;
+
 
     while (window.isOpen()) 
     {
@@ -139,50 +172,111 @@ int main() {
         {
             if (event.type == sf::Event::Closed) { window.close(); }
             else if (event.type == sf::Event::MouseButtonPressed) 
-            {
-                count = (count + 1) % 2;
-                shaderProgram = createShaderProgram(count % 2);
-                if (count == 0 || count == 1)
-                    getShape(VBO, count);
+            {               
+                shaderProgram = createShaderProgram(progID);         
+                    getShape(VBO, shaderProgram);
             }
         }
-
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        float time = clock.getElapsedTime().asSeconds();
         glUseProgram(shaderProgram);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        //Получаем расположение юниформ-переменных в Вертексном шейдере
+        GLuint matrloc = glGetUniformLocation(shaderProgram, "matr");
 
-        //GLuint texture = loadTexture("texture1.png");
-        //glBindTexture(GL_TEXTURE_2D, texture);
+        //Передаём юниформ-переменные в шейдеры
+        glUniformMatrix4fv(matrloc, 1, GL_FALSE, glm::value_ptr(mvp));
+
+
         // Считываем координаты x, y, z и передаем по индексу 0
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0); // 3 координаты
-        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(Attrib_vertex, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
+        glEnableVertexAttribArray(Attrib_vertex); // Включаем массив атрибутов
+
+        glVertexAttribPointer(Color_vertex, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(Color_vertex);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        //Куб
+        glDrawArrays(GL_QUADS, 0, 24);
+        glDisableVertexAttribArray(Attrib_vertex);
+        glDisableVertexAttribArray(Color_vertex);
+        //glBindVertexArray(0);
 
         // Считываем цвета r, g, b и передаем по индексу 1
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat))); // Öâåò
-        glEnableVertexAttribArray(1);
+        //glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(1 * sizeof(GLfloat))); 
+        //glEnableVertexAttribArray(1);
 
         // uniform - для любых двух шейдеров
         // attrib - для вершинного
 
-        // Полуаем адрес для хранения цвета в uniform
-        //GLuint colorLocation = glGetUniformLocation(shaderProgram, "uniformcolor");
-        //glUniform3f(colorLocation, 1.0f, 0.0f, 0.0f);
-
-        glBindBuffer(GL_ARRAY_BUFFER, NULL);
-
-        // Куб
-        if (count == 0)
-            glDrawArrays(GL_QUADS, 0, 12);
-        // Тетраэдр
-        else if (count == 1)
-            glDrawArrays(GL_TRIANGLES, 0, 12);
-
         window.display();
     }
-    glBindTexture(GL_TEXTURE_2D, 0);
+
     glDeleteBuffers(1, &VBO);
     glUseProgram(0);
     glDeleteProgram(shaderProgram);
-
+   
     return 0;
 }
+
+
+
+
+//Vertex cubeVertices2[] = {  // Вершины кубика
+// { -0.5, -0.5, +0.5}, { -0.5, +0.5, +0.5 }, { +0.5, +0.5, +0.5 },
+// { +0.5, +0.5, +0.5 }, { +0.5, -0.5, +0.5 }, { -0.5, -0.5, +0.5 },
+// { -0.5, -0.5, -0.5 }, { +0.5, +0.5, -0.5 }, { -0.5, +0.5, -0.5 },
+// { +0.5, +0.5, -0.5 }, { -0.5, -0.5, -0.5 }, { +0.5, -0.5, -0.5 },
+// { -0.5, +0.5, -0.5 }, { -0.5, +0.5, +0.5 }, { +0.5, +0.5, +0.5 },
+// { +0.5, +0.5, +0.5 }, { +0.5, +0.5, -0.5 }, { -0.5, +0.5, -0.5 },
+// { -0.5, -0.5, -0.5 }, { +0.5, -0.5, +0.5 }, { -0.5, -0.5, +0.5 },
+// { +0.5, -0.5, +0.5 }, { -0.5, -0.5, -0.5 }, { +0.5, -0.5, -0.5 },
+// { +0.5, -0.5, -0.5 }, { +0.5, -0.5, +0.5 }, { +0.5, +0.5, +0.5 },
+// { +0.5, +0.5, +0.5 }, { +0.5, +0.5, -0.5 }, { +0.5, -0.5, -0.5 },
+// { -0.5, -0.5, -0.5 }, { -0.5, +0.5, +0.5 }, { -0.5, -0.5, +0.5 },
+// { -0.5, +0.5, +0.5 }, { -0.5, -0.5, -0.5 }, { -0.5, +0.5, -0.5 },
+//};
+
+//GLfloat vertices[] = {
+//       -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+//        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+//       -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+//       -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+//
+//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+//        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+//        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+//        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+//       -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+//
+//       -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+//       -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+//       -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+//
+//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+//        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+//        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+//        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+//
+//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+//        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+//        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+//        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+//
+//       -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+//       -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+//       -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+//};
