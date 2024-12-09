@@ -134,6 +134,7 @@ int main()
     glm::mat4 mvp;
     mvp = projection * view * model;
     GLfloat moveX = 0.0f;
+    GLfloat moveY = 0.0f;
     GLuint count = 0;
     while (window.isOpen()) 
     {
@@ -151,19 +152,30 @@ int main()
             {
                 
                 //std::cout << "Key left pressed" << std::endl;
-                moveX = 0.5f;
+                moveX = -0.5f;
                 model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
-                mvp = projection * view * model;
+
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
             {
-                moveX = -0.5f;
+                moveX = 0.5f;
                 model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
-                mvp = projection * view * model;
+                
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
+            {
+                moveY = 0.5f;
+                model = glm::translate(model, glm::vec3(0.0f, moveY, 0.0f));
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            {
+                moveY = -0.5f;
+                model = glm::translate(model, glm::vec3(0.0f, moveY, 0.0f));
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         float time = clock.getElapsedTime().asSeconds();
+        mvp = projection * view * model;
         glUseProgram(shaderProgram);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         //Получаем расположение юниформ-переменных в Вертексном шейдере
