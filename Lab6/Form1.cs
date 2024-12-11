@@ -524,13 +524,23 @@ namespace Lab6
 
         private Matrix IsometricMatrix()
         {
+            //return new Matrix(new[,]
+            //{
+            //    { Math.Sqrt(3), 0, -Math.Sqrt(3), 0 },
+            //    { 1, 2, 1, 0 },
+            //    { Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0 },
+            //    { 0, 0, 0, 1 }
+            //});
+
             return new Matrix(new[,]
-            {
-                { Math.Sqrt(3), 0, -Math.Sqrt(3), 0 },
-                { 1, 2, 1, 0 },
-                { Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0 },
-                { 0, 0, 0, 1 }
+{
+                {Math.Sqrt(3), 1, Math.Sqrt(2), 0 },
+                {0, 2, -Math.Sqrt(2), 0 },
+                {-Math.Sqrt(3), 1, Math.Sqrt(2), 0 },
+                {0, 0 ,0, 1 }
             });
+
+
         }
 
     }
