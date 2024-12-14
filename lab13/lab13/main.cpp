@@ -203,11 +203,16 @@ void setupVAO(GLuint& VAO, GLuint& VBO, const std::vector <GLfloat>& vertices)
 
 int main() 
 {
+
+    ParseObjFromFile("cube.obj");
     int width = 512;
     int height = 512;
 
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
     glewInit();
+
+    // Загрузка .obj файла
+    ParseObjFromFile("cube.obj");
 
     GLuint progID = 0;
     glEnable(GL_DEPTH_TEST);  //Включаем проверку глубины

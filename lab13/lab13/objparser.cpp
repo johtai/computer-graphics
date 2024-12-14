@@ -14,8 +14,13 @@ void ParseObjFromFile(std::string filename)
 		{
 
 			std::cout << line << std::endl;
+
 		}
 		in.close();
+	}
+	else 
+	{
+		std::cerr << "Error open file";
 	}
 
 
