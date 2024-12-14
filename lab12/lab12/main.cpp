@@ -38,37 +38,36 @@ const char* VertexTexShaderSource = R"(
 	        layout (location = 0) in vec3 coord;
 	        layout (location = 1) in vec3 colorVertex; //Цвет вершины (для градиента)
             layout (location = 2) in vec2 texCoord;
-            uniform mat4 matr;
-            out vec2 TexCoord;
-            out vec3 Coord;
 
+            out vec2 TexCoord;
+            out vec3 VertexColor;
+
+            uniform mat4 matr;
 
 	        void main() {
 		        gl_Position = matr *  vec4(coord, 1.0f);
                 TexCoord = texCoord;
-                Coord = coord;	       
+                VertexColor = colorVertex;
+                      
 	        }
         )";
 
 const char* FragmentGradientTextureShaderSource = R"(
         #version 330 core
-        in vec3 Color;
         in vec2 TexCoord; 
+        in vec3 VertexColor;
+
         out vec4 color;
+
         uniform sampler2D ourTexture;
         void main()
         {
-            color =  texture(ourTexture, TexCoord);
+            color =  texture(ourTexture, TexCoord) * vec4(VertexColor, 1.0f);
         }
 
 
 )";
 //projection* view* model* vec4(coord, 1.0f);
-
-
-
-     
-
 
 
 // Компиляция шейдера
@@ -86,6 +85,33 @@ GLuint compileShader(const GLchar* source, GLenum type) {
     }
 
     return shader;
+}
+
+
+GLuint loadTexture(const char* filePath) {
+    int width, height;
+    unsigned char* image = SOIL_load_image(filePath, &width, &height, 0, SOIL_LOAD_RGB);
+    if (!image) {
+        std::cerr << "Failed to load texture" << std::endl;
+        return 0;
+    }
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    SOIL_free_image_data(image);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return texture;
 }
 
 // Создание шейдера
@@ -157,22 +183,6 @@ int main()
 {
     int width, height;
     width = 512; height = 512;
-    unsigned char* image = SOIL_load_image("container.jpg", &width, &height, 0, SOIL_LOAD_RGB); //0 - кол-во каналов изображения. SOIL_LOAD_RGB - количество каналов изображения
-    
-    if(!image) 
-    {
-        std::cerr << "Failed to load texture" << std::endl;
-        return -1;
-    }
-    //Создадим текстуру
-    GLuint texture;
-    glGenTextures(1, &texture); //1 - кол-во тестур для генерации
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Повторение текстуры по S
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Повторение текстуры по T
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Линейная фильтрация при уменьшении
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Линейная фильтрация при увеличении
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
     glewInit();
@@ -189,7 +199,6 @@ int main()
     getShape(VBO, progID);
     glm::mat4 model = glm::mat4(1.0f);
     //model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
     glm::mat4 view = glm::lookAt(
         glm::vec3(5.0f, 5.0f, -5.0f),//Положение 
         glm::vec3(0.0f, 0.0f, 0.0f),//Куда должна быть направлена камера
@@ -203,6 +212,9 @@ int main()
     GLfloat moveX = 0.0f;
     GLfloat moveY = 0.0f;
     GLuint count = 0;
+
+    //Создадим текстуру
+    GLuint texture = loadTexture("container.jpg");
     while (window.isOpen()) 
     {
         sf::Event event;
@@ -321,61 +333,3 @@ int main()
 
 
 
-//Vertex cubeVertices2[] = {  // Вершины кубика
-// { -0.5, -0.5, +0.5}, { -0.5, +0.5, +0.5 }, { +0.5, +0.5, +0.5 },
-// { +0.5, +0.5, +0.5 }, { +0.5, -0.5, +0.5 }, { -0.5, -0.5, +0.5 },
-// { -0.5, -0.5, -0.5 }, { +0.5, +0.5, -0.5 }, { -0.5, +0.5, -0.5 },
-// { +0.5, +0.5, -0.5 }, { -0.5, -0.5, -0.5 }, { +0.5, -0.5, -0.5 },
-// { -0.5, +0.5, -0.5 }, { -0.5, +0.5, +0.5 }, { +0.5, +0.5, +0.5 },
-// { +0.5, +0.5, +0.5 }, { +0.5, +0.5, -0.5 }, { -0.5, +0.5, -0.5 },
-// { -0.5, -0.5, -0.5 }, { +0.5, -0.5, +0.5 }, { -0.5, -0.5, +0.5 },
-// { +0.5, -0.5, +0.5 }, { -0.5, -0.5, -0.5 }, { +0.5, -0.5, -0.5 },
-// { +0.5, -0.5, -0.5 }, { +0.5, -0.5, +0.5 }, { +0.5, +0.5, +0.5 },
-// { +0.5, +0.5, +0.5 }, { +0.5, +0.5, -0.5 }, { +0.5, -0.5, -0.5 },
-// { -0.5, -0.5, -0.5 }, { -0.5, +0.5, +0.5 }, { -0.5, -0.5, +0.5 },
-// { -0.5, +0.5, +0.5 }, { -0.5, -0.5, -0.5 }, { -0.5, +0.5, -0.5 },
-//};
-
-//GLfloat vertices[] = {
-//       -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-//        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//       -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-//       -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-//
-//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-//        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-//        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-//       -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//
-//       -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//       -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//       -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//
-//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//
-//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-//        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-//        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-//       -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//       -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//
-//       -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-//        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//       -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-//       -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-//};

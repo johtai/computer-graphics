@@ -30,7 +30,7 @@ const char* FragShaderSource = R"(
 	#version 330 core
 	out vec4 color;
 	void main() {
-		color = vec4(0, 1, 0, 1);
+		color = vec4(0.0, 1.0, 0.0, 1.0);
 	}
 )";
 
@@ -55,17 +55,12 @@ void ReleaseVBO() {
 
 // Освобождение шейдеров
 void ReleaseShader() {
-	// Передавая ноль, мы отключаем шейдерную программу
 	glUseProgram(0);
-	
-	// Удаляем шейдерную программу
 	glDeleteProgram(Program);
 }
 
 void Release() {
-	// Шейдеры
 	ReleaseShader();
-	// Вершинный буфер
 	ReleaseVBO();
 }
 
@@ -73,18 +68,12 @@ void Draw() {
 	glUseProgram(Program); // Устанавливаем шейдерную программу текущей
 	glEnableVertexAttribArray(Attrib_vertex); // Включаем массив атрибутов
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); // Подключаем VBO
-	
-	// сообщаем OpenGL как он должен интерпретировать вершинные данные.
-	// 2 - берем по 2
-	// GL_FALSE - нормализация (от 0 до 2)
-	// 0 шаг (берем каждый, он сам считает)
-	// берем с 0 элемента буфера (с начала)
+
 	glVertexAttribPointer(Attrib_vertex, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Отключаем VBO
 
-	// начиная с нулевой вершины берем 3
-	glDrawArrays(GL_TRIANGLES, 0, 3); // Передаем данные на видеокарту (рисуем)
-	glDisableVertexAttribArray(Attrib_vertex); // Отключаем массив атрибутов
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDisableVertexAttribArray(Attrib_vertex);
 	glUseProgram(0); // Отключаем шейдерную программу
 	//checkOpenGLerror();
 }
@@ -92,11 +81,7 @@ void Draw() {
 void InitShader() {
 	// Создаем вершинный шейдер
 	GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
-	
-	// Передаем исходный код
 	glShaderSource(vShader, 1, &VertexShaderSource, NULL);
-	
-	// Компилируем шейдер
 	glCompileShader(vShader);
 	std::cout << "vertex shader \n";
 	
@@ -105,11 +90,7 @@ void InitShader() {
 
 	// Создаем фрагментный шейдер
 	GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
-	
-	// Передаем исходный код
 	glShaderSource(fShader, 1, &FragShaderSource, NULL);
-	
-	// Компилируем шейдер
 	glCompileShader(fShader);
 	std::cout << "fragment shader \n";
 	
@@ -135,11 +116,11 @@ void InitShader() {
 	// Вытягиваем ID атрибута из собранной программы
 	const char* attr_name = "coord"; //имя в шейдере
 	Attrib_vertex = glGetAttribLocation(Program, attr_name);
+
 	if (Attrib_vertex == -1) {
 		std::cout << "could not bind attrib " << attr_name << std::endl;
 		return;
 	}
-	//checkOpenGLerror();
 }
 
 void InitVBO() {

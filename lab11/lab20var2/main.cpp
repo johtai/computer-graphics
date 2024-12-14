@@ -25,11 +25,11 @@ const std::vector<GLfloat> fanVertices = {
 
 // Пятиугольник
 const std::vector<GLfloat> pentaVertices = {
-     0.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-     1.0f,  0.3f,  1.0f, 0.0f, 0.0f,
-     0.6f, -0.8f,  0.0f, 1.0f, 1.0f,
-    -0.6f, -0.8f,  0.0f, 1.0f, 1.0f,
-    -1.0f,  0.3f,  0.0f, 1.0f, 1.0f,
+     0.0f,  1.0f,   1.0f, 0.0f, 0.0f,
+     1.0f,  0.3f,   1.0f, 0.0f, 0.0f,
+     0.6f, -0.8f,   0.0f, 1.0f, 1.0f,
+    -0.6f, -0.8f,   0.0f, 1.0f, 1.0f,
+    -1.0f,  0.3f,   0.0f, 1.0f, 1.0f,
 };
 
 const char* VertexShaderSource = R"(
@@ -156,13 +156,16 @@ int main() {
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-        // Считываем координаты x, y и передаем по индексу 0
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0); // Ïîçèöèÿ
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        // Считываем координаты x, y и передаем по индексу 0
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+        
 
         // Считываем цвета r, g, b и передаем по индексу 1
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat))); // Öâåò
-        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+        
 
         // uniform - для любых двух шейдеров
         // attrib - для вершинного
