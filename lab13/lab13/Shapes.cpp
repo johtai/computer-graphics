@@ -54,20 +54,23 @@ const std::vector<GLfloat> cubefigure{
 };
 
 
-std::vector<GLfloat> loadedVertices; // Хранение загруженных данных
 
-void ParseObjFromFile(const std::string& filePath) {
+
+std::vector<GLfloat>  ParseObjFromFile(const std::string& filePath) {
     std::ifstream objFile(filePath);
-    if (!objFile.is_open()) {
+    std::vector<GLfloat> loadedVertices; // Хранение загруженных данных
+    if (!objFile.is_open()) 
+    {
         std::cerr << "Failed to open .obj file: " << filePath << std::endl;
-        return;
+        
+        return std::vector<GLfloat>();
     }
 
     std::vector<glm::vec3> positions;
     std::vector<glm::vec2> texCoords;
     std::vector<glm::vec3> normals;
 
-    loadedVertices.clear();
+
 
     std::string line;
     while (std::getline(objFile, line)) {
@@ -91,23 +94,57 @@ void ParseObjFromFile(const std::string& filePath) {
             normals.push_back(normal);
         }
         else if (prefix == "f") { // Индексы (face)
-            unsigned int posIndex[3], texIndex[3], normIndex[3];
-            char slash; // Для пропуска символа '/' в индексе
-            for (int i = 0; i < 3; i++) {
-                ss >> posIndex[i] >> slash >> texIndex[i] >> slash >> normIndex[i];
-                glm::vec3 position = positions[posIndex[i] - 1];
-                glm::vec2 texCoord = texCoords[texIndex[i] - 1];
-                glm::vec3 normal = normals[normIndex[i] - 1];
+            unsigned int posIndex[3] = { 0 }, texIndex[3] = { 0 }, normIndex[3] = { 0 };
+            char slash;
+
+            for (int i = 0; i < 3; i++) 
+            {
+                std::string vertexData;
+                ss >> vertexData; // Считываем весь блок данных (например, "1/1/1")
+
+                std::stringstream vertexStream(vertexData);
+                std::string pos, tex, norm;
+
+                // Разделяем по символу '/'
+                std::getline(vertexStream, pos, '/');
+                std::getline(vertexStream, tex, '/');
+                std::getline(vertexStream, norm, '/');
+
+                // Преобразуем индексы, если они существуют
+                posIndex[i] = !pos.empty() ? std::stoi(pos) : 0;
+                texIndex[i] = !tex.empty() ? std::stoi(tex) : 0;
+                normIndex[i] = !norm.empty() ? std::stoi(norm) : 0;
+
+                // Проверка индексов позиции
+                glm::vec3 position = (posIndex[i] > 0 && posIndex[i] - 1 < positions.size())
+                    ? positions[posIndex[i] - 1]
+                    : glm::vec3(0.0f);
+
+                // Проверка индексов текстурных координат
+                glm::vec2 texCoord = (texIndex[i] > 0 && texIndex[i] - 1 < texCoords.size())
+                    ? texCoords[texIndex[i] - 1]
+                    : glm::vec2(0.0f);
+
+                // Проверка индексов нормалей
+                glm::vec3 normal = (normIndex[i] > 0 && normIndex[i] - 1 < normals.size())
+                    ? normals[normIndex[i] - 1]
+                    : glm::vec3(0.0f, 0.0f, 1.0f);
+
+                //std::cout << "Face: ";
+                //std::cout << "v: " << posIndex[i] << " vt: " << texIndex[i] << " vn: " << normIndex[i] << std::endl;
 
                 // Добавление векторных данных в массив для OpenGL
-                loadedVertices.insert(loadedVertices.end(), {
+                loadedVertices.insert(loadedVertices.end(), 
+                    {
                     position.x, position.y, position.z,
                     normal.x, normal.y, normal.z,
                     texCoord.x, texCoord.y
                     });
             }
         }
+
     }
     objFile.close();
     std::cout << "Successfully loaded .obj file: " << filePath << std::endl;
+    return loadedVertices;
 }

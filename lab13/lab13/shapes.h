@@ -21,11 +21,9 @@ public:
 };
 // extern указывает, что массивы будут определены в другом файле.
 //extern  Vertex cubeVertices2[];
-extern std::vector<GLfloat> loadedVertices;
-void ParseObjFromFile(const std::string& filePath);
+//extern std::vector<GLfloat> loadedVertices;
+std::vector<GLfloat>  ParseObjFromFile(const std::string& filePath);
 extern const std::vector<GLfloat> tetrafigure;
 extern const std::vector<GLfloat> cubefigure;
-
-
 
 #endif SHAPES_H
