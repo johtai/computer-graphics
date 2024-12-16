@@ -18,11 +18,11 @@ public:
     GLfloat r, g, b;
     Vertex(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLfloat g, GLfloat b) : x(x), y(y), z(z), r(r), g(g), b(b) {}
 };
-// extern указывает, что массивы будут определены в другом файле.
-//extern  Vertex cubeVertices2[];
+
 extern const std::vector<GLfloat> tetrafigure;
 extern const std::vector<GLfloat> cubefigure;
+extern std::vector<GLfloat> circle;
 
-
+void initCircle();
 
 #endif SHAPES_H

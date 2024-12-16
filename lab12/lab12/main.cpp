@@ -1,6 +1,6 @@
 ﻿#include "shapes.h"
 // Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint WIDTH = 800, HEIGHT = 800;
 
 const char* VertexShaderSource = R"(
 	        #version 330 core
@@ -67,9 +67,7 @@ const char* FragmentGradientTextureShaderSource = R"(
 
 
 )";
-//projection* view* model* vec4(coord, 1.0f);
-
-
+    
 // Компиляция шейдера
 GLuint compileShader(const GLchar* source, GLenum type) {
     GLuint shader = glCreateShader(type);
@@ -141,7 +139,7 @@ GLuint createShaderProgram(int filename) {
         //Фрагментный шейдер и проверка на ошибку создания
         fragmentShader = compileShader(FragmentGradientTextureShaderSource, GL_FRAGMENT_SHADER);
     }
-    else if(filename == 0 || filename == 2)
+    else if (filename == 0 || filename == 2 || filename == 3)
     {
         //Фрагментный шейдер и проверка на ошибку создания
         fragmentShader = compileShader(FragmentGradientShaderSource, GL_FRAGMENT_SHADER);
@@ -174,6 +172,11 @@ void getShape(GLuint& VBO, GLuint count)
     else if (count == 2) 
     {
         glBufferData(GL_ARRAY_BUFFER, tetrafigure.size() * sizeof(GLfloat), tetrafigure.data(), GL_STATIC_DRAW);
+    }
+    else if (count == 3)
+    {
+        initCircle();
+        glBufferData(GL_ARRAY_BUFFER, circle.size() * sizeof(GLfloat), circle.data(), GL_STATIC_DRAW);
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, NULL);
@@ -208,7 +211,6 @@ int main()
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
     glm::mat4 mvp;
-    mvp = projection * view * model;
     GLfloat moveX = 0.0f;
     GLfloat moveY = 0.0f;
     GLuint count = 0;
@@ -223,15 +225,13 @@ int main()
             if (event.type == sf::Event::Closed) { window.close(); }
             else if (event.type == sf::Event::MouseButtonPressed) 
             {               
-                count = (count + 1) % 3;
+                count = (count + 1) % 4;
                 shaderProgram = createShaderProgram(count); 
                 if (count == 1) 
                 {
                     Tex_Vertex = glGetAttribLocation(shaderProgram, "texCoord");
                     std::cout << Tex_Vertex;
-                }
-                    
-                    
+                }   
                 getShape(VBO, count);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -259,11 +259,11 @@ int main()
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //float time = clock.getElapsedTime().asSeconds();
-        mvp = projection * view * model;
+        
+        mvp = count == 3 ? glm::mat4(1.0f) : projection * view * model;
+
         glUseProgram(shaderProgram);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        //Получаем расположение юниформ-переменных в Вертексном шейдере
         GLuint matrloc = glGetUniformLocation(shaderProgram, "matr");
 
         //Передаём юниформ-переменные в шейдеры
@@ -298,9 +298,16 @@ int main()
 
             glVertexAttribPointer(Color_vertex, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
             glEnableVertexAttribArray(Color_vertex);
-
         }
-                    
+        if (count == 3)
+        {
+            // Считываем координаты x, y, z и передаем по индексу 0
+            glVertexAttribPointer(Attrib_vertex, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)0);
+            glEnableVertexAttribArray(Attrib_vertex); // Включаем массив атрибутов
+
+            glVertexAttribPointer(Color_vertex, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+            glEnableVertexAttribArray(Color_vertex);
+        }
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         if (count == 0 || count == 1) 
@@ -313,6 +320,11 @@ int main()
         {
             //Тетраэдр
             glDrawArrays(GL_TRIANGLES, 0, 12);
+        }
+        else if (count == 3)
+        {   
+            //Тетраэдр
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 362);
         }
         glDisableVertexAttribArray(Attrib_vertex);
         glDisableVertexAttribArray(Color_vertex);
