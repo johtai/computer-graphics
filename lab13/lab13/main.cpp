@@ -211,8 +211,8 @@ void rotateCamera(Camera& camera, float deltaTime) {
 }
 
 void moveCamera(Camera& camera, float deltaTime) {
-    float speed = 2.5f * deltaTime; // Скорость движения
-
+    //float speed = 2.5f * deltaTime; // Скорость движения
+    float speed = 10.0f * deltaTime;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
         camera.position += speed * camera.front; // Вперёд
     }
@@ -240,7 +240,8 @@ int main()
 {
     setlocale(LC_ALL, "ru");
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    std::vector<GLfloat> loadedVertices = ParseObjFromFile("tako.obj");
+    /*std::vector<GLfloat> loadedVertices = ParseObjFromFile("tako.obj");*/
+    std::vector<GLfloat> loadedVertices = ParseObjFromFile("helicopter_model.obj");
     int width = 512;
     int height = 512;
 
@@ -249,14 +250,24 @@ int main()
 
 
     GLuint progID = 0;
+
     glEnable(GL_DEPTH_TEST);  //Включаем проверку глубины
+    glDepthFunc(GL_LESS);    // Отрисовка ближних объектов
+    glEnable(GL_CULL_FACE);          // Включить отсечение граней
+    glCullFace(GL_BACK);             // Отсечь задние грани
+    glFrontFace(GL_CCW);             // Определить, что передняя грань имеет порядок вершин counter-clockwise (по умолчанию)
+    // Если используется прозрачность
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     GLuint shaderProgram = createShaderProgram(progID);
 
     GLuint VAO, VBO;
     setupVAO(VAO, VBO, loadedVertices);
 
     //Создадим текстуру
-    GLuint texture = loadTexture("container.jpg");
+    //GLuint texture = loadTexture("ambientMap1.png");
+    GLuint texture = loadTexture("helicopter_model.jpg");
     if (texture == 0) {
         std::cerr << "Error: Texture not loaded!" << std::endl;
         return -1;
@@ -270,7 +281,7 @@ int main()
     //    glm::vec3(0.0f, 1.0f, 0.0f) //Для ориентации
     //);
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 500.0f);
 
     glm::mat4 mvp;
     //mvp = projection * view * model;
@@ -280,6 +291,8 @@ int main()
     GLuint count = 0;
     float lastTime = 0.0f;
     sf::Clock clock;
+
+
     while (window.isOpen()) 
     {
         float currentTime = clock.getElapsedTime().asSeconds(); //получает текущее время в секундах.
@@ -322,10 +335,10 @@ int main()
                 model = glm::translate(model, glm::vec3(0.0f, moveY, 0.0f));
             }
 
-            //if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) 
-            //{
-            //    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            //}
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) 
+            {
+                model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            }
 
         }
 

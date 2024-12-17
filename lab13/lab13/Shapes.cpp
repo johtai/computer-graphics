@@ -138,7 +138,7 @@ std::vector<GLfloat>  ParseObjFromFile(const std::string& filePath) {
                     {
                     position.x, position.y, position.z,
                     normal.x, normal.y, normal.z,
-                    texCoord.x, texCoord.y
+                    texCoord.x,  1 - texCoord.y
                     });
             }
         }
