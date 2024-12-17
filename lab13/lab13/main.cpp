@@ -160,8 +160,85 @@ struct Camera
         yaw(-90.0f), pitch(0.0f), fov(45.0f){}
 };
 
+
+glm::mat4 getViewMatrix(const Camera& camera) 
+{
+    return glm::lookAt(camera.position, camera.position + camera.front, camera.up);
+}
+
+
+
+void updateCameraPosition(Camera& camera, float deltaTime, const sf::Keyboard keyboard)
+{
+    float speed = 2.5f * deltaTime; //Скорость движения
+}
+
+glm::mat4 getProjectionMatrix(float aspectRatio, const Camera& camera) {
+    return glm::perspective(glm::radians(camera.fov), aspectRatio, 0.1f, 100.0f);
+}
+
+
+void rotateCamera(Camera& camera, float deltaTime) {
+    float rotationSpeed = 50.0f * deltaTime; // Скорость вращения в градусах
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        camera.yaw -= rotationSpeed; // Поворот камеры влево
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        camera.yaw += rotationSpeed; // Поворот камеры вправо
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+        camera.pitch += rotationSpeed; // Поворот камеры вверх
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+        camera.pitch -= rotationSpeed; // Поворот камеры вниз
+    }
+
+    // Ограничение вертикального поворота
+    if (camera.pitch > 89.0f) camera.pitch = 89.0f;
+    if (camera.pitch < -89.0f) camera.pitch = -89.0f;
+
+    // Пересчёт направления камеры
+    glm::vec3 front;
+    front.x = cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+    front.y = sin(glm::radians(camera.pitch));
+    front.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+    camera.front = glm::normalize(front);
+
+    // Пересчёт векторов "вправо" и "вверх"
+    camera.right = glm::normalize(glm::cross(camera.front, glm::vec3(0.0f, 1.0f, 0.0f)));
+    camera.up = glm::normalize(glm::cross(camera.right, camera.front));
+}
+
+void moveCamera(Camera& camera, float deltaTime) {
+    float speed = 2.5f * deltaTime; // Скорость движения
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+        camera.position += speed * camera.front; // Вперёд
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        camera.position -= speed * camera.front; // Назад
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        camera.position -= speed * camera.right; // Влево
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        camera.position += speed * camera.right; // Вправо
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+        camera.position += speed * camera.up;    // Вверх
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+        camera.position -= speed * camera.up;    // Вниз
+    }
+}
+
+
+
+
 int main() 
 {
+    setlocale(LC_ALL, "ru");
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     std::vector<GLfloat> loadedVertices = ParseObjFromFile("tako.obj");
     int width = 512;
@@ -180,33 +257,48 @@ int main()
 
     //Создадим текстуру
     GLuint texture = loadTexture("container.jpg");
+    if (texture == 0) {
+        std::cerr << "Error: Texture not loaded!" << std::endl;
+        return -1;
+    }
+
 
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::lookAt(
-        glm::vec3(1.0f, 1.0f, -1.0f),//Положение 
-        glm::vec3(0.0f, 0.0f, 0.0f),//Куда должна быть направлена камера
-        glm::vec3(0.0f, 1.0f, 0.0f) //Для ориентации
-    );
+    //glm::mat4 view = glm::lookAt(
+    //    glm::vec3(1.0f, 1.0f, -1.0f),//Положение 
+    //    glm::vec3(0.0f, 0.0f, 0.0f),//Куда должна быть направлена камера
+    //    glm::vec3(0.0f, 1.0f, 0.0f) //Для ориентации
+    //);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
     glm::mat4 mvp;
-    mvp = projection * view * model;
+    //mvp = projection * view * model;
     GLfloat moveX = 0.0f;
     GLfloat moveY = 0.0f;
     GLfloat scaleUp = 0.0f;
     GLuint count = 0;
-
+    float lastTime = 0.0f;
+    sf::Clock clock;
     while (window.isOpen()) 
     {
+        float currentTime = clock.getElapsedTime().asSeconds(); //получает текущее время в секундах.
+        float deltaTime = currentTime - lastTime; // обновляется, чтобы сохранить текущее время для следующего шага.
+        lastTime = currentTime; //вычисляет разницу между текущим временем и временем последнего обновления 
+      
         sf::Event event;
+        // Управление камерой
         while (window.pollEvent(event))
         {
+
+          
             if (event.type == sf::Event::Closed) { window.close(); }
             else if (event.type == sf::Event::MouseButtonPressed) 
             {               
                 shaderProgram = createShaderProgram(count);
             }
+
+          
 
             //Keyboard Actions
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -230,12 +322,19 @@ int main()
                 model = glm::translate(model, glm::vec3(0.0f, moveY, 0.0f));
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) 
-            {
-                model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            }
+            //if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) 
+            //{
+            //    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            //}
 
         }
+
+
+        rotateCamera(camera, deltaTime);
+        moveCamera(camera, deltaTime);
+        glm::mat4 view = getViewMatrix(camera);
+
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mvp = projection * view * model;
         glUseProgram(shaderProgram);
@@ -246,10 +345,6 @@ int main()
         glUniformMatrix4fv(matrloc, 1, GL_FALSE, glm::value_ptr(mvp));                   
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        if (texture == 0) {
-            std::cerr << "Error: Texture not loaded!" << std::endl;
-            return -1;
-        }
         glBindTexture(GL_TEXTURE_2D, texture);
         //Куб
         glBindVertexArray(VAO);

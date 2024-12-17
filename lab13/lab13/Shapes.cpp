@@ -61,7 +61,7 @@ std::vector<GLfloat>  ParseObjFromFile(const std::string& filePath) {
     std::vector<GLfloat> loadedVertices; // Хранение загруженных данных
     if (!objFile.is_open()) 
     {
-        std::cerr << "Failed to open .obj file: " << filePath << std::endl;
+        std::cerr << "Ошибка открытия .obj файла: " << filePath << std::endl;
         
         return std::vector<GLfloat>();
     }
@@ -145,6 +145,6 @@ std::vector<GLfloat>  ParseObjFromFile(const std::string& filePath) {
 
     }
     objFile.close();
-    std::cout << "Successfully loaded .obj file: " << filePath << std::endl;
+    std::cout << "Успешная загрузка .obj файла " << filePath << std::endl;
     return loadedVertices;
 }
