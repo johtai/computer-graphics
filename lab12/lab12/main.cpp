@@ -1,5 +1,5 @@
 ﻿#include "shapes.h"
-// Window dimensions
+
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 const char* VertexShaderSource = R"(
@@ -60,9 +60,10 @@ const char* FragmentGradientTextureShaderSource = R"(
         out vec4 color;
 
         uniform sampler2D ourTexture;
+        uniform float colorAlpha;
         void main()
         {
-            color =  texture(ourTexture, TexCoord) * vec4(VertexColor, 1.0f);
+            color =  mix( texture(ourTexture, TexCoord), vec4(VertexColor, 1.0f), colorAlpha);
         }
 
 
@@ -115,7 +116,8 @@ GLuint loadTexture(const char* filePath) {
 }
 
 // Создание шейдера
-GLuint createShaderProgram(int filename) {
+GLuint createShaderProgram(int filename) 
+{
     GLuint vertexShader;
     if (filename == 1) 
     {
@@ -212,6 +214,7 @@ int main()
     GLfloat moveX = 0.0f;
     GLfloat moveY = 0.0f;
     GLuint count = 0;
+    GLfloat intensity = 1;
 
     //Создадим текстуру
     GLuint texture = loadTexture("container.jpg");
@@ -228,24 +231,40 @@ int main()
                 if (count == 1) 
                 {
                     Tex_Vertex = glGetAttribLocation(shaderProgram, "texCoord");
-                    std::cout << Tex_Vertex;
+                    //std::cout << Tex_Vertex;
+                   
+                   
+                    //glUniform1f(colorAlphaLoc, 1.0f);
                 }
-                    
                     
                 getShape(VBO, count);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+
+
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) 
             {
-                
+                if(count == 1 && intensity <= 1)
+                    intensity += 0.09f;
+            }
+               
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) 
+            {
+                if(count == 1 && intensity >= 0)
+                    intensity -= 0.09f;
+            }
+    
+        
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {              
                 moveX = -0.5f;
                 model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
-
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
             {
                 moveX = 0.5f;
-                model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
-                
+                model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));             
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
             {
@@ -259,16 +278,19 @@ int main()
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //float time = clock.getElapsedTime().asSeconds();
+
         mvp = projection * view * model;
         glUseProgram(shaderProgram);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
         //Получаем расположение юниформ-переменных в Вертексном шейдере
         GLuint matrloc = glGetUniformLocation(shaderProgram, "matr");
+        GLfloat colorAlphaLoc = glGetUniformLocation(shaderProgram, "colorAlpha");
 
         //Передаём юниформ-переменные в шейдеры
         glUniformMatrix4fv(matrloc, 1, GL_FALSE, glm::value_ptr(mvp));
-
+        glUniform1f(colorAlphaLoc, intensity);
+     
         if (count == 0) 
         {
             // Считываем координаты x, y, z и передаем по индексу 0
@@ -329,7 +351,3 @@ int main()
    
     return 0;
 }
-
-
-
-
