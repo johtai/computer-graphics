@@ -1,6 +1,6 @@
 ﻿#include "shapes.h"
 // Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint WIDTH = 1200, HEIGHT = 900;
 
 
 const char* VertexTexShaderSource = R"(
@@ -179,7 +179,7 @@ glm::mat4 getProjectionMatrix(float aspectRatio, const Camera& camera) {
 
 
 void rotateCamera(Camera& camera, float deltaTime) {
-    float rotationSpeed = 50.0f * deltaTime; // Скорость вращения в градусах
+    float rotationSpeed = 2.5f * deltaTime; // Скорость вращения в градусах
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
         camera.yaw -= rotationSpeed; // Поворот камеры влево
@@ -241,7 +241,7 @@ int main()
     setlocale(LC_ALL, "ru");
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     /*std::vector<GLfloat> loadedVertices = ParseObjFromFile("tako.obj");*/
-    std::vector<GLfloat> loadedVertices = ParseObjFromFile("helicopter_model.obj");
+    std::vector<GLfloat> loadedVertices = ParseObjFromFile("lootbox_model.obj");
     int width = 512;
     int height = 512;
 
@@ -267,7 +267,7 @@ int main()
 
     //Создадим текстуру
     //GLuint texture = loadTexture("ambientMap1.png");
-    GLuint texture = loadTexture("helicopter_model.jpg");
+    GLuint texture = loadTexture("lootbox_model.png");
     if (texture == 0) {
         std::cerr << "Error: Texture not loaded!" << std::endl;
         return -1;
