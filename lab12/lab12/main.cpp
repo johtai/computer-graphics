@@ -43,9 +43,14 @@ const char* VertexTexShaderSource = R"(
             out vec3 VertexColor;
 
             uniform mat4 matr;
+            uniform float scaleX;
+            uniform float scaleY;
 
 	        void main() {
-		        gl_Position = matr *  vec4(coord, 1.0f);
+                vec3 pos = coord * mat3(scaleX, 0, 0,
+                                        0, scaleY, 0,
+                                        0, 0, 1);
+		        gl_Position = matr *  vec4(pos, 1.0f);
                 TexCoord = texCoord;
                 VertexColor = colorVertex;
                       
@@ -81,7 +86,7 @@ const char* FragmentMixTextureShaderSource = R"(
         uniform float colorAlpha;
         void main()
         {
-            color =  mix(texture(ourTexture, TexCoord), texture(ourTexture2, TexCoord), 0.0f);
+            color =  mix(texture(ourTexture, TexCoord), texture(ourTexture2, TexCoord), colorAlpha);
         }
 )";
 
@@ -240,6 +245,8 @@ int main()
     mvp = projection * view * model;
     GLfloat moveX = 0.0f;
     GLfloat moveY = 0.0f;
+    GLfloat scaleX = 1.0f;
+    GLfloat scaleY = 1.0f;
     GLfloat intensity = 0.5f;
 
     //Создадим текстуру
@@ -270,15 +277,17 @@ int main()
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) 
             {
-                //if(count == 1 && intensity <= 1)
+                if((count == 1 || count == 2) && intensity < 1)
                     intensity += 0.09f;
+                //std::cout << intensity << std::endl;
             }
                
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) 
             {
-                //if(count == 1 && intensity >= 0)
+                if ((count == 1 || count == 2) && intensity > 0)
                     intensity -= 0.09f;
+                //std::cout << intensity << std::endl;
             }
     
         
@@ -302,6 +311,22 @@ int main()
                 moveY = -0.5f;
                 model = glm::translate(model, glm::vec3(0.0f, moveY, 0.0f));
             }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            {
+                scaleY += 0.1f;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
+                scaleY -= 0.1f;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            {
+                scaleX += 0.1f;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            {
+                scaleX -= 0.1f;
+            }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -312,10 +337,14 @@ int main()
         //Получаем расположение юниформ-переменных в Вертексном шейдере
         GLuint matrloc = glGetUniformLocation(shaderProgram, "matr");
         GLfloat colorAlphaLoc = glGetUniformLocation(shaderProgram, "colorAlpha");
+        GLfloat colorAlphaLoc1 = glGetUniformLocation(shaderProgram, "scaleX");
+        GLfloat colorAlphaLoc2 = glGetUniformLocation(shaderProgram, "scaleY");
 
         //Передаём юниформ-переменные в шейдеры
         glUniformMatrix4fv(matrloc, 1, GL_FALSE, glm::value_ptr(mvp));
         glUniform1f(colorAlphaLoc, intensity);
+        glUniform1f(colorAlphaLoc1, scaleX);
+        glUniform1f(colorAlphaLoc2, scaleY);
      
         if (count == 0) 
         {
@@ -376,9 +405,16 @@ int main()
             glDrawArrays(GL_QUADS, 0, 24);
         }
         else if (count == 2)
-        {
+        {   
+            glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
+            glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 0);
+
+            glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, texture2);
+            glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture2"), 1);
+
+
 
             //Куб
             glDrawArrays(GL_QUADS, 0, 24);
