@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -12,7 +11,7 @@ namespace Lab7
     public partial class Afins3D : Form
     {
         private static int _spin = 0;
-
+        fileaction f = new fileaction();
         private Polyhedron _polyhedron;
         double d = 5;
         Projection projectionFunction = new Projection();
@@ -132,10 +131,14 @@ namespace Lab7
                 foreach (Vertex vertex in face.Vertices)
                 {
                     Vertex worldVertex = Transformer.TransformToWorld(vertex, _polyhedron.LocalToWorld * projectionFunction.getProjection(), projectionFunction);
+                    if (worldMatrix == null) throw new InvalidOperationException("Матрица преобразования некорректна.");
                     points2D.Add(new Point((int)worldVertex.X, (int)worldVertex.Y));
                 }
                 var centeredPoints = points2D.Select(p => new Point(p.X + offsetX, p.Y + offsetY)).ToArray();
-                e.Graphics.DrawPolygon(Pens.Black, centeredPoints);
+                if(centeredPoints.Length > 0) 
+                {
+                    e.Graphics.DrawPolygon(Pens.Black, centeredPoints);
+                }
                 points2D.Clear();
             }
         }
@@ -307,6 +310,39 @@ namespace Lab7
             }
         }
 
+        private void ButtonLoad_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel) 
+            {
+                return;
+            }
+            string filename = openFileDialog1.FileName;
+            //string filetext = System.IO.File.ReadAllText(filename);
+            _polyhedron = f.LoadFromOBJ(filename);
+            pictureBox1.Invalidate();
+            
+            //MessageBox.Show("asd");
+        }
+
+        private void Save_Click(object sender, EventArgs e)
+        {
+            // Пример фигуры вращения
+            var profile = new List<Vertex> {
+                new Vertex(0, 0, 0),
+                new Vertex(0, 1, 0),
+                new Vertex(0, 2, 1),
+            };
+
+            var revolutionFigure = FigureBuilder.BuildRevolutionFigure(profile, "z", 500);
+            var fileAction = new fileaction();
+            fileAction.SaveToOBJ(revolutionFigure, "revolution.obj");
+
+            // Пример графика функции
+            Func<double, double, double> func = (x, y) => Math.Sin(Math.Sqrt(x * x + y * y));
+            var surface = FigureBuilder.BuildSurface(func, -5, 5, -5, 5, 20);
+            fileAction.SaveToOBJ(surface, "surface.obj");
+        }
+
         public void radioButtonSwitch(object sender, EventArgs e)
         {
             var rbt = sender as RadioButton;
@@ -389,75 +425,73 @@ namespace Lab7
 
     }
 
-        private void button7_Click(object sender, EventArgs e)
-        {
-                _fi = Convert.ToInt32(textBox4.Text);
-                _l = Convert.ToInt32(textBox5.Text);
-                _m = Convert.ToInt32(textBox6.Text);
-                _n = Convert.ToInt32(textBox7.Text);
-            //    Matrix lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
-            //_lrotationIs = lRotMatr1;
-                //_rotation *= lRotMatr1;
-            pictureBox1.Invalidate();
-        }
+    private void button7_Click(object sender, EventArgs e)
+    {
+            _fi = Convert.ToInt32(textBox4.Text);
+            _l = Convert.ToInt32(textBox5.Text);
+            _m = Convert.ToInt32(textBox6.Text);
+            _n = Convert.ToInt32(textBox7.Text);
+        //    Matrix lRotMatr1 = LRotation(Convert.ToInt32(textBox4.Text), Convert.ToDouble(textBox5.Text), Convert.ToDouble(textBox6.Text), Convert.ToDouble(textBox7.Text));
+        //_lrotationIs = lRotMatr1;
+            //_rotation *= lRotMatr1;
+        pictureBox1.Invalidate();
+    }
 
     private void switchReflectionRadioButton(object sender, EventArgs e)
     {
 
     }
 
-        private void button5_Click_1(object sender, EventArgs e)
+    private void button5_Click_1(object sender, EventArgs e)
+    {
+        try
         {
-            try
-            {
-                    switch (_spin) 
-                    {
+                switch (_spin) 
+                {
 
-                        case 0:
-                            _rotationX = Convert.ToInt32(rotationBox.Text);
-                            _rotationY = 0;
-                            _rotationZ = 0;
-                            break;
-                        case 1:
-                            _rotationY = Convert.ToInt32(rotationBox.Text);
-                            _rotationX = 0;
-                            _rotationZ = 0;
-                            break;
-                        case 2:
-                            _rotationZ = Convert.ToInt32(rotationBox.Text);
-                            _rotationX = 0;
-                            _rotationY = 0;
-                            break;
+                    case 0:
+                        _rotationX = Convert.ToInt32(rotationBox.Text);
+                        _rotationY = 0;
+                        _rotationZ = 0;
+                        break;
+                    case 1:
+                        _rotationY = Convert.ToInt32(rotationBox.Text);
+                        _rotationX = 0;
+                        _rotationZ = 0;
+                        break;
+                    case 2:
+                        _rotationZ = Convert.ToInt32(rotationBox.Text);
+                        _rotationX = 0;
+                        _rotationY = 0;
+                        break;
 
 
-                    }
-                pictureBox1.Invalidate();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Введите корректные значения!");
-            }
-
-        }
-        private void button6_Click_1(object sender, EventArgs e)
-        {
-            var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-            var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
-
-            _scaleX = dxScale;
-            _scaleY = dyScale;
-            _scaleZ = dzScale;
-
-            //(scaleXCenter, scaleYCenter, scaleZCenter) = Centroid();
-
+                }
             pictureBox1.Invalidate();
         }
+        catch (Exception)
+        {
+            MessageBox.Show("Введите корректные значения!");
+        }
+
+    }
+    private void button6_Click_1(object sender, EventArgs e)
+    {
+        var dxScale = Convert.ToDouble(textBox1.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+        var dyScale = Convert.ToDouble(textBox2.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+        var dzScale = Convert.ToDouble(textBox3.Text, new NumberFormatInfo() { NumberDecimalSeparator = "." });
+
+        _scaleX = dxScale;
+        _scaleY = dyScale;
+        _scaleZ = dzScale;
+
+        //(scaleXCenter, scaleYCenter, scaleZCenter) = Centroid();
+
+        pictureBox1.Invalidate();
+    }
 
 
         
-
-
 
     }
 
@@ -496,7 +530,7 @@ namespace Lab7
         public void setProjection(enumprojection proj)
         {
 
-            switch (en)
+            switch (proj)
             {
                 case enumprojection.perspective:
                     _projMatrix = PerspectiveMatrix();
@@ -527,13 +561,23 @@ namespace Lab7
 
         private Matrix IsometricMatrix()
         {
+            //return new Matrix(new[,]
+            //{
+            //    { Math.Sqrt(3), 0, -Math.Sqrt(3), 0 },
+            //    { 1, 2, 1, 0 },
+            //    { Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0 },
+            //    { 0, 0, 0, 1 }
+            //});
+
             return new Matrix(new[,]
-            {
-                { Math.Sqrt(3), 0, -Math.Sqrt(3), 0 },
-                { 1, 2, 1, 0 },
-                { Math.Sqrt(2), -Math.Sqrt(2), Math.Sqrt(2), 0 },
-                { 0, 0, 0, 1 }
+{
+                {Math.Sqrt(3), 1, Math.Sqrt(2), 0 },
+                {0, 2, -Math.Sqrt(2), 0 },
+                {-Math.Sqrt(3), 1, Math.Sqrt(2), 0 },
+                {0, 0 ,0, 1 }
             });
+
+
         }
 
     }

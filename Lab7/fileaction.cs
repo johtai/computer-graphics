@@ -14,7 +14,7 @@ namespace Lab7
     internal class fileaction
     {
 
-        private Polyhedron LoadFromOBJ(string filePath)
+        public Polyhedron LoadFromOBJ(string filePath)
         {
             List<Vertex> vertices = new List<Vertex>();
             List<Face> faces = new List<Face>();
@@ -31,49 +31,66 @@ namespace Lab7
                 }
                 else if (line.StartsWith("f "))
                 {
-                    var parts = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
-                    List<Face> faceVertices = parts.Skip(1)
-                                                     .Select(index => vertices[int.Parse(index) - 1])
-                                                     .ToList();
-                    faces.Add(new Face(faceVertices));
+                    var partsFace = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
+                    int i = 0;
+                    List<Vertex> tempListVertex = new List<Vertex>();
+                    //foreach (var p in parts) 
+                    //{
+                    //    vv[i] = vertices[int.Parse(p)];
+                    //    i++;
+
+                    //}
+                    for (int j = 1; j < partsFace.Length; j++) 
+                    {
+
+                        tempListVertex.Add(vertices[int.Parse(partsFace[j]) - 1]);
+                    }
+                    faces.Add(new Face(tempListVertex));
+                   // List<Face> faceVertices = parts.Skip(1).Select(index => vertices[int.Parse(index)]);
+                    //                                 //.Select(index => vertices[int.Parse(index) - 1])
+                    //                                 //.ToList();
+                    //faces.Add(new Face(faceVertices));
                 }
             }
-
-            return new polyhedron(vertices, faces);
+           
+            return new Polyhedron(vertices, faces);
         }
 
-        //private void SaveToOBJ(Polyhedron polyhedron, string filePath)
-        //{
-        //    using (StreamWriter writer = new StreamWriter(filePath))
-        //    {
-        //        foreach (var vertex in polyhedron.Vertices)
-        //        {
-        //            writer.WriteLine($"v {vertex.X} {vertex.Y} {vertex.Z}");
-        //        }
+        public void SaveToOBJ(Polyhedron polyhedron, string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                foreach (var vertex in polyhedron.Vertices)
+                {
+                    writer.WriteLine(string.Format(CultureInfo.InvariantCulture, "v {0:0.###} {1:0.###} {2:0.###}", vertex.X, vertex.Y, vertex.Z));
 
-        //        foreach (var face in polyhedron.Faces)
-        //        {
-        //            var indices = face.Vertices.Select(v => polyhedron.Vertices.IndexOf(v) + 1);
-        //            writer.WriteLine("f " + string.Join(" ", indices));
-        //        }
-        //    }
-        //}
+                }
 
-        //private void LoadFile_Click(object sender, EventArgs e)
-        //{
-        //    OpenFileDialog openFileDialog = new OpenFileDialog();
-        //    if (openFileDialog.ShowDialog() == DialogResult.OK)
-        //    {
-
-        //        pop = LoadFromOBJ(openFileDialog.FileName);
-        //        pnts = pop.Faces;
-        //        pictureBox1.Invalidate();
-        //    }
-        //}
-
-
-
-
-
+                foreach (var face in polyhedron.Faces)
+                {
+                    var indices = face.Vertices.Select(v => polyhedron.Vertices.IndexOf(v) + 1);
+                    writer.WriteLine("f " + string.Join(" ", indices));
+                }
+            }
+        }
     }
 }
+
+//private void LoadFile_Click(object sender, EventArgs e)
+//{
+//    OpenFileDialog openFileDialog = new OpenFileDialog();
+//    if (openFileDialog.ShowDialog() == DialogResult.OK)
+//    {
+
+//        pop = LoadFromOBJ(openFileDialog.FileName);
+//        pnts = pop.Faces;
+//        pictureBox1.Invalidate();
+//    }
+//}
+
+
+
+
+
+//    }
+//}

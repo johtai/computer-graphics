@@ -493,7 +493,7 @@ namespace Lab6
         public void setProjection(enumprojection proj)
         {
 
-            switch (en)
+            switch (proj)
             {
                 case enumprojection.perspective:
                     _projMatrix = PerspectiveMatrix();

@@ -71,6 +71,9 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button6 = new System.Windows.Forms.Button();
             this.MousepositionLabel = new System.Windows.Forms.Label();
+            this.ButtonLoad = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.Save = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -80,8 +83,8 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(128, 65);
@@ -529,11 +532,37 @@
             this.MousepositionLabel.TabIndex = 34;
             this.MousepositionLabel.Text = "label9";
             // 
+            // ButtonLoad
+            // 
+            this.ButtonLoad.Location = new System.Drawing.Point(27, 515);
+            this.ButtonLoad.Name = "ButtonLoad";
+            this.ButtonLoad.Size = new System.Drawing.Size(75, 26);
+            this.ButtonLoad.TabIndex = 35;
+            this.ButtonLoad.Text = "Загрузить";
+            this.ButtonLoad.UseVisualStyleBackColor = true;
+            this.ButtonLoad.Click += new System.EventHandler(this.ButtonLoad_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // Save
+            // 
+            this.Save.Location = new System.Drawing.Point(31, 479);
+            this.Save.Name = "Save";
+            this.Save.Size = new System.Drawing.Size(75, 23);
+            this.Save.TabIndex = 36;
+            this.Save.Text = "ButtonSave";
+            this.Save.UseVisualStyleBackColor = true;
+            this.Save.Click += new System.EventHandler(this.Save_Click);
+            // 
             // Afins3D
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1291, 592);
+            this.Controls.Add(this.Save);
+            this.Controls.Add(this.ButtonLoad);
             this.Controls.Add(this.MousepositionLabel);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.groupBox4);
@@ -624,6 +653,9 @@
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label MousepositionLabel;
+        private System.Windows.Forms.Button ButtonLoad;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button Save;
     }
 }
 

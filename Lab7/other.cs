@@ -1,4 +1,160 @@
-﻿using System;
+//Face.cs
+using System.Collections.Generic;
+
+namespace Lab7
+{
+    public class Face
+    {
+        public List<Vertex> Vertices { get; private set; }
+        public Face(List<Vertex> vertices)
+        {
+            Vertices = vertices;
+        }
+    }
+}
+
+//fileaction.cs
+using Lab7;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Lab7
+{
+    internal class fileaction
+    {
+
+        public Polyhedron LoadFromOBJ(string filePath)
+        {
+            List<Vertex> vertices = new List<Vertex>();
+            List<Face> faces = new List<Face>();
+
+            foreach (var line in File.ReadLines(filePath))
+            {
+                if (line.StartsWith("v "))
+                {
+                    var parts = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
+                    double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
+                    double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
+                    double z = double.Parse(parts[3], CultureInfo.InvariantCulture);
+                    vertices.Add(new Vertex(x, y, z));
+                }
+                else if (line.StartsWith("f "))
+                {
+                    var partsFace = line.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
+                    int i = 0;
+                    List<Vertex> tempListVertex = new List<Vertex>();
+                    //foreach (var p in parts) 
+                    //{
+                    //    vv[i] = vertices[int.Parse(p)];
+                    //    i++;
+
+                    //}
+                    for (int j = 1; j < partsFace.Length; j++) 
+                    {
+
+                        tempListVertex.Add(vertices[int.Parse(partsFace[j]) - 1]);
+                    }
+                    faces.Add(new Face(tempListVertex));
+                   // List<Face> faceVertices = parts.Skip(1).Select(index => vertices[int.Parse(index)]);
+                    //                                 //.Select(index => vertices[int.Parse(index) - 1])
+                    //                                 //.ToList();
+                    //faces.Add(new Face(faceVertices));
+                }
+            }
+           
+            return new Polyhedron(vertices, faces);
+        }
+
+        public void SaveToOBJ(Polyhedron polyhedron, string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                foreach (var vertex in polyhedron.Vertices)
+                {
+                    writer.WriteLine($"v {vertex.X} {vertex.Y} {vertex.Z}");
+                }
+
+                foreach (var face in polyhedron.Faces)
+                {
+                    var indices = face.Vertices.Select(v => polyhedron.Vertices.IndexOf(v) + 1);
+                    writer.WriteLine("f " + string.Join(" ", indices));
+                }
+            }
+        }
+    }
+}
+
+//private void LoadFile_Click(object sender, EventArgs e)
+//{
+//    OpenFileDialog openFileDialog = new OpenFileDialog();
+//    if (openFileDialog.ShowDialog() == DialogResult.OK)
+//    {
+
+//        pop = LoadFromOBJ(openFileDialog.FileName);
+//        pnts = pop.Faces;
+//        pictureBox1.Invalidate();
+//    }
+//}
+
+
+
+
+
+//    }
+//}
+
+
+//
+//Matrix.cs
+namespace Lab7
+{
+    public class Matrix
+    {
+        private readonly double[,] _data;
+        private readonly int _rows;
+        private readonly int _cols;
+
+        public Matrix(double[,] data)
+        {
+            _data = data;
+            _rows = data.GetLength(0);
+            _cols = data.GetLength(1);
+        }
+        public double this[int x, int y] => _data[x, y];
+
+        public static Matrix operator* (Matrix a, Matrix b)
+        {
+            int rows = a._rows;
+            int cols = b._cols;
+
+            var result = new double[rows, cols];
+
+            for (var i = 0; i < rows; i++)
+            {
+                for (var j = 0; j < cols; j++)
+                {
+                    result[i, j] = 0;
+                    for (var k = 0; k < a._cols; k++)
+                    {
+                        result[i, j] += a._data[i, k] * b._data[k, j];
+                    }
+                }
+            }
+            return new Matrix(result);
+        }
+    }
+}
+
+
+//polyhedron.cs
+using System;
 using System.Collections.Generic;
 
 namespace Lab7
@@ -202,5 +358,53 @@ namespace Lab7
 
             return new Vertex(centerX, centerY, centerZ);
         }
+    }
+}
+
+
+//vertex.cs
+using System;
+
+namespace Lab7
+{
+    public class Vertex
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
+
+        public Vertex(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+
+        public static Vertex operator +(Vertex v1, Vertex v2) 
+        {
+            return new Vertex(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
+        }
+
+        public static Vertex operator /(Vertex v, double scalar) 
+        {
+            if (scalar == 0)throw new DivideByZeroException("Деление на ноль! В школе не учился? :)");
+
+            return new Vertex(v.X / scalar, v.Y / scalar, v.Z / scalar);
+        }
+
+        //public static Vertex operator/=(Vertex v, double scalar)
+        //{
+
+        //    if (scalar == 0) 
+        //    {
+        //        throw new DivideByZeroException("Деление на ноль! В школе не учился? :)");
+        //    }
+
+        //    v.X /= scalar;
+        //    v.Y /= scalar;
+        //    v.Z /= scalar;
+        //    return v;
+        //}
     }
 }
