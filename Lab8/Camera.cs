@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Lab6
 {
@@ -12,6 +13,7 @@ namespace Lab6
         public Vertex Position { get; set; }
         public Vertex Target { get; set; }
         public Vertex Up { get; set; } = new Vertex(0, 1, 0); // Вектор "вверх" камеры
+
 
         public double FieldOfView { get; set; } = Math.PI / 4; // Угол обзора (рад)
         public double AspectRatio { get; set; } = 1.0; // Соотношение сторон экрана
@@ -72,6 +74,9 @@ namespace Lab6
         {
             return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
         }
+
+
+
     }
 
 }

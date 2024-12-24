@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 
@@ -16,7 +17,7 @@ namespace Lab8
         private Polyhedron _polyhedron;
         double d = 5;
         Projection projectionFunction = new Projection();
-
+        private double _cameraAngle = 0;
 
         private Camera _camera = new Camera
         {
@@ -109,79 +110,124 @@ namespace Lab8
             if (_polyhedron == null)
                 return;
 
-            if (_polyhedron == null) return;
+            var viewMatrix = _camera.GetViewMatrix();
+            var projectionMatrix = _camera.GetProjectionMatrix();
 
-            var renderer = new ZBufferRenderer(e.ClipRectangle.Width, e.ClipRectangle.Height, projectionFunction);
+            var transformationMatrix = TranslationMatrix(_translationX, _translationY, _translationZ) *
+                                       ScalingMatrix(_scaleX, _scaleY, _scaleZ) *
+                                       RotationMatrix(_rotationX, _rotationY, _rotationZ);
 
-            Matrix transformationMatrix = TranslationMatrix(_translationX, _translationY, _translationZ) *
-                                          ScalingMatrix(_scaleX, _scaleY, _scaleZ) *
-                                          RotationMatrix(_rotationX, _rotationY, _rotationZ);
+            int clientWidth = e.ClipRectangle.Width;
+            int clientHeight = e.ClipRectangle.Height;
 
-            renderer.ClearBuffer();
+            int offsetX = clientWidth / 2;
+            int offsetY = clientHeight / 2;
 
-            // Рендерим все грани
             foreach (var face in _polyhedron.Faces)
             {
-                renderer.RenderFace(e.Graphics, face, transformationMatrix, Pens.Black);
+                var points2D = new List<Point>();
+                foreach (var vertex in face.Vertices)
+                {
+                    // Трансформация вершины
+                    var transformedVertex = Transformer.TransformToWorld(vertex, transformationMatrix * viewMatrix * projectionMatrix, projectionFunction);
+
+                    // Нормализация в экранные координаты
+                    double x = transformedVertex.X / transformedVertex.Z;
+                    double y = transformedVertex.Y / transformedVertex.Z;
+
+                    // Преобразование в пиксельные координаты
+                    points2D.Add(new Point(
+                        (int)(x * offsetX + offsetX),
+                        (int)(-y * offsetY + offsetY)
+                    ));
+                }
+
+                // Отрисовка полигона
+                if (points2D.Count >= 3)
+                {
+                    e.Graphics.DrawPolygon(Pens.Black, points2D.ToArray());
+                }
             }
 
-            // Направление обзора
-            //var viewDirection = new Vertex(1, 0, -1);
 
 
-            //Matrix translationMatrix = TranslationMatrix(_translationX, _translationY, _translationZ);
-            //Matrix scalingMatrix = ScalingMatrix(_scaleX, _scaleY, _scaleZ);
-            //Matrix rotationMatrix = RotationMatrix(_rotationX, _rotationY, _rotationZ);
-            //Matrix lrotation = LRotation(_fi, _l, _m, _n);
-            //Vertex centroid = _polyhedron.Centroid(_polyhedron.LocalToWorld);
 
-            //Matrix toCenter = TranslationMatrix(-centroid.X, -centroid.Y, -centroid.Z);
-            //Matrix fromCenter = TranslationMatrix(centroid.X, centroid.Y, centroid.Z);
+                //BEGIN---------------------------ZBUFFER
 
-            //// Матрица преобразования (только поворот и масштабирование, без переноса)
-            //Matrix trasformationMatrixWithoutTranslation = RotationMatrix(_rotationX, _rotationX, _rotationZ) * ScalingMatrix(_scaleX, _scaleY, _scaleZ);
-            //Matrix worldMatrix; 
-            //if (!IsCentroid)
-            //{
-            //    IsCentroid = true;
-            //    worldMatrix = translationMatrix * scalingMatrix * rotationMatrix * lrotation *  _reflection;
-            //}
-            //else
-            //{
-            //    worldMatrix = toCenter * translationMatrix * scalingMatrix * rotationMatrix * lrotation * _reflection * fromCenter;
-            //}
-            //_polyhedron.LocalToWorld *= worldMatrix;
+                //var renderer = new ZBufferRenderer(e.ClipRectangle.Width, e.ClipRectangle.Height, projectionFunction);
 
-            //int clientWidth = e.ClipRectangle.Width;
-            //int clientHeight = e.ClipRectangle.Height;
+                //Matrix transformationMatrix = TranslationMatrix(_translationX, _translationY, _translationZ) *
+                //                              ScalingMatrix(_scaleX, _scaleY, _scaleZ) *
+                //                              RotationMatrix(_rotationX, _rotationY, _rotationZ);
 
-            //int offsetX = clientWidth / 2;
-            //int offsetY = clientHeight / 2;
+                //renderer.ClearBuffer();
 
-            //centroid = _polyhedron.Centroid(_polyhedron.LocalToWorld);
-            //e.Graphics.FillRectangle(Brushes.Red, (int) centroid.X + offsetX, (int)centroid.Y + offsetY,2, 2);
+                //// Рендерим все грани
+                //foreach (var face in _polyhedron.Faces)
+                //{
+                //    renderer.RenderFace(e.Graphics, face, transformationMatrix, Pens.Black);
+                //}
 
-            //var points2D = new List<Point>(10);
+                // Направление обзора
+                //var viewDirection = new Vertex(1, 0, -1);
 
-            //// Выполняем отсечение
-            //Polyhedron visibleFaces = BackfaceCulling(_polyhedron, viewDirection, trasformationMatrixWithoutTranslation);
-            //foreach (Face face in visibleFaces.Faces)
-            //{
-            //    foreach (Vertex vertex in face.Vertices)
-            //    {
-            //        Vertex worldVertex = Transformer.TransformToWorld(vertex, _polyhedron.LocalToWorld * projectionFunction.getProjection(), projectionFunction);
-            //        if (worldMatrix == null) throw new InvalidOperationException("Матрица преобразования некорректна.");
-            //        points2D.Add(new Point((int)worldVertex.X, (int)worldVertex.Y));
-            //    }
 
-            //    var centeredPoints = points2D.Select(p => new Point(p.X + offsetX, p.Y + offsetY)).ToArray();
-            //    if(centeredPoints.Length > 0) 
-            //    {                    
-            //        e.Graphics.DrawPolygon(Pens.Black, centeredPoints);
-            //    }
-            //    points2D.Clear();
-            //}
-        }
+                //END--------------------------- ZBUFFER
+
+
+                //Matrix translationMatrix = TranslationMatrix(_translationX, _translationY, _translationZ);
+                //Matrix scalingMatrix = ScalingMatrix(_scaleX, _scaleY, _scaleZ);
+                //Matrix rotationMatrix = RotationMatrix(_rotationX, _rotationY, _rotationZ);
+                //Matrix lrotation = LRotation(_fi, _l, _m, _n);
+                //Vertex centroid = _polyhedron.Centroid(_polyhedron.LocalToWorld);
+
+                //Matrix toCenter = TranslationMatrix(-centroid.X, -centroid.Y, -centroid.Z);
+                //Matrix fromCenter = TranslationMatrix(centroid.X, centroid.Y, centroid.Z);
+
+                //// Матрица преобразования (только поворот и масштабирование, без переноса)
+                //Matrix trasformationMatrixWithoutTranslation = RotationMatrix(_rotationX, _rotationX, _rotationZ) * ScalingMatrix(_scaleX, _scaleY, _scaleZ);
+                //Matrix worldMatrix; 
+                //if (!IsCentroid)
+                //{
+                //    IsCentroid = true;
+                //    worldMatrix = translationMatrix * scalingMatrix * rotationMatrix * lrotation *  _reflection;
+                //}
+                //else
+                //{
+                //    worldMatrix = toCenter * translationMatrix * scalingMatrix * rotationMatrix * lrotation * _reflection * fromCenter;
+                //}
+                //_polyhedron.LocalToWorld *= worldMatrix;
+
+                //int clientWidth = e.ClipRectangle.Width;
+                //int clientHeight = e.ClipRectangle.Height;
+
+                //int offsetX = clientWidth / 2;
+                //int offsetY = clientHeight / 2;
+
+                //centroid = _polyhedron.Centroid(_polyhedron.LocalToWorld);
+                //e.Graphics.FillRectangle(Brushes.Red, (int) centroid.X + offsetX, (int)centroid.Y + offsetY,2, 2);
+
+                //var points2D = new List<Point>(10);
+
+                //// Выполняем отсечение
+                //Polyhedron visibleFaces = BackfaceCulling(_polyhedron, viewDirection, trasformationMatrixWithoutTranslation);
+                //foreach (Face face in visibleFaces.Faces)
+                //{
+                //    foreach (Vertex vertex in face.Vertices)
+                //    {
+                //        Vertex worldVertex = Transformer.TransformToWorld(vertex, _polyhedron.LocalToWorld * projectionFunction.getProjection(), projectionFunction);
+                //        if (worldMatrix == null) throw new InvalidOperationException("Матрица преобразования некорректна.");
+                //        points2D.Add(new Point((int)worldVertex.X, (int)worldVertex.Y));
+                //    }
+
+                //    var centeredPoints = points2D.Select(p => new Point(p.X + offsetX, p.Y + offsetY)).ToArray();
+                //    if(centeredPoints.Length > 0) 
+                //    {                    
+                //        e.Graphics.DrawPolygon(Pens.Black, centeredPoints);
+                //    }
+                //    points2D.Clear();
+                //}
+            }
 
         public bool IsCentroid { get; private set; }
 
@@ -408,6 +454,26 @@ namespace Lab8
 
         }
 
+        private void RotateCamera()
+        {
+            _cameraAngle += 0.01; // Угол поворота
+            _camera.Position = new Vertex(
+                5 * Math.Cos(_cameraAngle), // X
+                5,                          // Y
+                5 * Math.Sin(_cameraAngle)  // Z
+            );
+            pictureBox1.Invalidate(); // Перерисовать сцену
+        }
+
+        private void rotationButton_Click(object sender, EventArgs e)
+        {
+            RotateCamera();
+        }
+
+        private void groupBox5_Enter(object sender, EventArgs e)
+        {
+
+        }
 
         private void button4_Click_1(object sender, EventArgs e)
         {
@@ -563,6 +629,8 @@ namespace Lab8
             }
             return new Polyhedron(visibleVertices.ToList(), visibleFaces);
         }
+
+
 
 
         
