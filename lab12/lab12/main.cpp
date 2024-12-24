@@ -1,5 +1,5 @@
 ﻿#include "shapes.h"
-// Window dimensions
+
 const GLuint WIDTH = 800, HEIGHT = 800;
 
 const char* VertexShaderSource = R"(
@@ -60,14 +60,34 @@ const char* FragmentGradientTextureShaderSource = R"(
         out vec4 color;
 
         uniform sampler2D ourTexture;
+
+        uniform float colorAlpha;
         void main()
         {
-            color =  texture(ourTexture, TexCoord) * vec4(VertexColor, 1.0f);
+            color =  mix( texture(ourTexture, TexCoord), vec4(VertexColor, 1.0f), colorAlpha);
         }
-
-
 )";
-    
+
+const char* FragmentMixTextureShaderSource = R"(
+        #version 330 core
+        in vec2 TexCoord; 
+        in vec3 VertexColor;
+
+        out vec4 color;
+
+        uniform sampler2D ourTexture;
+        uniform sampler2D ourTexture2;
+
+        uniform float colorAlpha;
+        void main()
+        {
+            color =  mix(texture(ourTexture, TexCoord), texture(ourTexture2, TexCoord), 0.0f);
+        }
+)";
+
+//projection* view* model* vec4(coord, 1.0f);
+
+
 // Компиляция шейдера
 GLuint compileShader(const GLchar* source, GLenum type) {
     GLuint shader = glCreateShader(type);
@@ -113,13 +133,13 @@ GLuint loadTexture(const char* filePath) {
 }
 
 // Создание шейдера
-GLuint createShaderProgram(int filename) {
+GLuint createShaderProgram(int filename) 
+{
     GLuint vertexShader;
-    if (filename == 1) 
+    if (filename == 1 || filename == 2) 
     {
         //Вертексный шейдер и проверка на ошибку создания
         vertexShader = compileShader(VertexTexShaderSource, GL_VERTEX_SHADER);
-
     }
     else 
     {
@@ -139,7 +159,12 @@ GLuint createShaderProgram(int filename) {
         //Фрагментный шейдер и проверка на ошибку создания
         fragmentShader = compileShader(FragmentGradientTextureShaderSource, GL_FRAGMENT_SHADER);
     }
-    else if (filename == 0 || filename == 2 || filename == 3)
+    else if (filename == 2)
+    {
+        //Фрагментный шейдер и проверка на ошибку создания
+        fragmentShader = compileShader(FragmentMixTextureShaderSource, GL_FRAGMENT_SHADER);
+    }
+    else if(filename == 0 || filename == 3 || filename == 4)
     {
         //Фрагментный шейдер и проверка на ошибку создания
         fragmentShader = compileShader(FragmentGradientShaderSource, GL_FRAGMENT_SHADER);
@@ -165,15 +190,15 @@ void getShape(GLuint& VBO, GLuint count)
 {
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    if (count == 0 || count == 1) 
+    if (count == 0 || count == 1 || count == 2) 
     {
         glBufferData(GL_ARRAY_BUFFER, cubefigure.size() * sizeof(GLfloat), cubefigure.data(), GL_STATIC_DRAW);
     }
-    else if (count == 2) 
+    else if (count == 3) 
     {
         glBufferData(GL_ARRAY_BUFFER, tetrafigure.size() * sizeof(GLfloat), tetrafigure.data(), GL_STATIC_DRAW);
     }
-    else if (count == 3)
+    else if (count == 4)
     {
         initCircle();
         glBufferData(GL_ARRAY_BUFFER, circle.size() * sizeof(GLfloat), circle.data(), GL_STATIC_DRAW);
@@ -191,15 +216,16 @@ int main()
     glewInit();
 
     GLuint VBO;
-    GLuint progID = 0;
+    GLuint count = 0;
+
     glEnable(GL_DEPTH_TEST);  //Включаем проверку глубины
-    GLuint shaderProgram = createShaderProgram(progID);
+    GLuint shaderProgram = createShaderProgram(count);
 
     // Вытягиваем ID атрибута вершин из собранной программы
     GLuint Attrib_vertex = glGetAttribLocation(shaderProgram, "coord");
     GLuint Color_vertex = glGetAttribLocation(shaderProgram, "colorVertex");
     GLuint Tex_Vertex;
-    getShape(VBO, progID);
+    getShape(VBO, count);
     glm::mat4 model = glm::mat4(1.0f);
     //model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 view = glm::lookAt(
@@ -213,10 +239,11 @@ int main()
     glm::mat4 mvp;
     GLfloat moveX = 0.0f;
     GLfloat moveY = 0.0f;
-    GLuint count = 0;
+    GLfloat intensity = 0.5f;
 
     //Создадим текстуру
     GLuint texture = loadTexture("container.jpg");
+    GLuint texture2 = loadTexture("tex2.png");
     while (window.isOpen()) 
     {
         sf::Event event;
@@ -225,27 +252,44 @@ int main()
             if (event.type == sf::Event::Closed) { window.close(); }
             else if (event.type == sf::Event::MouseButtonPressed) 
             {               
-                count = (count + 1) % 4;
+                count = (count + 1) % 5;
                 shaderProgram = createShaderProgram(count); 
                 if (count == 1) 
                 {
                     Tex_Vertex = glGetAttribLocation(shaderProgram, "texCoord");
-                    std::cout << Tex_Vertex;
-                }   
+                    //std::cout << Tex_Vertex;
+                   
+                   
+                    //glUniform1f(colorAlphaLoc, 1.0f);
+                }
+                    
                 getShape(VBO, count);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) 
             {
-                
+                //if(count == 1 && intensity <= 1)
+                    intensity += 0.09f;
+            }
+               
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) 
+            {
+                //if(count == 1 && intensity >= 0)
+                    intensity -= 0.09f;
+            }
+    
+        
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {              
                 moveX = -0.5f;
                 model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
-
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
             {
                 moveX = 0.5f;
-                model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));
-                
+                model = glm::translate(model, glm::vec3(moveX, 0.0f, 0.0f));             
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
             {
@@ -259,16 +303,19 @@ int main()
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        mvp = count == 3 ? glm::mat4(1.0f) : projection * view * model;
 
+        mvp = projection * view * model;
         glUseProgram(shaderProgram);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        //Получаем расположение юниформ-переменных в Вертексном шейдере
         GLuint matrloc = glGetUniformLocation(shaderProgram, "matr");
+        GLfloat colorAlphaLoc = glGetUniformLocation(shaderProgram, "colorAlpha");
 
         //Передаём юниформ-переменные в шейдеры
         glUniformMatrix4fv(matrloc, 1, GL_FALSE, glm::value_ptr(mvp));
-
+        glUniform1f(colorAlphaLoc, intensity);
+     
         if (count == 0) 
         {
             // Считываем координаты x, y, z и передаем по индексу 0
@@ -293,10 +340,28 @@ int main()
         if (count == 2)
         {
             // Считываем координаты x, y, z и передаем по индексу 0
+            glVertexAttribPointer(Attrib_vertex, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+            glEnableVertexAttribArray(Attrib_vertex); // Включаем массив атрибутов
+
+            glVertexAttribPointer(Tex_Vertex, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+            glEnableVertexAttribArray(Tex_Vertex);
+        }
+        if (count == 3)
+        {
+            // Считываем координаты x, y, z и передаем по индексу 0
             glVertexAttribPointer(Attrib_vertex, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
             glEnableVertexAttribArray(Attrib_vertex); // Включаем массив атрибутов
 
             glVertexAttribPointer(Color_vertex, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+            glEnableVertexAttribArray(Color_vertex);
+        }
+        if (count == 4)
+        {
+            // Считываем координаты x, y, z и передаем по индексу 0
+            glVertexAttribPointer(Attrib_vertex, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)0);
+            glEnableVertexAttribArray(Attrib_vertex); // Включаем массив атрибутов
+
+            glVertexAttribPointer(Color_vertex, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
             glEnableVertexAttribArray(Color_vertex);
         }
         if (count == 3)
@@ -313,19 +378,29 @@ int main()
         if (count == 0 || count == 1) 
         {
             glBindTexture(GL_TEXTURE_2D, texture);
+
             //Куб
             glDrawArrays(GL_QUADS, 0, 24);
         }
-        else if(count == 2) 
+        else if (count == 2)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glBindTexture(GL_TEXTURE_2D, texture2);
+
+            //Куб
+            glDrawArrays(GL_QUADS, 0, 24);
+        }
+        else if(count == 3) 
         {
             //Тетраэдр
             glDrawArrays(GL_TRIANGLES, 0, 12);
         }
-        else if (count == 3)
-        {   
-            //Тетраэдр
+        else if (count == 4)
+        {
+            //шар
             glDrawArrays(GL_TRIANGLE_FAN, 0, 362);
         }
+
         glDisableVertexAttribArray(Attrib_vertex);
         glDisableVertexAttribArray(Color_vertex);
         //glBindVertexArray(0);
@@ -341,7 +416,3 @@ int main()
    
     return 0;
 }
-
-
-
-

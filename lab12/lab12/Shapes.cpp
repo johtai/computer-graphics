@@ -53,7 +53,6 @@ const std::vector<GLfloat> cubefigure{
 
 };
 
-
 std::vector<float> hsvToRgb(float hue, float saturation = 100.0, float value = 100.0)
 {
     int perc = (int)floor(hue / 60) % 6;
@@ -87,12 +86,12 @@ std::vector<GLfloat> circle{};
 const float radius = 0.5f;
 
 void initCircle() {
-    // Позиция центра
+    // ������� ������
     circle.push_back(0.0f);
     circle.push_back(0.0f);
     circle.push_back(0.0f);
 
-    // Цвет центра
+    // ���� ������
     circle.push_back(1.0f);
     circle.push_back(1.0f);
     circle.push_back(1.0f);
