@@ -107,6 +107,8 @@ namespace Lab8
             Matrix toCenter = TranslationMatrix(-centroid.X, -centroid.Y, -centroid.Z);
             Matrix fromCenter = TranslationMatrix(centroid.X, centroid.Y, centroid.Z);
 
+            // Матрица преобразования (только поворот и масштабирование, без переноса)
+            Matrix trasformationMatrixWithoutTranslation = RotationMatrix(_rotationX, _rotationX, _rotationZ) * ScalingMatrix(_scaleX, _scaleY, _scaleZ);
             Matrix worldMatrix; 
             if (!IsCentroid)
             {
@@ -130,7 +132,8 @@ namespace Lab8
 
             var points2D = new List<Point>(10);
 
-            Polyhedron visibleFaces = BackfaceCulling(_polyhedron, viewDirection);
+            // Выполняем отсечение
+            Polyhedron visibleFaces = BackfaceCulling(_polyhedron, viewDirection, trasformationMatrixWithoutTranslation);
             foreach (Face face in visibleFaces.Faces)
             {
                 foreach (Vertex vertex in face.Vertices)
@@ -497,18 +500,22 @@ namespace Lab8
         }
 
 
-        public static Polyhedron BackfaceCulling(Polyhedron polyhedron, Vertex viewDirection)
+        public static Polyhedron BackfaceCulling(Polyhedron polyhedron, Vertex viewDirection, Matrix transformationMatrix)
         {
             //Если нормалей нет, возвращаем исходный polyhedron
             if (polyhedron.Faces[0].Normales.Count == 0) return polyhedron;
 
             var visibleFaces = new List<Face>();
             var visibleVertices = new List<Vertex>();
+
             foreach (var face in polyhedron.Faces)
             {
                 var normal = face.Normales[0];
 
-                double dotProduct = normal.X * viewDirection.X + normal.Y * viewDirection.Y + normal.Z * viewDirection.Z;
+                var transformedNormal = Transformer.TransformNormal(face.Normales[0], transformationMatrix);
+                double dotProduct = transformedNormal.X * viewDirection.X +
+                                    transformedNormal.Y * viewDirection.Y +
+                                    transformedNormal.Z * viewDirection.Z;
 
                 //Если грань "лицевая", добавляем её в список видимых
                 if (dotProduct < 0) 
@@ -516,7 +523,8 @@ namespace Lab8
                     visibleFaces.Add(face);
                     foreach (var vertex in face.Vertices) 
                     {
-                        visibleVertices.Add(vertex);
+                        if(!visibleVertices.Contains(vertex))
+                            visibleVertices.Add(vertex);
                     }
                 }
                   
@@ -524,6 +532,10 @@ namespace Lab8
             }
             return new Polyhedron(visibleVertices.ToList(), visibleFaces);
         }
+
+
+        
+
 
     }
 
@@ -533,7 +545,7 @@ namespace Lab8
         public static Vertex TransformToWorld(Vertex vertex, Matrix matrix, Projection projection)
         {
             var point = new Matrix(new[,] { { vertex.X, vertex.Y, vertex.Z, 1 } });
-            point *= matrix;
+            point = point *  matrix;
 
             var result = new Vertex(point[0, 0], point[0, 1], point[0, 2]);
 
@@ -545,6 +557,29 @@ namespace Lab8
             return result;
             //return new Vertex(point[0, 0], point[0, 1], point[0, 2]);
         }
+
+        public static Vertex TransformNormal(Vertex normal, Matrix transformationMatrix)
+        {
+
+
+            // Используем только 3x3 подматрицу для нормали
+            var normalMatrix = new Matrix(new[,]
+            {
+        { transformationMatrix[0, 0], transformationMatrix[0, 1], transformationMatrix[0, 2] },
+        { transformationMatrix[1, 0], transformationMatrix[1, 1], transformationMatrix[1, 2] },
+        { transformationMatrix[2, 0], transformationMatrix[2, 1], transformationMatrix[2, 2] }
+        });
+
+            var point = new Matrix(new[,] { { normal.X, normal.Y, normal.Z } }); // 1x3
+            point *= normalMatrix; // Умножение 1x3 на 3x3
+
+            //var transformedNormal = TransformToWorld(normal, normalMatrix, new Projection());
+
+            // Нормализация нормали после преобразования
+            double length = Math.Sqrt(point[0, 0] * point[0, 0] + point[0, 1] * point[0, 1] + point[0, 2] * point[0, 2]);
+            return new Vertex(point[0, 0] / length, point[0, 1] / length, point[0, 2] / length);
+        }
+
     }
 
 
